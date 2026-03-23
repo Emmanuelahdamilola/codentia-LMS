@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter }           from 'next/navigation'
+import { signOut }             from 'next-auth/react'
 import { Eye, EyeOff, Loader2, Bell, Globe, Shield, Trash2 } from 'lucide-react'
 
 // ─────────────────────────────────────────────────────────────
@@ -120,8 +121,8 @@ export default function SettingsPage() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
-      // Redirect to login after deletion
-      router.push('/login?deleted=1')
+      // Sign out to clear the JWT cookie, then redirect
+      await signOut({ callbackUrl: '/login?deleted=1' })
     } catch (err) {
       setDeleteMsg(err instanceof Error ? err.message : 'Failed to delete account.')
     } finally { setDeleteLoading(false) }

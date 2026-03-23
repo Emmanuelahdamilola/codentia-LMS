@@ -1,64 +1,58 @@
-// PATH: next.config.ts
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  images: {
-    remotePatterns: [
-      { protocol: 'https', hostname: '**.amazonaws.com' },
-      { protocol: 'https', hostname: '**.r2.dev' },
-      { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
-    ],
-  },
+// PATH: src/middleware.ts
+// Uses getToken() instead of auth() to avoid importing Prisma in Edge Runtime.
+// auth() wraps auth.ts which imports PrismaClient — incompatible with the Edge Runtime.
 
-  experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000'],
-      bodySizeLimit:  '10mb',   // allows video/file uploads via server actions
-    },
-  },
+import { getToken } from 'next-auth/jwt'
+import { NextResponse, type NextRequest } from 'next/server'
 
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key:   'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key:   'X-Frame-Options',
-            value: 'SAMEORIGIN',
-          },
-          {
-            key:   'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-        ],
-      },
-      // Allow iframe embeds from video providers on lesson pages
-      {
-        source:  '/courses/:courseId/learn/:lessonId',
-        headers: [
-          {
-            key:   'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "font-src 'self' https://fonts.gstatic.com",
-              "img-src 'self' data: blob: https:",
-              "media-src 'self' https: blob:",
-              // Allow YouTube, Vimeo, Loom, and R2 self-hosted video
-              "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com https://www.loom.com https://js.stripe.com",
-              "connect-src 'self' https://api.groq.com https://api.stripe.com https://api.resend.com",
-            ].join('; '),
-          },
-        ],
-      },
-    ]
-  },
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl
+
+  // Read JWT token (works in Edge Runtime — no Prisma needed)
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  })
+
+  const isLoggedIn = !!token
+  const role       = token?.role as string | undefined
+
+  // ── Public routes ──────────────────────────────────────────
+  const publicRoutes = ['/login', '/register']
+  if (publicRoutes.includes(pathname)) {
+    if (isLoggedIn) {
+      return NextResponse.redirect(
+        new URL(role === 'ADMIN' ? '/admin/dashboard' : '/dashboard', req.url)
+      )
+    }
+    return NextResponse.next()
+  }
+
+  // ── Not logged in → login ──────────────────────────────────
+  if (!isLoggedIn) {
+    const loginUrl = new URL('/login', req.url)
+    loginUrl.searchParams.set('callbackUrl', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  // ── Admin-only routes ──────────────────────────────────────
+  if (pathname.startsWith('/admin') && role !== 'ADMIN') {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
+  }
+
+  // ── Student routes — redirect admin to their panel ─────────
+  const studentPrefixes = [
+    '/dashboard', '/courses', '/assignments', '/quizzes',
+    '/live-classes', '/progress', '/profile', '/settings',
+    '/leaderboard', '/badges', '/calendar', '/lessons',
+  ]
+  if (studentPrefixes.some(p => pathname.startsWith(p)) && role === 'ADMIN') {
+    return NextResponse.redirect(new URL('/admin/dashboard', req.url))
+  }
+
+  return NextResponse.next()
 }
 
-module.exports = nextConfig
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+}

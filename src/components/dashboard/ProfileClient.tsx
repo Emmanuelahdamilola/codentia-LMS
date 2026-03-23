@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signOut } from 'next-auth/react'
+import AvatarUpload from '@/components/ui/AvatarUpload'
 
 interface UserData {
   name: string; email: string; bio: string; timezone: string
@@ -91,6 +92,7 @@ export default function ProfileClient({ user, stats, enrolledCourses }: Props) {
   // Edit mode state
   const [editing,   setEditing]   = useState(false)
   const [form, setForm]           = useState({ name: user.name, bio: user.bio, timezone: user.timezone })
+  const [currentImage, setCurrentImage] = useState<string | null>(user.image)
   const [saving,    setSaving]    = useState(false)
   const [toast,     setToast]     = useState('')
 
@@ -141,7 +143,7 @@ export default function ProfileClient({ user, stats, enrolledCourses }: Props) {
       await fetch('/api/auth/update-profile', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ name: form.name, bio: form.bio, timezone: form.timezone }),
+        body:    JSON.stringify({ name: form.name, bio: form.bio, timezone: form.timezone, image: currentImage }),
       })
       setEditing(false)
       showToast('✓ Profile saved successfully')
@@ -205,12 +207,13 @@ export default function ProfileClient({ user, stats, enrolledCourses }: Props) {
             {/* Avatar + info */}
             <div className="flex items-start pr-6">
               <div className="relative -mt-9 ml-6 inline-block">
-                <div className="w-[72px] h-[72px] rounded-full border-3 border-white flex items-center justify-center font-black text-[24px] text-white" style={{ background: 'linear-gradient(135deg,#8A70D6,#6B52B8)', borderWidth: 3 }}>
-                  {user.image
-                    ? <img src={user.image} alt={user.name} className="w-full h-full rounded-full object-cover" />
-                    : user.initials}
-                </div>
-                <span className="absolute bottom-0.5 right-0.5 w-[18px] h-[18px] rounded-full bg-[#22C55E] border-2 border-white" />
+                <AvatarUpload
+                  currentImage={currentImage}
+                  initials={user.initials}
+                  size={72}
+                  onUpload={url => { setCurrentImage(url); showToast('Photo updated — click Save Changes to confirm') }}
+                  onError={msg => showToast(msg)}
+                />
               </div>
 
               <div className="flex-1 flex items-end justify-between px-4 pt-3 pb-4 min-w-0">

@@ -3,6 +3,9 @@
 
 import Link        from 'next/link'
 import { usePathname } from 'next/navigation'
+import { signOut }  from 'next-auth/react'
+import { useState } from 'react'
+import AvatarUpload from '@/components/ui/AvatarUpload'
 
 // ─── Nav definition (mirrors blueprint exactly) ───────────────
 const NAV = [
@@ -37,6 +40,7 @@ const NAV = [
     section: 'System',
     items: [
       { label: 'Settings', href: '/admin/settings', icon: <><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></> },
+      { label: 'My Profile', href: '/admin/profile',  icon: <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></> },
     ],
   },
 ]
@@ -50,16 +54,27 @@ const BREADCRUMBS: Record<string, string> = {
   '/admin/assignments':  'Assignments',
   '/admin/notifications':'Notifications',
   '/admin/settings':     'Settings',
+  '/admin/profile':      'My Profile',
   '/admin/lessons':      'Lessons',
   '/admin/quizzes':      'Quizzes',
 }
 
-interface Props { adminName: string; adminEmail: string; children: React.ReactNode }
+interface Props { adminName: string; adminEmail: string; adminImage?: string | null; children: React.ReactNode }
 
-export default function AdminShell({ adminName, adminEmail, children }: Props) {
+export default function AdminShell({ adminName, adminEmail, adminImage, children }: Props) {
   const pathname = usePathname()
   const initials = adminName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
   const page     = BREADCRUMBS[pathname] ?? 'Admin'
+  const [image,  setImage]  = useState<string | null>(adminImage ?? null)
+
+  async function handleImageUpload(url: string) {
+    setImage(url)
+    await fetch('/api/auth/update-profile', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ name: adminName, image: url }),
+    })
+  }
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: '#F4F4F6' }}>
@@ -122,20 +137,33 @@ export default function AdminShell({ adminName, adminEmail, children }: Props) {
 
         {/* Admin profile footer */}
         <div className="px-2.5 py-3" style={{ borderTop: '1px solid rgba(255,255,255,.06)' }}>
-          <div className="flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-all duration-150"
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,.07)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-            <div className="w-[30px] h-[30px] rounded-full bg-[#8A70D6] flex items-center justify-center text-[11px] font-black text-white flex-shrink-0">
-              {initials}
-            </div>
+          <div className="flex items-center gap-2 p-2 rounded-lg"
+            style={{ background: 'transparent' }}>
+            <AvatarUpload
+              currentImage={image}
+              initials={initials}
+              size={30}
+              onUpload={handleImageUpload}
+            />
             <div className="flex-1 min-w-0">
               <div className="text-[12px] font-bold truncate" style={{ color: 'rgba(255,255,255,.8)' }}>{adminName}</div>
               <div className="text-[10px] truncate" style={{ color: 'rgba(255,255,255,.35)' }}>Admin · Super User</div>
             </div>
-            <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-              style={{ width: 13, height: 13, stroke: 'rgba(255,255,255,.3)', flexShrink: 0 }}>
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
+            <button
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              title="Sign out"
+              className="flex items-center justify-center w-7 h-7 rounded-md transition-all duration-150 flex-shrink-0"
+              style={{ background: 'transparent' }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,.15)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                style={{ width: 14, height: 14, stroke: 'rgba(255,255,255,.4)' }}>
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+            </button>
           </div>
         </div>
       </aside>

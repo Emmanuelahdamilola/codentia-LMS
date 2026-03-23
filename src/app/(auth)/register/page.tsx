@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { signIn } from 'next-auth/react'
-import { Code2, Eye, EyeOff, Loader2, Check } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 
 function StrengthBar({ password }: { password: string }) {
   const checks = [
@@ -14,29 +14,36 @@ function StrengthBar({ password }: { password: string }) {
     /[^A-Za-z0-9]/.test(password),
   ]
   const score = checks.filter(Boolean).length
-  const colors = ['bg-red-400', 'bg-orange-400', 'bg-amber-400', 'bg-green-500']
-  const labels = ['Weak', 'Fair', 'Good', 'Strong']
   if (!password) return null
+  const colors = ['#ef4444','#f97316','#eab308','#22c55e']
+  const labels = ['Weak','Fair','Good','Strong']
   return (
-    <div className="mt-2">
-      <div className="flex gap-1 mb-1">
-        {[0, 1, 2, 3].map(i => (
-          <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${i < score ? colors[score - 1] : 'bg-gray-200'}`} />
+    <div style={{ marginTop: 8 }}>
+      <div style={{ display: 'flex', gap: 4, marginBottom: 5 }}>
+        {[0,1,2,3].map(i => (
+          <div key={i} style={{
+            flex: 1, height: 3, borderRadius: 2,
+            background: i < score ? colors[score - 1] : '#e4e4e7',
+            transition: 'background .3s',
+          }} />
         ))}
       </div>
-      <p className={`text-[11px] font-semibold ${score < 2 ? 'text-red-500' : score < 3 ? 'text-amber-500' : 'text-green-600'}`}>
+      <span style={{ fontSize: 11, fontWeight: 600, color: score < 2 ? '#ef4444' : score < 3 ? '#f97316' : score < 4 ? '#eab308' : '#22c55e' }}>
         {labels[score - 1] ?? 'Too short'}
-      </p>
+      </span>
     </div>
   )
 }
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ name: '', email: '', password: '', confirm: '' })
-  const [showPw, setShowPw] = useState(false)
-  const [error, setError] = useState('')
+  const [form, setForm]       = useState({ name: '', email: '', password: '', confirm: '' })
+  const [showPw, setShowPw]   = useState(false)
+  const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
+
+  useEffect(() => { setMounted(true) }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -45,119 +52,350 @@ export default function RegisterPage() {
     if (form.password.length < 8) { setError('Password must be at least 8 characters.'); return }
     setLoading(true)
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res  = await fetch('/api/auth/register', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: form.name, email: form.email, password: form.password }),
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? 'Registration failed.'); return }
-      // Auto sign in
       await signIn('credentials', { email: form.email, password: form.password, redirect: false })
       router.push('/dashboard')
-    } finally {
-      setLoading(false)
-    }
+    } finally { setLoading(false) }
   }
 
+  const steps = [
+    { icon: '⚡', title: 'Instant access', desc: 'Start learning in under 60 seconds' },
+    { icon: '🤖', title: 'AI tutor 24/7',  desc: 'Get unstuck anytime, on any topic' },
+    { icon: '📹', title: 'Live classes',    desc: 'Twice a week with real instructors' },
+  ]
+
   return (
-    <div className="min-h-screen flex">
-      {/* Left branding */}
-      <div className="hidden lg:flex flex-col justify-between w-[480px] shrink-0 bg-[#8A70D6] p-12 relative overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-white/10" />
-        <div className="absolute -bottom-20 -right-16 w-72 h-72 rounded-full bg-white/10" />
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-              <Code2 size={20} className="text-white" />
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        .reg-root {
+          min-height: 100vh;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          font-family: 'DM Sans', sans-serif;
+          background: #fafafa;
+        }
+
+        @media (max-width: 900px) {
+          .reg-root { grid-template-columns: 1fr; }
+          .reg-panel { display: none; }
+        }
+
+        /* ── Left form side ── */
+        .reg-form-side {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 48px 40px;
+          background: #fafafa;
+          order: 1;
+        }
+
+        .form-box {
+          width: 100%;
+          max-width: 420px;
+          opacity: 0;
+          transform: translateY(16px);
+          transition: opacity .5s ease, transform .5s ease;
+        }
+        .form-box.visible { opacity: 1; transform: translateY(0); }
+
+        .mobile-logo {
+          display: none;
+          font-family: 'Syne', sans-serif;
+          font-size: 20px;
+          font-weight: 800;
+          color: #09090b;
+          letter-spacing: -.5px;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 36px;
+        }
+        .mobile-logo-dot { width: 7px; height: 7px; border-radius: 50%; background: #8A70D6; }
+        @media (max-width: 900px) { .mobile-logo { display: flex; } }
+
+        .form-heading {
+          font-family: 'Syne', sans-serif;
+          font-size: 28px; font-weight: 800;
+          color: #09090b; letter-spacing: -1px; margin-bottom: 6px;
+        }
+        .form-sub { font-size: 14px; color: #71717a; margin-bottom: 28px; line-height: 1.5; }
+
+        .form-error {
+          background: #fef2f2; border: 1px solid #fecaca;
+          color: #dc2626; font-size: 13px;
+          padding: 12px 16px; border-radius: 10px; margin-bottom: 20px;
+          display: flex; align-items: center; gap: 8px;
+        }
+
+        .field { margin-bottom: 16px; }
+        .field label {
+          display: block; font-size: 13px; font-weight: 600;
+          color: #3f3f46; margin-bottom: 7px;
+        }
+        .input-wrap { position: relative; }
+        .auth-input {
+          width: 100%; height: 46px; padding: 0 14px;
+          border: 1.5px solid #e4e4e7; border-radius: 10px;
+          font-family: 'DM Sans', sans-serif; font-size: 14px;
+          color: #09090b; background: #fff; outline: none;
+          transition: border-color .15s, box-shadow .15s;
+        }
+        .auth-input:focus {
+          border-color: #8A70D6;
+          box-shadow: 0 0 0 3px rgba(138,112,214,.12);
+        }
+        .auth-input.has-icon { padding-right: 44px; }
+        .auth-input.valid { border-color: #22c55e; }
+        .auth-input.invalid { border-color: #ef4444; }
+
+        .eye-btn {
+          position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+          background: none; border: none; cursor: pointer;
+          color: #a1a1aa; display: flex; padding: 4px;
+        }
+        .eye-btn:hover { color: #52525b; }
+
+        .match-msg { font-size: 11px; margin-top: 5px; font-weight: 600; }
+        .match-msg.ok { color: #22c55e; }
+        .match-msg.bad { color: #ef4444; }
+
+        .submit-btn {
+          width: 100%; height: 48px; border-radius: 10px; border: none;
+          background: linear-gradient(135deg, #8A70D6, #6B52B8);
+          color: #fff; font-family: 'Syne', sans-serif;
+          font-size: 15px; font-weight: 700; cursor: pointer;
+          letter-spacing: -.2px;
+          display: flex; align-items: center; justify-content: center; gap: 8px;
+          margin-top: 8px;
+          transition: opacity .15s, transform .1s;
+          box-shadow: 0 4px 16px rgba(138,112,214,.35);
+        }
+        .submit-btn:hover { opacity: .92; transform: translateY(-1px); }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+        .spinner {
+          width: 16px; height: 16px;
+          border: 2px solid rgba(255,255,255,.35);
+          border-top-color: #fff; border-radius: 50%;
+          animation: spin .7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .terms-note {
+          font-size: 11px; color: #a1a1aa;
+          text-align: center; margin-top: 12px; line-height: 1.5;
+        }
+
+        .form-footer {
+          text-align: center; font-size: 13px;
+          color: #71717a; margin-top: 22px;
+        }
+        .form-footer a { color: #8A70D6; font-weight: 600; text-decoration: none; }
+        .form-footer a:hover { text-decoration: underline; }
+
+        /* ── Right panel ── */
+        .reg-panel {
+          order: 2;
+          background: #09090b;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 64px 56px;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .panel-grid {
+          position: absolute; inset: 0;
+          background-image:
+            linear-gradient(rgba(138,112,214,.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(138,112,214,.1) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+
+        .panel-glow {
+          position: absolute;
+          width: 400px; height: 400px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(138,112,214,.3) 0%, transparent 70%);
+          bottom: -100px; right: -100px;
+          filter: blur(50px);
+        }
+
+        .panel-content { position: relative; z-index: 2; }
+
+        .wordmark {
+          font-family: 'Syne', sans-serif;
+          font-size: 22px; font-weight: 800;
+          color: #fff; letter-spacing: -.5px;
+          display: flex; align-items: center; gap: 10px;
+          margin-bottom: 56px;
+        }
+        .wordmark-dot {
+          width: 8px; height: 8px; border-radius: 50%;
+          background: #8A70D6; box-shadow: 0 0 12px #8A70D6;
+        }
+
+        .panel-headline {
+          font-family: 'Syne', sans-serif;
+          font-size: 36px; font-weight: 800;
+          color: #fff; line-height: 1.15;
+          letter-spacing: -1.5px; margin-bottom: 16px;
+        }
+        .panel-headline em {
+          font-style: normal;
+          background: linear-gradient(135deg, #8A70D6, #C4B0FF);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .panel-sub { color: rgba(255,255,255,.4); font-size: 14px; margin-bottom: 48px; line-height: 1.6; }
+
+        .steps { display: flex; flex-direction: column; gap: 20px; }
+
+        .step {
+          display: flex; gap: 16px; align-items: flex-start;
+          padding: 20px; border-radius: 12px;
+          background: rgba(255,255,255,.04);
+          border: 1px solid rgba(255,255,255,.06);
+          transition: background .2s;
+        }
+        .step:hover { background: rgba(255,255,255,.07); }
+
+        .step-icon {
+          width: 40px; height: 40px; border-radius: 10px;
+          background: rgba(138,112,214,.2);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 18px; flex-shrink: 0;
+        }
+
+        .step-title { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+        .step-desc { font-size: 13px; color: rgba(255,255,255,.4); line-height: 1.4; }
+      `}</style>
+
+      <div className="reg-root">
+        {/* ── Left: form ── */}
+        <div className="reg-form-side">
+          <div className={`form-box ${mounted ? 'visible' : ''}`}>
+
+            <div className="mobile-logo">
+              <div className="mobile-logo-dot" />
+              Codentia
             </div>
-            <span className="text-2xl font-black text-white">Codentia</span>
-          </div>
-          <h2 className="text-3xl font-black text-white leading-tight mb-4">
-            Start your<br />coding journey<br />today.
-          </h2>
-          <p className="text-purple-200 text-sm">Free to join. Learn at your own pace.</p>
-        </div>
-        <div className="relative z-10 space-y-3">
-          {['Access all course videos', 'AI tutor 24/7', 'Live classes twice a week', 'Track your progress'].map(item => (
-            <div key={item} className="flex items-center gap-3">
-              <div className="w-5 h-5 bg-white/20 rounded-full flex items-center justify-center shrink-0">
-                <Check size={11} className="text-white" />
+
+            <h1 className="form-heading">Create your account</h1>
+            <p className="form-sub">Join thousands of students learning to code.</p>
+
+            {error && (
+              <div className="form-error">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                {error}
               </div>
-              <span className="text-purple-100 text-sm">{item}</span>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              <div className="field">
+                <label>Full name</label>
+                <input className="auth-input" type="text" value={form.name}
+                  onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
+                  placeholder="Ada Lovelace" required autoComplete="name" />
+              </div>
+
+              <div className="field">
+                <label>Email address</label>
+                <input className="auth-input" type="email" value={form.email}
+                  onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                  placeholder="you@example.com" required autoComplete="email" />
+              </div>
+
+              <div className="field">
+                <label>Password</label>
+                <div className="input-wrap">
+                  <input className="auth-input has-icon" type={showPw ? 'text' : 'password'}
+                    value={form.password}
+                    onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                    placeholder="Min. 8 characters" required autoComplete="new-password" />
+                  <button type="button" className="eye-btn" onClick={() => setShowPw(p => !p)}>
+                    {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                <StrengthBar password={form.password} />
+              </div>
+
+              <div className="field">
+                <label>Confirm password</label>
+                <input
+                  className={`auth-input ${form.confirm ? (form.password === form.confirm ? 'valid' : 'invalid') : ''}`}
+                  type="password" value={form.confirm}
+                  onChange={e => setForm(p => ({ ...p, confirm: e.target.value }))}
+                  placeholder="••••••••" required autoComplete="new-password" />
+                {form.confirm && (
+                  <p className={`match-msg ${form.password === form.confirm ? 'ok' : 'bad'}`}>
+                    {form.password === form.confirm ? '✓ Passwords match' : '✗ Passwords don\'t match'}
+                  </p>
+                )}
+              </div>
+
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading ? <><div className="spinner" />Creating account…</> : 'Create Account →'}
+              </button>
+            </form>
+
+            <p className="terms-note">
+              By creating an account, you agree to our Terms of Service and Privacy Policy.
+            </p>
+
+            <p className="form-footer">
+              Already have an account?{' '}
+              <Link href="/login">Sign in</Link>
+            </p>
+          </div>
+        </div>
+
+        {/* ── Right: panel ── */}
+        <div className="reg-panel">
+          <div className="panel-grid" />
+          <div className="panel-glow" />
+
+          <div className="panel-content">
+            <div className="wordmark">
+              <div className="wordmark-dot" />
+              Codentia
             </div>
-          ))}
+
+            <h2 className="panel-headline">
+              Your first line<br />of code is<br /><em>one click away.</em>
+            </h2>
+            <p className="panel-sub">
+              No experience required. We'll take you from zero to job-ready.
+            </p>
+
+            <div className="steps">
+              {steps.map(s => (
+                <div key={s.title} className="step">
+                  <div className="step-icon">{s.icon}</div>
+                  <div>
+                    <div className="step-title">{s.title}</div>
+                    <div className="step-desc">{s.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Right form */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-[#FBFBFB]">
-        <div className="w-full max-w-sm">
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 bg-[#8A70D6] rounded-lg flex items-center justify-center">
-              <Code2 size={16} className="text-white" />
-            </div>
-            <span className="text-xl font-black text-[#424040]">Codentia</span>
-          </div>
-
-          <h1 className="text-2xl font-black text-[#424040] mb-1">Create your account</h1>
-          <p className="text-[#8A8888] text-sm mb-8">Join thousands of students learning to code.</p>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-5">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-[#424040] mb-1.5">Full Name</label>
-              <input type="text" value={form.name}
-                onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                placeholder="John Doe" required className="input" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-[#424040] mb-1.5">Email</label>
-              <input type="email" value={form.email}
-                onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                placeholder="you@example.com" required className="input" />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-[#424040] mb-1.5">Password</label>
-              <div className="relative">
-                <input type={showPw ? 'text' : 'password'} value={form.password}
-                  onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-                  placeholder="Min. 8 characters" required className="input pr-10" />
-                <button type="button" onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A8888]">
-                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-              <StrengthBar password={form.password} />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-[#424040] mb-1.5">Confirm Password</label>
-              <input type="password" value={form.confirm}
-                onChange={e => setForm(p => ({ ...p, confirm: e.target.value }))}
-                placeholder="••••••••" required className="input" />
-              {form.confirm && form.password !== form.confirm && (
-                <p className="text-xs text-red-500 mt-1">Passwords don&apos;t match</p>
-              )}
-            </div>
-
-            <button type="submit" disabled={loading}
-              className="btn-primary w-full py-3 flex items-center justify-center gap-2 mt-2">
-              {loading && <Loader2 size={15} className="animate-spin" />}
-              {loading ? 'Creating account...' : 'Create Account'}
-            </button>
-          </form>
-
-          <p className="text-sm text-[#8A8888] text-center mt-6">
-            Already have an account?{' '}
-            <Link href="/login" className="text-[#8A70D6] font-semibold hover:underline">Sign in</Link>
-          </p>
-        </div>
-      </div>
-    </div>
+    </>
   )
 }

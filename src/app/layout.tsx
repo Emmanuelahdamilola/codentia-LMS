@@ -1,5 +1,4 @@
-// PATH: src/app/layout.tsx
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { SessionProvider } from 'next-auth/react'
 import './globals.css'
 
@@ -7,15 +6,15 @@ export const metadata: Metadata = {
   title: { default: 'Codentia', template: '%s | Codentia' },
   description: 'Hybrid Interactive Coding Academy — Learn. Build. Get Hired.',
   icons: {
-    icon:  [
-      { url: '/icon.svg',       type: 'image/svg+xml' },
-    ],
-    apple: [
-      { url: '/apple-icon.svg', type: 'image/svg+xml' },
-    ],
+    icon:  [{ url: '/icon.svg',       type: 'image/svg+xml' }],
+    apple: [{ url: '/apple-icon.svg', type: 'image/svg+xml' }],
   },
+}
+
+export const viewport: Viewport = {
   themeColor: '#8A70D6',
 }
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

@@ -1,158 +1,538 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Code2, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm]     = useState({ email: '', password: '' })
   const [showPw, setShowPw] = useState(false)
-  const [error, setError] = useState('')
+  const [error, setError]   = useState('')
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
+
+  useEffect(() => { setMounted(true) }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setError('')
-    setLoading(true)
+    setError(''); setLoading(true)
     try {
       const result = await signIn('credentials', {
-        email: form.email,
-        password: form.password,
-        redirect: false,
+        email: form.email, password: form.password, redirect: false,
       })
-      if (result?.error) {
-        setError('Invalid email or password.')
-      } else {
-        router.push('/dashboard')
-        router.refresh()
-      }
-    } finally {
-      setLoading(false)
-    }
+      if (result?.error) setError('Invalid email or password.')
+      else { router.push('/dashboard'); router.refresh() }
+    } finally { setLoading(false) }
   }
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left branding panel */}
-      <div className="hidden lg:flex flex-col justify-between w-[480px] shrink-0 bg-[#8A70D6] p-12 relative overflow-hidden">
-        {/* decorative circles */}
-        <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-white/10" />
-        <div className="absolute -bottom-20 -right-16 w-72 h-72 rounded-full bg-white/10" />
-        <div className="absolute top-1/2 left-1/3 w-40 h-40 rounded-full bg-white/5" />
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-              <Code2 size={20} className="text-white" />
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        .auth-root {
+          min-height: 100vh;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          font-family: 'DM Sans', sans-serif;
+          background: #09090b;
+        }
+
+        @media (max-width: 900px) {
+          .auth-root { grid-template-columns: 1fr; }
+          .auth-panel { display: none; }
+        }
+
+        /* ── Left panel ── */
+        .auth-panel {
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 48px;
+          background: #09090b;
+        }
+
+        .panel-grid {
+          position: absolute;
+          inset: 0;
+          background-image:
+            linear-gradient(rgba(138,112,214,.12) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(138,112,214,.12) 1px, transparent 1px);
+          background-size: 40px 40px;
+        }
+
+        .panel-glow {
+          position: absolute;
+          width: 500px; height: 500px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(138,112,214,.35) 0%, transparent 70%);
+          top: 50%; left: 50%;
+          transform: translate(-50%, -50%);
+          filter: blur(40px);
+          animation: breathe 6s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .8; }
+          50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+        }
+
+        .panel-content { position: relative; z-index: 2; }
+
+        .wordmark {
+          font-family: 'Syne', sans-serif;
+          font-size: 22px;
+          font-weight: 800;
+          color: #fff;
+          letter-spacing: -.5px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .wordmark-dot {
+          width: 8px; height: 8px;
+          border-radius: 50%;
+          background: #8A70D6;
+          box-shadow: 0 0 12px #8A70D6;
+        }
+
+        .panel-headline {
+          font-family: 'Syne', sans-serif;
+          font-size: clamp(32px, 3.5vw, 48px);
+          font-weight: 800;
+          color: #fff;
+          line-height: 1.1;
+          letter-spacing: -1.5px;
+          margin-top: 64px;
+        }
+
+        .panel-headline em {
+          font-style: normal;
+          background: linear-gradient(135deg, #8A70D6, #C4B0FF);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .panel-sub {
+          color: rgba(255,255,255,.45);
+          font-size: 15px;
+          line-height: 1.6;
+          margin-top: 20px;
+          max-width: 340px;
+        }
+
+        .panel-stats {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+          margin-top: 56px;
+        }
+
+        .stat-card {
+          background: rgba(255,255,255,.04);
+          border: 1px solid rgba(255,255,255,.07);
+          border-radius: 12px;
+          padding: 20px;
+          transition: background .2s;
+        }
+
+        .stat-card:hover { background: rgba(255,255,255,.07); }
+
+        .stat-num {
+          font-family: 'Syne', sans-serif;
+          font-size: 28px;
+          font-weight: 800;
+          color: #fff;
+          letter-spacing: -1px;
+        }
+
+        .stat-label {
+          font-size: 12px;
+          color: rgba(255,255,255,.4);
+          margin-top: 4px;
+          font-weight: 500;
+        }
+
+        .panel-footer {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .avatar-stack { display: flex; }
+        .avatar-stack span {
+          width: 32px; height: 32px;
+          border-radius: 50%;
+          border: 2px solid #09090b;
+          margin-left: -8px;
+          first-child { margin-left: 0; }
+          display: flex; align-items: center; justify-content: center;
+          font-size: 13px;
+          font-weight: 600;
+          color: #fff;
+        }
+        .avatar-stack span:first-child { margin-left: 0; }
+
+        .footer-text {
+          font-size: 13px;
+          color: rgba(255,255,255,.4);
+        }
+
+        /* ── Right form panel ── */
+        .auth-form-side {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 48px 40px;
+          background: #fafafa;
+          position: relative;
+        }
+
+        .form-box {
+          width: 100%;
+          max-width: 400px;
+          opacity: 0;
+          transform: translateY(16px);
+          transition: opacity .5s ease, transform .5s ease;
+        }
+
+        .form-box.visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* Mobile logo */
+        .mobile-logo {
+          display: none;
+          font-family: 'Syne', sans-serif;
+          font-size: 20px;
+          font-weight: 800;
+          color: #09090b;
+          letter-spacing: -.5px;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 36px;
+        }
+
+        .mobile-logo-dot {
+          width: 7px; height: 7px;
+          border-radius: 50%;
+          background: #8A70D6;
+        }
+
+        @media (max-width: 900px) {
+          .mobile-logo { display: flex; }
+        }
+
+        .form-heading {
+          font-family: 'Syne', sans-serif;
+          font-size: 28px;
+          font-weight: 800;
+          color: #09090b;
+          letter-spacing: -1px;
+          margin-bottom: 6px;
+        }
+
+        .form-sub {
+          font-size: 14px;
+          color: #71717a;
+          margin-bottom: 32px;
+          line-height: 1.5;
+        }
+
+        .form-error {
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          color: #dc2626;
+          font-size: 13px;
+          padding: 12px 16px;
+          border-radius: 10px;
+          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .field { margin-bottom: 18px; }
+
+        .field label {
+          display: block;
+          font-size: 13px;
+          font-weight: 600;
+          color: #3f3f46;
+          margin-bottom: 7px;
+          letter-spacing: .01em;
+        }
+
+        .field-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 7px;
+        }
+
+        .field-row label {
+          font-size: 13px;
+          font-weight: 600;
+          color: #3f3f46;
+          margin-bottom: 0;
+        }
+
+        .forgot-link {
+          font-size: 12px;
+          color: #8A70D6;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+
+        .input-wrap { position: relative; }
+
+        .auth-input {
+          width: 100%;
+          height: 46px;
+          padding: 0 14px;
+          border: 1.5px solid #e4e4e7;
+          border-radius: 10px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 14px;
+          color: #09090b;
+          background: #fff;
+          outline: none;
+          transition: border-color .15s, box-shadow .15s;
+        }
+
+        .auth-input:focus {
+          border-color: #8A70D6;
+          box-shadow: 0 0 0 3px rgba(138,112,214,.12);
+        }
+
+        .auth-input.has-icon { padding-right: 44px; }
+
+        .eye-btn {
+          position: absolute;
+          right: 13px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          cursor: pointer;
+          color: #a1a1aa;
+          display: flex;
+          padding: 4px;
+        }
+        .eye-btn:hover { color: #52525b; }
+
+        .submit-btn {
+          width: 100%;
+          height: 48px;
+          border-radius: 10px;
+          border: none;
+          background: #09090b;
+          color: #fff;
+          font-family: 'Syne', sans-serif;
+          font-size: 15px;
+          font-weight: 700;
+          cursor: pointer;
+          letter-spacing: -.2px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 8px;
+          transition: background .15s, transform .1s;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .submit-btn::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, #8A70D6, #6B52B8);
+          opacity: 0;
+          transition: opacity .2s;
+        }
+
+        .submit-btn:hover::after { opacity: 1; }
+        .submit-btn:hover { transform: translateY(-1px); }
+        .submit-btn:active { transform: translateY(0); }
+        .submit-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+        .submit-btn span { position: relative; z-index: 1; display: flex; align-items: center; gap: 8px; }
+
+        .spinner {
+          width: 16px; height: 16px;
+          border: 2px solid rgba(255,255,255,.3);
+          border-top-color: #fff;
+          border-radius: 50%;
+          animation: spin .7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .divider {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 24px 0;
+          color: #d4d4d8;
+          font-size: 12px;
+        }
+        .divider::before, .divider::after {
+          content: ''; flex: 1;
+          height: 1px; background: #e4e4e7;
+        }
+
+        .form-footer {
+          text-align: center;
+          font-size: 13px;
+          color: #71717a;
+          margin-top: 24px;
+        }
+        .form-footer a {
+          color: #8A70D6;
+          font-weight: 600;
+          text-decoration: none;
+        }
+        .form-footer a:hover { text-decoration: underline; }
+
+        .demo-box {
+          margin-top: 28px;
+          padding: 14px 16px;
+          background: #fffbeb;
+          border: 1px solid #fde68a;
+          border-radius: 10px;
+          font-size: 12px;
+          color: #78350f;
+          line-height: 1.6;
+        }
+
+        .demo-box strong { display: block; margin-bottom: 4px; color: #92400e; font-weight: 600; }
+      `}</style>
+
+      <div className="auth-root">
+        {/* ── Left panel ── */}
+        <div className="auth-panel">
+          <div className="panel-grid" />
+          <div className="panel-glow" />
+
+          <div className="panel-content">
+            <div className="wordmark">
+              <div className="wordmark-dot" />
+              Codentia
             </div>
-            <span className="text-2xl font-black text-white">Codentia</span>
           </div>
 
-          <h2 className="text-3xl font-black text-white leading-tight mb-4">
-            Learn to code.<br />Build real things.<br />Get hired.
-          </h2>
-          <p className="text-purple-200 text-sm leading-relaxed">
-            Join our hybrid coding academy — self-paced lessons, live classes twice a week, 
-            and an AI tutor available 24/7.
-          </p>
+          <div className="panel-content">
+            <h2 className="panel-headline">
+              Learn to code.<br />
+              Build <em>real things.</em><br />
+              Get hired.
+            </h2>
+            <p className="panel-sub">
+              A hybrid coding academy with self-paced lessons, live classes twice a week, and an AI tutor available 24/7.
+            </p>
+
+            <div className="panel-stats">
+              {[
+                { num: '2,400+', label: 'Active students' },
+                { num: '94%', label: 'Completion rate' },
+                { num: '48hrs', label: 'Avg. to first project' },
+                { num: '4.9★', label: 'Student rating' },
+              ].map(s => (
+                <div key={s.label} className="stat-card">
+                  <div className="stat-num">{s.num}</div>
+                  <div className="stat-label">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="panel-content panel-footer">
+            <div className="avatar-stack">
+              {['#8A70D6','#06B6D4','#10B981','#F59E0B'].map((c, i) => (
+                <span key={i} style={{ background: c, zIndex: 4 - i }}>
+                  {['A','B','C','D'][i]}
+                </span>
+              ))}
+            </div>
+            <p className="footer-text">Join 2,400+ students already learning</p>
+          </div>
         </div>
 
-        <div className="relative z-10 space-y-4">
-          {[
-            { emoji: '🤖', label: 'AI Coding Tutor — always available' },
-            { emoji: '📹', label: 'Live classes 2× per week' },
-            { emoji: '🚀', label: 'Real projects & code reviews' },
-            { emoji: '🏆', label: 'Track your progress daily' },
-          ].map(item => (
-            <div key={item.label} className="flex items-center gap-3">
-              <span className="text-xl">{item.emoji}</span>
-              <span className="text-purple-100 text-sm">{item.label}</span>
+        {/* ── Right form ── */}
+        <div className="auth-form-side">
+          <div className={`form-box ${mounted ? 'visible' : ''}`}>
+
+            <div className="mobile-logo">
+              <div className="mobile-logo-dot" />
+              Codentia
             </div>
-          ))}
+
+            <h1 className="form-heading">Welcome back</h1>
+            <p className="form-sub">Sign in to continue your learning journey.</p>
+
+            {error && (
+              <div className="form-error">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+              <div className="field">
+                <label>Email address</label>
+                <input className="auth-input" type="email" value={form.email}
+                  onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                  placeholder="you@example.com" required autoComplete="email" />
+              </div>
+
+              <div className="field">
+                <div className="field-row">
+                  <label>Password</label>
+                  <button type="button" className="forgot-link">Forgot password?</button>
+                </div>
+                <div className="input-wrap">
+                  <input className="auth-input has-icon" type={showPw ? 'text' : 'password'}
+                    value={form.password}
+                    onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                    placeholder="••••••••" required autoComplete="current-password" />
+                  <button type="button" className="eye-btn" onClick={() => setShowPw(p => !p)}>
+                    {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" className="submit-btn" disabled={loading}>
+                <span>
+                  {loading ? <><div className="spinner" />Signing in…</> : 'Sign In →'}
+                </span>
+              </button>
+            </form>
+
+            <p className="form-footer">
+              Don&apos;t have an account?{' '}
+              <Link href="/register">Create account</Link>
+            </p>
+
+            <div className="demo-box">
+              <strong>Demo credentials</strong>
+              Admin: admin@codentia.dev / admin123<br />
+              Student: john@example.com / student123
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Right form panel */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-[#FBFBFB]">
-        <div className="w-full max-w-sm">
-          {/* Mobile logo */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 bg-[#8A70D6] rounded-lg flex items-center justify-center">
-              <Code2 size={16} className="text-white" />
-            </div>
-            <span className="text-xl font-black text-[#424040]">Codentia</span>
-          </div>
-
-          <h1 className="text-2xl font-black text-[#424040] mb-1">Welcome back</h1>
-          <p className="text-[#8A8888] text-sm mb-8">Sign in to continue your learning journey.</p>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg mb-5">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-[#424040] mb-1.5">Email</label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                placeholder="you@example.com"
-                required
-                className="input"
-              />
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-1.5">
-                <label className="text-sm font-semibold text-[#424040]">Password</label>
-                <button type="button" className="text-xs text-[#8A70D6] hover:underline">
-                  Forgot password?
-                </button>
-              </div>
-              <div className="relative">
-                <input
-                  type={showPw ? 'text' : 'password'}
-                  value={form.password}
-                  onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-                  placeholder="••••••••"
-                  required
-                  className="input pr-10"
-                />
-                <button type="button" onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8A8888] hover:text-[#424040]">
-                  {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-
-            <button type="submit" disabled={loading}
-              className="btn-primary w-full py-3 flex items-center justify-center gap-2 mt-2">
-              {loading && <Loader2 size={15} className="animate-spin" />}
-              {loading ? 'Signing in...' : 'Sign In'}
-            </button>
-          </form>
-
-          <p className="text-sm text-[#8A8888] text-center mt-6">
-            Don&apos;t have an account?{' '}
-            <Link href="/register" className="text-[#8A70D6] font-semibold hover:underline">
-              Create account
-            </Link>
-          </p>
-
-          {/* Dev hint */}
-          <div className="mt-8 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-700">
-            <strong>Demo credentials:</strong><br />
-            Admin: admin@codentia.dev / admin123<br />
-            Student: john@example.com / student123
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   )
 }

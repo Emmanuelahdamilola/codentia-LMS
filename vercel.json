@@ -20,6 +20,7 @@
     "STRIPE_SECRET_KEY":   "@stripe_secret_key",
     "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
     "STRIPE_PRICE_ID":     "@stripe_price_id",
-    "STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key"
+    "STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@next_public_stripe_publishable_key"
   }
 }

@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { signOut } from 'next-auth/react'
 
 interface UserData {
   name: string; email: string; bio: string; timezone: string
@@ -119,7 +120,8 @@ export default function ProfileClient({ user, stats, enrolledCourses }: Props) {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to delete account')
-      router.push('/login?deleted=1')
+      // Sign out to clear the JWT cookie, then redirect
+      await signOut({ callbackUrl: '/login?deleted=1' })
     } catch (err) {
       setDeleteError(err instanceof Error ? err.message : 'Failed to delete account')
     } finally {

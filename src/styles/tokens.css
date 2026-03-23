@@ -1,0 +1,113 @@
+/**
+ * styles/tokens.css
+ * Codentia Design System — CSS Custom Properties
+ * Import this in globals.css: @import '@/styles/tokens.css';
+ */
+
+:root {
+  /* ─── Brand Palette ──────────────────────────────── */
+  --color-primary:       #8A70D6;
+  --color-primary-dark:  #6B52B8;
+  --color-primary-dim:   #5B3FAA;
+  --color-primary-tint:  #E9E3FF;
+  --color-primary-light: #F0EAFF;
+  --color-primary-faint: #F8F6FF;
+
+  /* ─── Neutrals ───────────────────────────────────── */
+  --color-bg:       #FBFBFB;
+  --color-surface:  #FFFFFF;
+  --color-border:   #E8E4F0;
+  --color-border-strong: #C4B8EE;
+
+  /* ─── Text ───────────────────────────────────────── */
+  --color-text:       #424040;
+  --color-text-muted: #8A8888;
+  --color-text-faint: #B0ADAD;
+
+  /* ─── Semantic ───────────────────────────────────── */
+  --color-success:       #22C55E;
+  --color-success-tint:  #DCFCE7;
+  --color-warning:       #F59E0B;
+  --color-warning-tint:  #FEF3C7;
+  --color-error:         #EF4444;
+  --color-error-tint:    #FEE2E2;
+  --color-info:          #3B82F6;
+  --color-info-tint:     #EFF6FF;
+
+  /* ─── Difficulty badge colors ────────────────────── */
+  --color-beginner:        #22C55E;
+  --color-beginner-tint:   #DCFCE7;
+  --color-intermediate:    #F59E0B;
+  --color-intermediate-tint: #FEF3C7;
+  --color-advanced:        #EF4444;
+  --color-advanced-tint:   #FEE2E2;
+
+  /* ─── Submission status colors ───────────────────── */
+  --color-status-pending:     #F59E0B;
+  --color-status-ai:          #8A70D6;
+  --color-status-instructor:  #3B82F6;
+  --color-status-graded:      #22C55E;
+
+  /* ─── Typography ─────────────────────────────────── */
+  --font-sans: 'Lato', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  --text-xs:   12px;
+  --text-sm:   13px;
+  --text-base: 15px;
+  --text-md:   16px;
+  --text-lg:   18px;
+  --text-xl:   20px;
+  --text-2xl:  24px;
+  --text-3xl:  28px;
+
+  --font-regular:   400;
+  --font-semibold:  600;
+  --font-bold:      700;
+  --font-black:     900;
+
+  --line-normal:  1.5;
+  --line-relaxed: 1.7;
+
+  /* ─── Spacing (8px grid) ─────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* ─── Border radius ──────────────────────────────── */
+  --radius-sm:  4px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* ─── Shadows ─────────────────────────────────────── */
+  --shadow-card:      0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-card-hover: 0 4px 12px rgba(138,112,214,0.15), 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-modal:     0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.08);
+
+  /* ─── Layout ──────────────────────────────────────── */
+  --sidebar-width:    240px;
+  --topbar-height:    64px;
+  --content-max-w:    1280px;
+  --lesson-max-w:     900px;
+
+  /* ─── Transitions ─────────────────────────────────── */
+  --transition-fast:   100ms ease;
+  --transition-base:   150ms ease;
+  --transition-slow:   300ms ease;
+
+  /* ─── Z-index scale ───────────────────────────────── */
+  --z-sidebar:    40;
+  --z-topbar:     30;
+  --z-dropdown:   50;
+  --z-modal:      60;
+  --z-toast:      70;
+}

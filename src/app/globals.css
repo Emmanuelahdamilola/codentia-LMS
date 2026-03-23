@@ -1,0 +1,163 @@
+@import '../styles/tokens.css';
+@import "tailwindcss";
+
+
+/* ─── Base ────────────────────────────────────────────────── */
+
+* { box-sizing: border-box; }
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--line-normal);
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ─── Components (Tailwind v4 safe) ───────────────────────── */
+@layer components {
+
+  /* ─── Navigation ─── */
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium
+           text-[#8A8888] hover:bg-[#E9E3FF] hover:text-[#8A70D6]
+           transition-all duration-150 cursor-pointer select-none;
+  }
+
+  .nav-item.active {
+    @apply bg-[#8A70D6] text-white hover:bg-[#6B52B8];
+  }
+
+  /* ─── Cards ─── */
+  .card {
+    @apply bg-white rounded-xl border border-[#E8E4F0] p-5;
+  }
+
+  .card-hover {
+    @apply bg-white rounded-xl border border-[#E8E4F0] p-5
+           hover:shadow-md hover:border-[#C4B8EE]
+           transition-all duration-200 cursor-pointer;
+  }
+
+  .stat-card {
+    @apply bg-white rounded-xl border border-[#E8E4F0] p-5
+           flex items-start gap-4;
+  }
+
+  .stat-icon {
+    @apply w-12 h-12 rounded-xl bg-[#E9E3FF] text-[#8A70D6]
+           flex items-center justify-center shrink-0;
+  }
+
+  /* ─── Buttons ─── */
+  .btn-primary {
+    @apply bg-[#8A70D6] text-white px-5 py-2.5 rounded-lg font-semibold text-sm
+           hover:bg-[#6B52B8] active:scale-[0.98]
+           transition-all duration-150 disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply border border-[#8A70D6] text-[#8A70D6] px-5 py-2.5 rounded-lg font-semibold text-sm
+           hover:bg-[#E9E3FF] active:scale-[0.98]
+           transition-all duration-150;
+  }
+
+  .btn-ghost {
+    @apply text-[#8A70D6] px-4 py-2 rounded-lg font-medium text-sm
+           hover:bg-[#E9E3FF] transition-all duration-150;
+  }
+
+  .btn-danger {
+    @apply bg-red-500 text-white px-5 py-2.5 rounded-lg font-semibold text-sm
+           hover:bg-red-600 active:scale-[0.98]
+           transition-all duration-150;
+  }
+
+  /* ─── Inputs ─── */
+  .input {
+    @apply w-full border border-[#E8E4F0] rounded-lg px-4 py-2.5 text-sm
+           bg-white text-[#424040] placeholder-[#8A8888]
+           focus:outline-none focus:ring-2 focus:ring-[#8A70D6]/40 focus:border-[#8A70D6]
+           transition-all duration-150;
+  }
+
+  /* ─── Badges (NO reuse) ─── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  .badge-beginner {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+           bg-green-100 text-green-700;
+  }
+
+  .badge-intermediate {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+           bg-amber-100 text-amber-700;
+  }
+
+  .badge-advanced {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+           bg-red-100 text-red-700;
+  }
+
+  .badge-purple {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+           bg-[#E9E3FF] text-[#8A70D6];
+  }
+
+  .badge-gray {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+           bg-gray-100 text-gray-600;
+  }
+
+  /* ─── Progress ─── */
+  .progress-bar {
+    @apply w-full bg-gray-100 rounded-full h-2;
+  }
+
+  .progress-fill {
+    @apply bg-[#8A70D6] h-2 rounded-full transition-all duration-500;
+  }
+}
+
+/* ─── Utilities ───────────────────────────────────────────── */
+@layer utilities {
+  .font-lato { font-family: var(--font-sans); }
+  .font-code { font-family: var(--font-mono); }
+}
+
+/* ─── Code blocks ─────────────────────────────────────────── */
+pre, code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+pre {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 16px 20px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+code:not(pre code) {
+  background: #F0EAFF;
+  color: #6B52B8;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ─── Prose ──────────────────────────────────────────────── */
+.prose-lesson h1 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+.prose-lesson h2 { font-size: 20px; font-weight: 700; margin: 24px 0 12px; }
+.prose-lesson h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; }
+.prose-lesson p  { margin-bottom: 14px; color: #5a5858; line-height: 1.75; }
+.prose-lesson ul { margin-bottom: 14px; padding-left: 24px; }
+.prose-lesson li { margin-bottom: 6px; color: #5a5858; }

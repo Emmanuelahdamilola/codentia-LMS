@@ -10,12 +10,16 @@
   ],
   "env": {
     "DATABASE_URL":        "@database_url",
-    "AUTH_SECRET":         "@auth_secret",
+    "NEXTAUTH_SECRET":     "@nextauth_secret",
     "NEXTAUTH_URL":        "@nextauth_url",
     "OPENAI_API_KEY":      "@openai_api_key",
     "RESEND_API_KEY":      "@resend_api_key",
     "RESEND_FROM_EMAIL":   "@resend_from_email",
     "NEXT_PUBLIC_APP_URL": "@next_public_app_url",
-    "CRON_SECRET":         "@cron_secret"
+    "CRON_SECRET":         "@cron_secret",
+    "STRIPE_SECRET_KEY":   "@stripe_secret_key",
+    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
+    "STRIPE_PRICE_ID":     "@stripe_price_id",
+    "STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key"
   }
 }

@@ -9,18 +9,21 @@
     }
   ],
   "env": {
-    "DATABASE_URL":        "@database_url",
-    "NEXTAUTH_SECRET":     "@nextauth_secret",
-    "NEXTAUTH_URL":        "@nextauth_url",
-    "OPENAI_API_KEY":      "@openai_api_key",
-    "RESEND_API_KEY":      "@resend_api_key",
-    "RESEND_FROM_EMAIL":   "@resend_from_email",
+    "DATABASE_URL": "@database_url",
+    "NEXTAUTH_SECRET": "@nextauth_secret",
+    "NEXTAUTH_URL": "@nextauth_url",
+    "OPENAI_API_KEY": "@openai_api_key",
+    "RESEND_API_KEY": "@resend_api_key",
+    "RESEND_FROM_EMAIL": "@resend_from_email",
     "NEXT_PUBLIC_APP_URL": "@next_public_app_url",
-    "CRON_SECRET":         "@cron_secret",
-    "STRIPE_SECRET_KEY":   "@stripe_secret_key",
+    "CRON_SECRET": "@cron_secret",
+    "STRIPE_SECRET_KEY": "@stripe_secret_key",
     "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
-    "STRIPE_PRICE_ID":     "@stripe_price_id",
+    "STRIPE_PRICE_ID": "@stripe_price_id",
     "STRIPE_PUBLISHABLE_KEY": "@stripe_publishable_key",
-    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@next_public_stripe_publishable_key"
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "@next_public_stripe_publishable_key",
+    "PAYSTACK_SECRET_KEY": "@paystack_secret_key",
+    "PAYSTACK_PUBLIC_KEY": "@paystack_public_key",
+    "NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY": "@next_public_paystack_public_key"
   }
 }

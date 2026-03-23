@@ -43,7 +43,7 @@ type UploadFolder = 'videos' | 'thumbnails' | 'assignments' | 'resources'
 
 const ALLOWED_TYPES: Record<UploadFolder, string[]> = {
   videos:      ['video/mp4', 'video/webm', 'video/mov', 'video/quicktime'],
-  thumbnails:  ['image/jpeg', 'image/png', 'image/webp'],
+  thumbnails:  ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'],
   assignments: ['application/zip', 'application/pdf', 'text/plain', 'application/octet-stream'],
   resources:   ['application/pdf', 'application/zip', 'application/vnd.ms-powerpoint',
                  'application/vnd.openxmlformats-officedocument.presentationml.presentation'],

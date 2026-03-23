@@ -9,15 +9,17 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = { title: 'Lesson Management' }
 
-interface Props { searchParams: { courseId?: string } }
+interface Props { searchParams: Promise<{ courseId?: string }> }
 
 export default async function AdminLessonsPage({ searchParams }: Props) {
+  const { courseId: searchCourseId } = await searchParams
+
   const courses = await prisma.course.findMany({
     select: { id: true, title: true },
     orderBy: { title: 'asc' },
   })
 
-  const selectedCourseId = searchParams.courseId ?? courses[0]?.id
+  const selectedCourseId = searchCourseId ?? courses[0]?.id
 
   const modules = selectedCourseId
     ? await prisma.module.findMany({

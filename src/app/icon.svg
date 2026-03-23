@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Background circle -->
+  <rect width="32" height="32" rx="8" fill="#8A70D6"/>
+  <!-- Letter C -->
+  <path d="M21 11.5C19.8 10.5 18.2 10 16.5 10C12.9 10 10 12.9 10 16.5C10 20.1 12.9 23 16.5 23C18.2 23 19.8 22.5 21 21.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Dot accent -->
+  <circle cx="22.5" cy="16.5" r="1.5" fill="white" opacity="0.6"/>
+</svg>

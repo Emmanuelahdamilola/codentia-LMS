@@ -44,3 +44,14 @@ export async function DELETE(req: Request) {
   await prisma.module.delete({ where: { id: moduleId } })
   return NextResponse.json({ success: true })
 }
+
+export async function PATCH(req: Request) {
+  const session = await auth()
+  if (!session || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+  const { moduleId, title } = await req.json()
+  if (!moduleId || !title) return NextResponse.json({ error: 'moduleId and title required' }, { status: 400 })
+  const module = await prisma.module.update({ where: { id: moduleId }, data: { title } })
+  return NextResponse.json(module)
+}

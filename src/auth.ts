@@ -1,4 +1,4 @@
-// PATH: src/auth.ts
+
 import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
@@ -37,11 +37,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!passwordMatch) return null
 
         return {
-          id:    user.id,
-          name:  user.name,
-          email: user.email,
-          role:  user.role,
-          image: user.image,
+          id:            user.id,
+          name:          user.name,
+          email:         user.email,
+          role:          user.role,
+          image:         user.image,
+          emailVerified: !!user.emailVerified,
         }
       },
     }),
@@ -49,15 +50,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as { role: Role }).role
-        token.id   = user.id
+        token.role          = (user as any).role
+        token.id            = user.id
+        token.emailVerified = (user as any).emailVerified
       }
       return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id   = token.id   as string
-        session.user.role = token.role as Role
+        session.user.id            = token.id            as string
+        session.user.role          = token.role          as Role
+        session.user.emailVerified = token.emailVerified as boolean
       }
       return session
     },

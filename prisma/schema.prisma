@@ -71,6 +71,8 @@ model User {
   updatedAt     DateTime  @updatedAt
   deletedAt     DateTime?
   preferences   UserPreferences?
+  verifyToken   String?
+  verifyExpires DateTime?
 
   accounts      Account[]
   sessions      Session[]

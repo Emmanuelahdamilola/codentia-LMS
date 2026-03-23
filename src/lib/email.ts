@@ -120,3 +120,45 @@ export async function sendAssignmentDeadlineReminder(
 </html>`,
   })
 }
+// ── Email Verification ────────────────────────────────────────
+export async function sendVerificationEmail(
+  to:    string,
+  name:  string,
+  token: string,
+) {
+  const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  const link    = `${APP_URL}/verify-email?token=${token}`
+
+  await resend.emails.send({
+    from:    FROM,
+    to,
+    subject: 'Verify your Codentia account',
+    html: `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#FBFBFB;padding:40px 20px;">
+<div style="max-width:520px;margin:0 auto;background:#fff;border-radius:12px;border:1px solid #E9E3FF;overflow:hidden;">
+  <div style="background:linear-gradient(135deg,#8A70D6,#6B52B8);padding:32px 40px;text-align:center;">
+    <div style="font-size:40px;margin-bottom:8px;">✉️</div>
+    <h1 style="color:#fff;margin:0;font-size:22px;font-weight:700;">Verify your email</h1>
+    <p style="color:rgba(255,255,255,.8);margin:8px 0 0;font-size:14px;">One click and you're in</p>
+  </div>
+  <div style="padding:40px;">
+    <p style="color:#424040;font-size:16px;margin:0 0 8px;">Hi ${name.split(' ')[0]},</p>
+    <p style="color:#424040;font-size:14px;line-height:1.6;margin:0 0 28px;">
+      Thanks for signing up for Codentia! Click the button below to verify your email address and activate your account.
+    </p>
+    <div style="text-align:center;margin-bottom:28px;">
+      <a href="${link}"
+         style="display:inline-block;background:#8A70D6;color:#fff;text-decoration:none;
+                padding:14px 40px;border-radius:8px;font-size:15px;font-weight:600;">
+        Verify Email Address
+      </a>
+    </div>
+    <p style="color:#8A8888;font-size:12px;margin:0;text-align:center;">
+      This link expires in 24 hours. If you didn't sign up, you can ignore this email.
+    </p>
+    <p style="color:#8A8888;font-size:11px;margin:16px 0 0;text-align:center;word-break:break-all;">
+      Or copy this link: ${link}
+    </p>
+  </div>
+</div></body></html>`,
+  })
+}

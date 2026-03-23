@@ -1,6 +1,9 @@
-import { prisma } from '@/lib/prisma'
-import { NextResponse } from 'next/server'
-import bcrypt from 'bcryptjs'
+// PATH: src/app/api/auth/register/route.ts
+import { prisma }                  from '@/lib/prisma'
+import { sendVerificationEmail }   from '@/lib/email'
+import { NextResponse }            from 'next/server'
+import bcrypt                      from 'bcryptjs'
+import { randomBytes }             from 'crypto'
 
 export async function POST(req: Request) {
   const { name, email, password } = await req.json()
@@ -18,7 +21,28 @@ export async function POST(req: Request) {
   }
 
   const hashed = await bcrypt.hash(password, 12)
-  await prisma.user.create({ data: { name, email, password: hashed } })
 
-  return NextResponse.json({ success: true })
+  // Generate a secure verification token (expires in 24h)
+  const verifyToken   = randomBytes(32).toString('hex')
+  const verifyExpires = new Date(Date.now() + 24 * 60 * 60 * 1000)
+
+  await prisma.user.create({
+    data: {
+      name,
+      email,
+      password:      hashed,
+      emailVerified: null,          // null = not verified yet
+      verifyToken,
+      verifyExpires,
+    },
+  })
+
+  // Send verification email (non-fatal if it fails — user can request resend)
+  try {
+    await sendVerificationEmail(email, name, verifyToken)
+  } catch (err) {
+    console.error('[register] Failed to send verification email:', err)
+  }
+
+  return NextResponse.json({ success: true, message: 'Check your email to verify your account.' })
 }

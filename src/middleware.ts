@@ -1,8 +1,5 @@
-// PATH: src/middleware.ts
 // Uses getToken() instead of auth() to avoid importing Prisma in Edge Runtime.
-// auth() wraps auth.ts which imports PrismaClient — incompatible with the Edge Runtime.
-
-import { getToken } from 'next-auth/jwt'
+import { getToken }                    from 'next-auth/jwt'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
@@ -10,7 +7,6 @@ export async function middleware(req: NextRequest) {
 
   const secret = process.env.NEXTAUTH_SECRET
   if (!secret) {
-    // Secret not set — fail open in dev, redirect to login in prod
     if (process.env.NODE_ENV === 'production') {
       return NextResponse.redirect(new URL('/login', req.url))
     }
@@ -18,16 +14,22 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
-  // Read JWT token (works in Edge Runtime — no Prisma needed)
-  const token = await getToken({ req, secret })
-
+  const token     = await getToken({ req, secret })
   const isLoggedIn = !!token
   const role       = token?.role as string | undefined
 
-  // ── Public routes ──────────────────────────────────────────
-  const publicRoutes = ['/login', '/register']
-  if (publicRoutes.includes(pathname)) {
-    if (isLoggedIn) {
+  // ── Public routes — no auth needed ────────────────────────
+  const publicPrefixes = [
+    '/login', '/register',
+    '/home',                 // marketing landing page
+    '/verify-email',         // email verification
+    '/api/paystack/webhook', // Paystack webhook (server-to-server)
+    '/api/cron',             // cron.org calls (protected by CRON_SECRET)
+    '/icon.svg', '/apple-icon.svg', '/favicon.ico',
+  ]
+  if (publicPrefixes.some(p => pathname.startsWith(p))) {
+    // Already logged in — redirect away from login/register
+    if (isLoggedIn && (pathname === '/login' || pathname === '/register')) {
       return NextResponse.redirect(
         new URL(role === 'ADMIN' ? '/admin/dashboard' : '/dashboard', req.url)
       )
@@ -35,11 +37,20 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
+  // ── Root — handled by src/app/page.tsx ────────────────────
+  if (pathname === '/') return NextResponse.next()
+
   // ── Not logged in → login ──────────────────────────────────
   if (!isLoggedIn) {
     const loginUrl = new URL('/login', req.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
+  }
+
+  // ── Email not verified → verification page ─────────────────
+  const emailVerified = token?.emailVerified as boolean | undefined
+  if (emailVerified === false && !pathname.startsWith('/verify-email')) {
+    return NextResponse.redirect(new URL('/verify-email', req.url))
   }
 
   // ── Admin-only routes ──────────────────────────────────────

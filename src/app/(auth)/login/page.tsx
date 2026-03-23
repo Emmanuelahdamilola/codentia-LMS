@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
+  const searchParams = useSearchParams()
+  const verified     = searchParams.get('verified')
   const [form, setForm]     = useState({ email: '', password: '' })
   const [showPw, setShowPw] = useState(false)
   const [error, setError]   = useState('')
@@ -478,6 +480,12 @@ export default function LoginPage() {
             </div>
 
             <h1 className="form-heading">Welcome back</h1>
+            {verified && (
+              <div style={{ background:'#DCFCE7', border:'1px solid #BBF7D0', color:'#15803D',
+                fontSize:13, padding:'10px 14px', borderRadius:8, marginBottom:16 }}>
+                ✓ Email verified! You can now sign in.
+              </div>
+            )}
             <p className="form-sub">Sign in to continue your learning journey.</p>
 
             {error && (

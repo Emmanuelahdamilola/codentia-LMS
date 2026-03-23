@@ -1,18 +1,21 @@
-// PATH: src/components/admin/AdminCoursesClient.tsx
+
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 // ─────────────────────────────────────────────────────────────
 // Types
 // ─────────────────────────────────────────────────────────────
+interface CourseModule { id: string; title: string; lessonCount: number }
+
 interface Course {
   id: string; title: string; description: string; difficulty: string
-  published: boolean; thumbnail: string | null
+  published: boolean; thumbnail: string | null; price: number
   moduleCount: number; lessonCount: number; enrolled: number
   avgQuiz: number | null; avgProgress: number; fullyCompleted: number
-  createdAt: string
+  createdAt: string; modules: CourseModule[]
 }
 
 interface Stats {
@@ -86,29 +89,158 @@ function StatCard({ color, icon, delta, deltaDir, value, label }: {
 // Course editor slide-in panel
 // ─────────────────────────────────────────────────────────────
 function CourseEditor({ course, onClose, onSave }: {
-  course: Course | 'new'; onClose: () => void; onSave: () => void
+  course: Course | 'new'; onClose: () => void; onSave: (id?: string) => void
 }) {
   const isNew = course === 'new'
-  const [aiQuizPrompt, setAiQuizPrompt]     = useState('')
-  const [aiLessonPrompt, setAiLessonPrompt] = useState('')
-  const [generating, setGenerating]         = useState<'quiz'|'lesson'|null>(null)
-  const [pubToggle, setPubToggle]           = useState(!isNew && (course as Course).published)
+  const router = typeof window !== 'undefined' ? null : null
 
-  const handleGenerate = (type: 'quiz'|'lesson') => {
-    setGenerating(type)
-    setTimeout(() => {
-      setGenerating(null)
-      if (type === 'quiz') setAiQuizPrompt('')
-      else setAiLessonPrompt('')
-    }, 1800)
+  const [form, setForm] = useState({
+    title:       isNew ? '' : (course as Course).title,
+    description: isNew ? '' : (course as Course).description,
+    difficulty:  isNew ? 'BEGINNER' : (course as Course).difficulty.toUpperCase(),
+    price:       isNew ? 0 : (course as Course).price,
+    thumbnail:   isNew ? '' : ((course as Course).thumbnail ?? ''),
+    published:   isNew ? false : (course as Course).published,
+  })
+  const [modules,      setModules]      = useState<CourseModule[]>(isNew ? [] : (course as Course).modules)
+  const [newModTitle,  setNewModTitle]  = useState('')
+  const [addingMod,    setAddingMod]    = useState(false)
+  const [editingMod,   setEditingMod]   = useState<string | null>(null)
+  const [editModTitle, setEditModTitle] = useState('')
+  const [saving,       setSaving]       = useState(false)
+  const [aiQuizPrompt, setAiQuizPrompt] = useState('')
+  const [aiQuizResult, setAiQuizResult] = useState<string | null>(null)
+  const [aiLessonPrompt, setAiLessonPrompt] = useState('')
+  const [aiLessonResult, setAiLessonResult] = useState<string | null>(null)
+  const [aiLoading,    setAiLoading]    = useState<'quiz'|'lesson'|null>(null)
+  const [aiError,      setAiError]      = useState('')
+
+  const courseId = isNew ? null : (course as Course).id
+
+  // ── Save course ──────────────────────────────────────────
+  async function handleSave() {
+    if (!form.title.trim() || !form.description.trim()) return
+    setSaving(true)
+    try {
+      const res = await fetch('/api/admin/courses', {
+        method:  isNew ? 'POST' : 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          ...(courseId ? { courseId } : {}),
+          title:       form.title.trim(),
+          description: form.description.trim(),
+          difficulty:  form.difficulty,
+          price:       Number(form.price) || 0,
+          thumbnail:   form.thumbnail.trim() || null,
+          published:   form.published,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'Save failed')
+      onSave(data.id)
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to save')
+    } finally { setSaving(false) }
   }
+
+  // ── Add module ───────────────────────────────────────────
+  async function handleAddModule() {
+    if (!newModTitle.trim() || !courseId) return
+    setAddingMod(true)
+    try {
+      const res = await fetch('/api/admin/modules', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ courseId, title: newModTitle.trim() }),
+      })
+      const mod = await res.json()
+      if (!res.ok) throw new Error(mod.error)
+      setModules(p => [...p, { id: mod.id, title: mod.title, lessonCount: 0 }])
+      setNewModTitle('')
+    } catch (err) { alert(err instanceof Error ? err.message : 'Failed') }
+    finally { setAddingMod(false) }
+  }
+
+  // ── Rename module ────────────────────────────────────────
+  async function handleRenameModule(moduleId: string) {
+    if (!editModTitle.trim()) return
+    try {
+      await fetch('/api/admin/modules', {
+        method:  'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ moduleId, title: editModTitle.trim() }),
+      })
+      setModules(p => p.map(m => m.id === moduleId ? { ...m, title: editModTitle.trim() } : m))
+      setEditingMod(null)
+    } catch { alert('Failed to rename') }
+  }
+
+  // ── Delete module ────────────────────────────────────────
+  async function handleDeleteModule(moduleId: string) {
+    if (!confirm('Delete this module and all its lessons? Cannot be undone.')) return
+    try {
+      await fetch('/api/admin/modules', {
+        method:  'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ moduleId }),
+      })
+      setModules(p => p.filter(m => m.id !== moduleId))
+    } catch { alert('Failed to delete') }
+  }
+
+  // ── AI Quiz Generator ────────────────────────────────────
+  async function handleGenerateQuiz() {
+    if (!aiQuizPrompt.trim()) return
+    setAiLoading('quiz'); setAiQuizResult(null); setAiError('')
+    try {
+      const res  = await fetch('/api/admin/quiz/generate', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ prompt: aiQuizPrompt, count: 5 }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'AI failed')
+      const qs = (data.questions as Array<{ question: string; options: string[]; correctIndex: number }>) ?? []
+      setAiQuizResult(`Generated ${qs.length} questions:\n\n` + qs.map((q, i) =>
+        `Q${i+1}: ${q.question}\n${q.options.map((o, j) => `  ${j === q.correctIndex ? '✓' : ' '} ${o}`).join('\n')}`
+      ).join('\n\n'))
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'AI generation failed')
+    } finally { setAiLoading(null) }
+  }
+
+  // ── AI Lesson Assistant ──────────────────────────────────
+  async function handleGenerateLesson() {
+    if (!aiLessonPrompt.trim()) return
+    setAiLoading('lesson'); setAiLessonResult(null); setAiError('')
+    try {
+      const res  = await fetch('/api/ai/ask', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({
+          question: `Write comprehensive lesson notes for: ${aiLessonPrompt}. Include key concepts, examples, and a summary.`,
+          context:  'Admin lesson content creator',
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error ?? 'AI failed')
+      setAiLessonResult(data.answer ?? 'No content generated')
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'AI generation failed')
+    } finally { setAiLoading(null) }
+  }
+
+  const inputCls = "w-full rounded-lg px-3 py-2 text-[13px] outline-none"
+  const inputSty = { border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040' }
+  const labelCls = "text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5"
+  const labelSty = { color: '#8A8888' }
 
   return (
     <div className="fixed top-0 right-0 bottom-0 bg-white z-[5000] overflow-y-auto"
-      style={{ width: 480, borderLeft: '1px solid #E8E8EC', boxShadow: '0 8px 32px rgba(0,0,0,.12)', animation: 'slideIn .22s ease' }}>
+      style={{ width: 500, borderLeft: '1px solid #E8E8EC', boxShadow: '0 8px 32px rgba(0,0,0,.12)', animation: 'slideIn .22s ease' }}>
       <style>{`@keyframes slideIn{from{transform:translateX(40px);opacity:0}to{transform:translateX(0);opacity:1}}`}</style>
 
-      {/* Sticky header */}
+      {/* Header */}
       <div className="sticky top-0 bg-white flex items-center justify-between px-5 py-3.5 z-10"
         style={{ borderBottom: '1px solid #E8E8EC' }}>
         <div className="text-[15px] font-black" style={{ color: '#424040' }}>
@@ -119,137 +251,208 @@ function CourseEditor({ course, onClose, onSave }: {
           style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#8A8888' }}>✕</button>
       </div>
 
-      <div className="p-5 flex flex-col gap-4">
+      <div className="p-5 flex flex-col gap-5">
 
-        {/* Course title */}
-        <div>
-          <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#8A8888' }}>Course Title</label>
-          <input type="text" defaultValue={isNew ? '' : (course as Course).title}
-            placeholder="e.g. Advanced JavaScript"
-            className="w-full rounded-lg px-3 py-2 text-[13px] outline-none"
-            style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040' }} />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#8A8888' }}>Description</label>
-          <textarea defaultValue="A comprehensive introduction with hands-on projects."
-            className="w-full rounded-lg px-3 py-2 text-[13px] outline-none resize-y"
-            style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040', minHeight: 80 }} />
-        </div>
-
-        {/* Difficulty + Status */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* ── Basic Info ── */}
+        <div className="flex flex-col gap-3">
           <div>
-            <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#8A8888' }}>Difficulty</label>
-            <select className="w-full rounded-lg px-3 py-2 text-[13px] outline-none cursor-pointer"
-              style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040' }}>
-              <option>Beginner</option><option>Intermediate</option><option>Advanced</option>
-            </select>
+            <label className={labelCls} style={labelSty}>Course Title *</label>
+            <input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
+              placeholder="e.g. Advanced JavaScript" className={inputCls} style={inputSty} />
           </div>
+
           <div>
-            <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#8A8888' }}>Status</label>
-            <select className="w-full rounded-lg px-3 py-2 text-[13px] outline-none cursor-pointer"
-              style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040' }}>
-              <option>Draft</option><option>Published</option>
-            </select>
+            <label className={labelCls} style={labelSty}>Description *</label>
+            <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
+              placeholder="What will students learn?" rows={3}
+              className={inputCls} style={{ ...inputSty, resize: 'vertical' }} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelCls} style={labelSty}>Difficulty</label>
+              <select value={form.difficulty} onChange={e => setForm(p => ({ ...p, difficulty: e.target.value }))}
+                className={inputCls} style={{ ...inputSty, cursor: 'pointer' }}>
+                <option value="BEGINNER">Beginner</option>
+                <option value="INTERMEDIATE">Intermediate</option>
+                <option value="ADVANCED">Advanced</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelCls} style={labelSty}>Price (USD) — 0 = Free</label>
+              <input type="number" min="0" step="0.01"
+                value={form.price} onChange={e => setForm(p => ({ ...p, price: Number(e.target.value) }))}
+                placeholder="0.00 = Free"
+                className={inputCls} style={inputSty} />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls} style={labelSty}>Thumbnail URL</label>
+            <input type="url" value={form.thumbnail}
+              onChange={e => setForm(p => ({ ...p, thumbnail: e.target.value }))}
+              placeholder="https://... (paste image URL or leave empty)"
+              className={inputCls} style={inputSty} />
+            {form.thumbnail && (
+              <img src={form.thumbnail} alt="Thumbnail preview"
+                className="mt-2 rounded-lg object-cover w-full"
+                style={{ height: 120 }}
+                onError={e => (e.currentTarget.style.display = 'none')} />
+            )}
+          </div>
+
+          {/* Published toggle */}
+          <div className="flex items-center justify-between px-3 py-2.5 rounded-lg" style={{ background: '#F4F4F6' }}>
+            <div>
+              <div className="text-[13px] font-bold" style={{ color: '#424040' }}>
+                {form.published ? '✓ Published' : 'Draft'}
+              </div>
+              <div className="text-[11px]" style={{ color: '#8A8888' }}>
+                {form.published ? 'Visible to students' : 'Only admins can see this'}
+              </div>
+            </div>
+            <button role="switch" aria-checked={form.published}
+              onClick={() => setForm(p => ({ ...p, published: !p.published }))}
+              className="relative flex-shrink-0 rounded-full transition-colors duration-200"
+              style={{ width: 38, height: 22, background: form.published ? '#8A70D6' : '#E8E8EC' }}>
+              <span className="absolute top-[3px] w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200"
+                style={{ left: 3, transform: form.published ? 'translateX(16px)' : 'translateX(0)' }} />
+            </button>
           </div>
         </div>
 
-        {/* Publish toggle */}
-        <div className="flex items-center justify-between px-3 py-2.5 rounded-lg"
-          style={{ background: '#F4F4F6' }}>
-          <div>
-            <div className="text-[13px] font-bold" style={{ color: '#424040' }}>Draft / Publish toggle</div>
-            <div className="text-[11px]" style={{ color: '#8A8888' }}>Turn on to publish immediately</div>
-          </div>
-          <button role="switch" aria-checked={pubToggle} onClick={() => setPubToggle(p => !p)}
-            className="relative flex-shrink-0 rounded-full transition-colors duration-200"
-            style={{ width: 38, height: 22, background: pubToggle ? '#8A70D6' : '#E8E8EC' }}>
-            <span className="absolute top-[3px] w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200"
-              style={{ left: 3, transform: pubToggle ? 'translateX(16px)' : 'translateX(0)' }} />
-          </button>
-        </div>
-
-        {/* Modules */}
+        {/* ── Modules ── */}
         <div>
-          <div className="text-[13px] font-bold mb-2.5" style={{ color: '#424040' }}>Modules (drag to reorder)</div>
-          <div className="flex flex-col gap-1.5">
-            {[
-              { title: 'Module 1: Introduction',       meta: '4 lessons · 1 quiz' },
-              { title: 'Module 2: Core Concepts',      meta: '6 lessons · 1 quiz · 1 assignment' },
-              { title: 'Module 3: Functions & Scope',  meta: '5 lessons · 1 quiz · 1 assignment' },
-            ].map((m, i) => (
-              <div key={i} className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg"
-                style={{ border: '1px solid #E8E8EC', background: '#F4F4F6' }}>
-                <span className="text-[14px] cursor-grab" style={{ color: '#BCBBBB' }}>⠿</span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[12px] font-bold" style={{ color: '#424040' }}>{m.title}</div>
-                  <div className="text-[11px]" style={{ color: '#8A8888' }}>{m.meta}</div>
-                </div>
-                <button className="w-[26px] h-[26px] rounded-md flex items-center justify-center border border-[#E8E8EC] bg-white hover:border-[#8A70D6] hover:bg-[#E9E3FF] transition-all">
-                  <Svg size={12}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></Svg>
+          <div className="text-[13px] font-black mb-2.5" style={{ color: '#424040' }}>
+            Modules {isNew && <span className="text-[11px] font-normal text-[#8A8888]">— save course first to add modules</span>}
+          </div>
+
+          {!isNew && (
+            <>
+              <div className="flex flex-col gap-1.5 mb-2">
+                {modules.length === 0 && (
+                  <div className="text-[12px] text-[#8A8888] py-2 text-center">No modules yet — add one below</div>
+                )}
+                {modules.map((m, i) => (
+                  <div key={m.id} className="flex items-center gap-2 px-3 py-2.5 rounded-lg"
+                    style={{ border: '1px solid #E8E8EC', background: '#F4F4F6' }}>
+                    <span className="text-[11px] font-black w-5 text-center" style={{ color: '#BCBBBB' }}>{i + 1}</span>
+                    {editingMod === m.id ? (
+                      <div className="flex-1 flex items-center gap-1.5">
+                        <input value={editModTitle}
+                          onChange={e => setEditModTitle(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') handleRenameModule(m.id); if (e.key === 'Escape') setEditingMod(null) }}
+                          autoFocus
+                          className="flex-1 rounded px-2 py-1 text-[12px] outline-none"
+                          style={{ border: '1px solid #8A70D6', background: '#fff', color: '#424040' }} />
+                        <button onClick={() => handleRenameModule(m.id)}
+                          className="text-[11px] font-bold px-2 py-1 rounded text-white" style={{ background: '#8A70D6' }}>Save</button>
+                        <button onClick={() => setEditingMod(null)}
+                          className="text-[11px] font-bold px-2 py-1 rounded" style={{ color: '#8A8888' }}>✕</button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[12px] font-bold truncate" style={{ color: '#424040' }}>{m.title}</div>
+                          <div className="text-[11px]" style={{ color: '#8A8888' }}>{m.lessonCount} lesson{m.lessonCount !== 1 ? 's' : ''}</div>
+                        </div>
+                        <button onClick={() => { setEditingMod(m.id); setEditModTitle(m.title) }}
+                          className="w-[26px] h-[26px] rounded-md flex items-center justify-center border border-[#E8E8EC] bg-white hover:border-[#8A70D6] hover:bg-[#E9E3FF] transition-all" title="Rename">
+                          <Svg size={11}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></Svg>
+                        </button>
+                        <button onClick={() => handleDeleteModule(m.id)}
+                          className="w-[26px] h-[26px] rounded-md flex items-center justify-center border border-[#E8E8EC] bg-white hover:border-[#EF4444] hover:bg-[#FEF2F2] transition-all" title="Delete">
+                          <Svg size={11}><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M9 6V4h6v2"/></Svg>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Add module */}
+              <div className="flex gap-2">
+                <input value={newModTitle} onChange={e => setNewModTitle(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleAddModule()}
+                  placeholder="New module title…"
+                  className="flex-1 rounded-lg px-3 py-2 text-[12px] outline-none"
+                  style={{ border: '1.5px dashed #D4CAF7', background: '#F8F6FF', color: '#424040' }} />
+                <button onClick={handleAddModule} disabled={addingMod || !newModTitle.trim()}
+                  className="px-4 py-2 rounded-lg font-bold text-[12px] text-white transition-colors disabled:opacity-50"
+                  style={{ background: '#8A70D6' }}>
+                  {addingMod ? '…' : '+ Add'}
                 </button>
               </div>
-            ))}
-          </div>
-          <button className="w-full flex items-center justify-center gap-1.5 font-bold text-[12px] text-[#8A70D6] py-2 rounded-lg mt-2"
-            style={{ background: '#E9E3FF', border: '1.5px dashed #D4CAF7' }}>
-            <Svg size={13}><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></Svg>
-            Add module
-          </button>
+            </>
+          )}
         </div>
 
-        {/* AI Quiz Generator */}
+        {/* ── AI Quiz Generator ── */}
         <div className="rounded-lg p-4" style={{ background: 'linear-gradient(135deg,#8A70D6,#6B52B8)' }}>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <span className="text-[16px]">🤖</span>
             <div className="text-[13px] font-bold text-white">AI Quiz Generator</div>
           </div>
           <p className="text-[12px] mb-3" style={{ color: 'rgba(255,255,255,.75)' }}>
-            Describe the topic and AI will generate quiz questions for this module.
+            Describe a topic and generate 5 quiz questions instantly.
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mb-2">
             <input value={aiQuizPrompt} onChange={e => setAiQuizPrompt(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleGenerateQuiz()}
               placeholder="e.g. JavaScript closures and scope"
               className="flex-1 rounded-md px-3 py-2 text-[12px] outline-none"
               style={{ border: 'none', background: 'rgba(255,255,255,.9)', color: '#424040' }} />
-            <button onClick={() => handleGenerate('quiz')}
-              className="px-3 py-2 rounded-md font-bold text-[11px] text-white transition-colors whitespace-nowrap"
+            <button onClick={handleGenerateQuiz} disabled={aiLoading === 'quiz' || !aiQuizPrompt.trim()}
+              className="px-3 py-2 rounded-md font-bold text-[11px] text-white transition-colors whitespace-nowrap disabled:opacity-60"
               style={{ background: 'rgba(255,255,255,.2)', border: '1px solid rgba(255,255,255,.3)' }}>
-              {generating === 'quiz' ? 'Generating…' : 'Generate'}
+              {aiLoading === 'quiz' ? 'Generating…' : 'Generate'}
             </button>
           </div>
+          {aiQuizResult && (
+            <pre className="text-[11px] rounded-md p-2.5 whitespace-pre-wrap"
+              style={{ background: 'rgba(255,255,255,.1)', color: 'rgba(255,255,255,.9)', maxHeight: 200, overflowY: 'auto' }}>
+              {aiQuizResult}
+            </pre>
+          )}
+          {aiError && <p className="text-[11px] text-red-200 mt-1">{aiError}</p>}
         </div>
 
-        {/* AI Lesson Assistant */}
+        {/* ── AI Lesson Assistant ── */}
         <div className="rounded-lg p-4" style={{ background: '#F4F4F6', border: '1px solid #E8E8EC' }}>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1">
             <span className="text-[16px]">📝</span>
-            <div className="text-[13px] font-bold" style={{ color: '#424040' }}>AI Lesson Assistant</div>
+            <div className="text-[13px] font-bold" style={{ color: '#424040' }}>AI Lesson Content Generator</div>
           </div>
           <p className="text-[12px] mb-3" style={{ color: '#8A8888' }}>
-            Generate or improve lesson notes for any topic.
+            Generate lesson notes and content for any topic.
           </p>
-          <div className="flex gap-2">
+          <div className="flex gap-2 mb-2">
             <input value={aiLessonPrompt} onChange={e => setAiLessonPrompt(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleGenerateLesson()}
               placeholder="e.g. Explain JavaScript Promises"
               className="flex-1 rounded-md px-3 py-2 text-[12px] outline-none"
               style={{ border: '1px solid #E8E8EC', background: '#fff', color: '#424040' }} />
-            <button onClick={() => handleGenerate('lesson')}
-              className="px-3 py-2 rounded-md font-bold text-[11px] text-white transition-colors"
+            <button onClick={handleGenerateLesson} disabled={aiLoading === 'lesson' || !aiLessonPrompt.trim()}
+              className="px-3 py-2 rounded-md font-bold text-[11px] text-white transition-colors disabled:opacity-60"
               style={{ background: '#8A70D6' }}>
-              {generating === 'lesson' ? 'Generating…' : 'Generate'}
+              {aiLoading === 'lesson' ? 'Generating…' : 'Generate'}
             </button>
           </div>
+          {aiLessonResult && (
+            <pre className="text-[11px] rounded-md p-2.5 whitespace-pre-wrap"
+              style={{ background: '#fff', border: '1px solid #E8E8EC', color: '#424040', maxHeight: 200, overflowY: 'auto' }}>
+              {aiLessonResult}
+            </pre>
+          )}
+          {aiError && !aiQuizResult && <p className="text-[11px] text-red-500 mt-1">{aiError}</p>}
         </div>
 
-        {/* Save / Cancel */}
+        {/* ── Save / Cancel ── */}
         <div className="flex gap-2.5 pt-1">
-          <button onClick={onSave}
-            className="flex-1 py-2.5 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6B52B8]"
+          <button onClick={handleSave} disabled={saving || !form.title.trim()}
+            className="flex-1 py-2.5 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6B52B8] disabled:opacity-60"
             style={{ background: '#8A70D6' }}>
-            Save Changes
+            {saving ? 'Saving…' : isNew ? 'Create Course' : 'Save Changes'}
           </button>
           <button onClick={onClose}
             className="flex-1 py-2.5 rounded-lg font-bold text-[13px] border border-[#E8E8EC] transition-colors"
@@ -264,6 +467,7 @@ function CourseEditor({ course, onClose, onSave }: {
 
 // ─────────────────────────────────────────────────────────────
 // Main component
+
 // ─────────────────────────────────────────────────────────────
 export default function AdminCoursesClient({ courses, stats }: Props) {
   const [filter,  setFilter]  = useState<'all'|'published'|'draft'>('all')
@@ -457,7 +661,7 @@ export default function AdminCoursesClient({ courses, stats }: Props) {
         <CourseEditor
           course={editor}
           onClose={() => setEditor(null)}
-          onSave={() => { setEditor(null); showToast('Course saved ✓') }}
+          onSave={(id) => { setEditor(null); showToast(id ? 'Course saved ✓' : 'Saved ✓') }}
         />
       )}
 

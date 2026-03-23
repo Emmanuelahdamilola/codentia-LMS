@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { signIn } from 'next-auth/react'
 import { Eye, EyeOff } from 'lucide-react'
 
 function StrengthBar({ password }: { password: string }) {
@@ -58,8 +57,8 @@ export default function RegisterPage() {
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? 'Registration failed.'); return }
-      await signIn('credentials', { email: form.email, password: form.password, redirect: false })
-      router.push('/dashboard')
+      // Don't auto sign in — redirect to verify-email page first
+      router.push('/verify-email')
     } finally { setLoading(false) }
   }
 

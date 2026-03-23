@@ -16,8 +16,17 @@ const FROM    = process.env.RESEND_FROM_EMAIL   ?? 'noreply@codentia.dev'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url)
   const authHeader = req.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const querySecret = searchParams.get('secret')
+  const cronSecret  = process.env.CRON_SECRET
+
+  // Support both: Authorization: Bearer <secret>  AND  ?secret=<secret>
+  const isAuthorized =
+    (cronSecret && authHeader === `Bearer ${cronSecret}`) ||
+    (cronSecret && querySecret === cronSecret)
+
+  if (!isAuthorized) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

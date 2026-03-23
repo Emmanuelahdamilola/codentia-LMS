@@ -7,17 +7,19 @@ export async function POST(req: Request) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { name, bio, timezone } = await req.json()
+  const { name, bio, timezone, image } = await req.json()
   if (!name?.trim()) return NextResponse.json({ error: 'Name is required' }, { status: 400 })
 
-  await prisma.user.update({
+  const updated = await prisma.user.update({
     where: { id: session.user.id },
     data: {
       name:     name.trim(),
       bio:      bio?.trim()      ?? null,
       timezone: timezone?.trim() ?? 'Africa/Lagos',
+      ...(image !== undefined && { image: image || null }),
     },
+    select: { id: true, name: true, image: true },
   })
 
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ success: true, user: updated })
 }

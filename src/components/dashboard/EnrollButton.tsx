@@ -4,43 +4,50 @@
 import { useState }  from 'react'
 import { useRouter } from 'next/navigation'
 
+const USD_TO_NGN = Number(process.env.NEXT_PUBLIC_USD_TO_NGN_RATE ?? 1600)
+
 interface Props {
-  courseId:   string
-  priceUsd:   number | null   // null or 0 = free
-  enrolled:   boolean
-  published:  boolean
+  courseId:  string
+  priceUsd:  number | null   // null or 0 = free
+  enrolled:  boolean
+  published: boolean
 }
 
 export default function EnrollButton({ courseId, priceUsd, enrolled, published }: Props) {
-  const [loading, setLoading] = useState(false)
-  const [error,   setError]   = useState('')
+  const [loading,  setLoading]  = useState(false)
+  const [error,    setError]    = useState('')
+  const [currency, setCurrency] = useState<'NGN' | 'USD'>('NGN')
   const router = useRouter()
 
-  const isFree = !priceUsd || priceUsd === 0
-  const label  = enrolled      ? 'Continue Learning'
-               : isFree        ? 'Enrol Free'
-               : `Enrol · $${priceUsd?.toFixed(2)}`
+  const isFree   = !priceUsd || priceUsd === 0
+  const priceNgn = priceUsd ? priceUsd * USD_TO_NGN : 0
+
+  const displayPrice = currency === 'NGN'
+    ? `₦${priceNgn.toLocaleString('en-NG', { minimumFractionDigits: 0 })}`
+    : `$${priceUsd?.toFixed(2)}`
+
+  const label = enrolled  ? 'Continue Learning'
+              : isFree    ? 'Enrol Free'
+              : `Enrol · ${displayPrice}`
 
   async function handleClick() {
-    if (enrolled) { router.push(`/courses/${courseId}/learn`); return }
+    if (enrolled)  { router.push(`/courses/${courseId}/learn`); return }
     if (!published) return
 
     setLoading(true); setError('')
     try {
-      const res  = await fetch('/api/stripe/checkout', {
+      const res  = await fetch('/api/paystack/checkout', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ courseId }),
+        body:    JSON.stringify({ courseId, currency }),
       })
       const data = await res.json()
-
       if (!res.ok) throw new Error(data.error ?? 'Enrolment failed')
 
       if (data.free) {
-        // Free course — refresh to show enrolled state
         router.refresh()
       } else if (data.url) {
-        // Paid — redirect to Stripe Checkout
+        // Redirect to Paystack checkout page
         window.location.href = data.url
       }
     } catch (err) {
@@ -51,11 +58,34 @@ export default function EnrollButton({ courseId, priceUsd, enrolled, published }
   }
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
+
+      {/* Currency toggle — only show for paid courses not yet enrolled */}
+      {!isFree && !enrolled && (
+        <div className="flex rounded-lg overflow-hidden border border-[#E8E8EC]" style={{ height: 32 }}>
+          {(['NGN', 'USD'] as const).map(c => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCurrency(c)}
+              className="flex-1 text-[12px] font-bold transition-all"
+              style={{
+                background: currency === c ? '#8A70D6' : '#F4F4F6',
+                color:      currency === c ? '#fff'    : '#8A8888',
+                border:     'none',
+              }}
+            >
+              {c === 'NGN' ? '₦ NGN' : '$ USD'}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Enrol button */}
       <button
         onClick={handleClick}
         disabled={loading || !published}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-[14px] text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed hover:-translate-y-px"
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-[14px] text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
         style={{ background: enrolled ? '#22C55E' : '#8A70D6' }}
         onMouseEnter={e => {
           if (!loading && published)
@@ -70,7 +100,7 @@ export default function EnrollButton({ courseId, priceUsd, enrolled, published }
             <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
               <path d="M21 12a9 9 0 1 1-6.219-8.56" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
-            {isFree || enrolled ? 'Loading…' : 'Redirecting to payment…'}
+            Redirecting to Paystack…
           </>
         ) : (
           <>
@@ -95,7 +125,7 @@ export default function EnrollButton({ courseId, priceUsd, enrolled, published }
 
       {!isFree && !enrolled && (
         <p className="text-[11px] text-[#8A8888] text-center">
-          Secure payment via Stripe · Instant access
+          Secure payment via Paystack · Cards, bank transfer & USSD
         </p>
       )}
     </div>

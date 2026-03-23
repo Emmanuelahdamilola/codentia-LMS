@@ -8,11 +8,18 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
+  const secret = process.env.NEXTAUTH_SECRET
+  if (!secret) {
+    // Secret not set — fail open in dev, redirect to login in prod
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.redirect(new URL('/login', req.url))
+    }
+    console.error('[middleware] NEXTAUTH_SECRET is not set in .env.local')
+    return NextResponse.next()
+  }
+
   // Read JWT token (works in Edge Runtime — no Prisma needed)
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  })
+  const token = await getToken({ req, secret })
 
   const isLoggedIn = !!token
   const role       = token?.role as string | undefined

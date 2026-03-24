@@ -1,17 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 
-export default function LoginPage() {
+// ─────────────────────────────────────────────────────────────
+// Inner component — uses useSearchParams safely inside Suspense
+// ─────────────────────────────────────────────────────────────
+function LoginContent() {
   const searchParams = useSearchParams()
   const verified     = searchParams.get('verified')
-  const [form, setForm]     = useState({ email: '', password: '' })
-  const [showPw, setShowPw] = useState(false)
-  const [error, setError]   = useState('')
+  const [form, setForm]       = useState({ email: '', password: '' })
+  const [showPw, setShowPw]   = useState(false)
+  const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
   const [mounted, setMounted] = useState(false)
   const router = useRouter()
@@ -50,7 +53,6 @@ export default function LoginPage() {
           .auth-panel { display: none; }
         }
 
-        /* ── Left panel ── */
         .auth-panel {
           position: relative;
           overflow: hidden;
@@ -176,7 +178,6 @@ export default function LoginPage() {
           border-radius: 50%;
           border: 2px solid #09090b;
           margin-left: -8px;
-          first-child { margin-left: 0; }
           display: flex; align-items: center; justify-content: center;
           font-size: 13px;
           font-weight: 600;
@@ -189,7 +190,6 @@ export default function LoginPage() {
           color: rgba(255,255,255,.4);
         }
 
-        /* ── Right form panel ── */
         .auth-form-side {
           display: flex;
           align-items: center;
@@ -212,7 +212,6 @@ export default function LoginPage() {
           transform: translateY(0);
         }
 
-        /* Mobile logo */
         .mobile-logo {
           display: none;
           font-family: 'Syne', sans-serif;
@@ -380,19 +379,6 @@ export default function LoginPage() {
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .divider {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin: 24px 0;
-          color: #d4d4d8;
-          font-size: 12px;
-        }
-        .divider::before, .divider::after {
-          content: ''; flex: 1;
-          height: 1px; background: #e4e4e7;
-        }
-
         .form-footer {
           text-align: center;
           font-size: 13px;
@@ -405,19 +391,6 @@ export default function LoginPage() {
           text-decoration: none;
         }
         .form-footer a:hover { text-decoration: underline; }
-
-        .demo-box {
-          margin-top: 28px;
-          padding: 14px 16px;
-          background: #fffbeb;
-          border: 1px solid #fde68a;
-          border-radius: 10px;
-          font-size: 12px;
-          color: #78350f;
-          line-height: 1.6;
-        }
-
-        .demo-box strong { display: block; margin-bottom: 4px; color: #92400e; font-weight: 600; }
       `}</style>
 
       <div className="auth-root">
@@ -446,9 +419,9 @@ export default function LoginPage() {
             <div className="panel-stats">
               {[
                 { num: '2,400+', label: 'Active students' },
-                { num: '94%', label: 'Completion rate' },
-                { num: '48hrs', label: 'Avg. to first project' },
-                { num: '4.9★', label: 'Student rating' },
+                { num: '94%',    label: 'Completion rate' },
+                { num: '48hrs',  label: 'Avg. to first project' },
+                { num: '4.9★',  label: 'Student rating' },
               ].map(s => (
                 <div key={s.label} className="stat-card">
                   <div className="stat-num">{s.num}</div>
@@ -533,14 +506,18 @@ export default function LoginPage() {
               <Link href="/register">Create account</Link>
             </p>
 
-            <div className="demo-box">
-              <strong>Demo credentials</strong>
-              Admin: admin@codentia.dev / admin123<br />
-              Student: john@example.com / student123
-            </div>
           </div>
         </div>
       </div>
     </>
+  )
+}
+
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   )
 }

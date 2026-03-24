@@ -1,4 +1,4 @@
-
+// PATH: src/components/admin/AdminCoursesClient.tsx
 'use client'
 
 import { useState } from 'react'
@@ -108,6 +108,8 @@ function CourseEditor({ course, onClose, onSave }: {
   const [editingMod,   setEditingMod]   = useState<string | null>(null)
   const [editModTitle, setEditModTitle] = useState('')
   const [saving,       setSaving]       = useState(false)
+  const [thumbnailTab, setThumbnailTab] = useState<'url'|'upload'>('url')
+  const [thumbnailUploading, setThumbnailUploading] = useState(false)
   const [aiQuizPrompt, setAiQuizPrompt] = useState('')
   const [aiQuizResult, setAiQuizResult] = useState<string | null>(null)
   const [aiLessonPrompt, setAiLessonPrompt] = useState('')
@@ -288,16 +290,73 @@ function CourseEditor({ course, onClose, onSave }: {
           </div>
 
           <div>
-            <label className={labelCls} style={labelSty}>Thumbnail URL</label>
-            <input type="url" value={form.thumbnail}
-              onChange={e => setForm(p => ({ ...p, thumbnail: e.target.value }))}
-              placeholder="https://... (paste image URL or leave empty)"
-              className={inputCls} style={inputSty} />
+            <label className={labelCls} style={labelSty}>Course Thumbnail</label>
+            {/* Tab: URL or Upload */}
+            <div className="flex gap-1 p-0.5 rounded-lg mb-2 w-fit"
+              style={{ background: '#E8E8EC' }}>
+              {(['url', 'upload'] as const).map(t => (
+                <button key={t} type="button"
+                  onClick={() => setThumbnailTab(t)}
+                  className="px-3 py-1 rounded-md text-[11px] font-bold transition-all"
+                  style={{
+                    background: thumbnailTab === t ? '#fff' : 'transparent',
+                    color:      thumbnailTab === t ? '#8A70D6' : '#8A8888',
+                    boxShadow:  thumbnailTab === t ? '0 1px 3px rgba(0,0,0,.08)' : 'none',
+                  }}>
+                  {t === 'url' ? '🔗 Paste URL' : '⬆️ Upload Image'}
+                </button>
+              ))}
+            </div>
+
+            {thumbnailTab === 'url' ? (
+              <input type="url" value={form.thumbnail}
+                onChange={e => setForm(p => ({ ...p, thumbnail: e.target.value }))}
+                placeholder="https://images.unsplash.com/... or any image URL"
+                className={inputCls} style={inputSty} />
+            ) : (
+              <label className={`flex flex-col items-center gap-1.5 p-4 rounded-lg border-2 border-dashed cursor-pointer transition-all ${
+                thumbnailUploading ? 'border-[#8A70D6] bg-[#F8F6FF] cursor-wait' : 'border-[#D4CAF7] hover:border-[#8A70D6] hover:bg-[#F8F6FF]'
+              }`}>
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden"
+                  disabled={thumbnailUploading}
+                  onChange={async e => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    setThumbnailUploading(true)
+                    try {
+                      const presignRes = await fetch('/api/upload/presign', {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ filename: file.name, mimeType: file.type, folder: 'thumbnails', sizeBytes: file.size }),
+                      })
+                      const presign = await presignRes.json()
+                      if (!presignRes.ok) throw new Error(presign.error ?? 'Upload failed')
+                      await fetch(presign.uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type } })
+                      setForm(p => ({ ...p, thumbnail: presign.publicUrl }))
+                    } catch (err) {
+                      alert(err instanceof Error ? err.message : 'Upload failed — check R2 env vars')
+                    } finally { setThumbnailUploading(false) }
+                  }} />
+                {thumbnailUploading ? (
+                  <><span className="text-[12px] font-medium text-[#8A70D6]">Uploading…</span></>
+                ) : (
+                  <><span className="text-[18px]">🖼️</span>
+                  <span className="text-[12px] font-semibold text-[#424040]">Click to upload thumbnail</span>
+                  <span className="text-[11px] text-[#8A8888]">JPG, PNG, WebP · Max 5MB</span></>
+                )}
+              </label>
+            )}
+
             {form.thumbnail && (
-              <img src={form.thumbnail} alt="Thumbnail preview"
-                className="mt-2 rounded-lg object-cover w-full"
-                style={{ height: 120 }}
-                onError={e => (e.currentTarget.style.display = 'none')} />
+              <div className="mt-2 relative">
+                <img src={form.thumbnail} alt="Thumbnail preview"
+                  className="rounded-lg object-cover w-full"
+                  style={{ height: 120 }}
+                  onError={e => (e.currentTarget.style.display = 'none')} />
+                <button type="button" onClick={() => setForm(p => ({ ...p, thumbnail: '' }))}
+                  className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white text-[12px] flex items-center justify-center hover:bg-black/80 transition-colors">
+                  ✕
+                </button>
+              </div>
             )}
           </div>
 

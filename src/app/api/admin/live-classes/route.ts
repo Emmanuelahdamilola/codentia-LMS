@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
   // Confirmation emails (first notice — cron handles 24h/1h/10min reminders)
   const emailErrors: string[] = []
-  if (process.env.RESEND_API_KEY) {
+  if (process.env.EMAIL_USER) {
     for (const enrollment of enrollments) {
       try {
         await sendLiveClassReminder(

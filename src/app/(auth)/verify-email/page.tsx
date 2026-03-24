@@ -1,13 +1,13 @@
 // PATH: src/app/(auth)/verify-email/page.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 type Status = 'verifying' | 'success' | 'expired' | 'invalid' | 'unverified'
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams()
   const router       = useRouter()
   const token        = searchParams.get('token')
@@ -18,7 +18,6 @@ export default function VerifyEmailPage() {
   const [sent,    setSent]    = useState(false)
   const [error,   setError]   = useState('')
 
-  // Auto-verify if token in URL
   useEffect(() => {
     if (!token) return
     fetch('/api/auth/verify-email', {
@@ -35,7 +34,6 @@ export default function VerifyEmailPage() {
       .catch(() => setStatus('invalid'))
   }, [token])
 
-  // Auto-redirect after success
   useEffect(() => {
     if (status !== 'success') return
     const t = setTimeout(() => router.push('/login?verified=1'), 3000)
@@ -60,6 +58,21 @@ export default function VerifyEmailPage() {
     } finally { setSending(false) }
   }
 
+  const resendForm = (
+    !sent ? (
+      <form onSubmit={handleResend} style={{ display:'flex', flexDirection:'column', gap:10, marginTop:16 }}>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+          placeholder="your@email.com" required style={input} />
+        {error && <p style={{ color:'#EF4444', fontSize:13 }}>{error}</p>}
+        <button type="submit" disabled={sending} style={btn}>
+          {sending ? 'Sending…' : 'Resend Verification Email'}
+        </button>
+      </form>
+    ) : (
+      <p style={{ ...sub, color:'#22C55E', marginTop:16 }}>✓ Sent! Check your inbox.</p>
+    )
+  )
+
   const content: Record<Status, { icon: string; title: string; body: React.ReactNode }> = {
     verifying: {
       icon:  '⏳',
@@ -82,18 +95,7 @@ export default function VerifyEmailPage() {
       body: (
         <>
           <p style={sub}>This verification link has expired (links are valid for 24 hours). Enter your email to get a new one.</p>
-          {!sent ? (
-            <form onSubmit={handleResend} style={{ display:'flex', flexDirection:'column', gap:10, marginTop:16 }}>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com" required style={input} />
-              {error && <p style={{ color:'#EF4444', fontSize:13 }}>{error}</p>}
-              <button type="submit" disabled={sending} style={btn}>
-                {sending ? 'Sending…' : 'Resend Verification Email'}
-              </button>
-            </form>
-          ) : (
-            <p style={{ ...sub, color:'#22C55E', marginTop:16 }}>✓ Sent! Check your inbox.</p>
-          )}
+          {resendForm}
         </>
       ),
     },
@@ -114,18 +116,7 @@ export default function VerifyEmailPage() {
         <>
           <p style={sub}>We sent a verification link to your email address. Click the link in the email to activate your account.</p>
           <p style={{ ...sub, marginTop: 8 }}>Didn't get it? Check your spam folder or resend below.</p>
-          {!sent ? (
-            <form onSubmit={handleResend} style={{ display:'flex', flexDirection:'column', gap:10, marginTop:16 }}>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                placeholder="your@email.com" required style={input} />
-              {error && <p style={{ color:'#EF4444', fontSize:13 }}>{error}</p>}
-              <button type="submit" disabled={sending} style={btn}>
-                {sending ? 'Sending…' : 'Resend Verification Email'}
-              </button>
-            </form>
-          ) : (
-            <p style={{ ...sub, color:'#22C55E', marginTop:16 }}>✓ Sent! Check your inbox.</p>
-          )}
+          {resendForm}
         </>
       ),
     },
@@ -170,4 +161,17 @@ const input: React.CSSProperties = {
   border:'1.5px solid #E4E4E7', borderRadius:8,
   fontSize:14, outline:'none', color:'#09090b',
   boxSizing:'border-box',
+}
+
+// Default export wraps the real component in Suspense
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#FAFAFA' }}>
+        <p style={{ color:'#71717a', fontSize:14 }}>Loading…</p>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
+  )
 }

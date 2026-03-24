@@ -1,4 +1,4 @@
-
+// PATH: src/auth.ts
 import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import CredentialsProvider from 'next-auth/providers/credentials'
@@ -52,15 +52,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.role          = (user as any).role
         token.id            = user.id
-        token.emailVerified = (user as any).emailVerified
+        token.emailVerified = !!(user as any).emailVerified
       }
       return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id            = token.id            as string
-        session.user.role          = token.role          as Role
-        session.user.emailVerified = token.emailVerified as boolean
+        session.user.id            = token.id   as string
+        session.user.role          = token.role as Role
+        // emailVerified is stored as boolean in our JWT
+        ;(session.user as any).emailVerified = !!(token.emailVerified)
       }
       return session
     },

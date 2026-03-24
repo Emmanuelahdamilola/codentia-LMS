@@ -20,7 +20,9 @@ const NAV = [
     section: 'Content',
     items: [
       { label: 'Courses',      href: '/admin/courses',      icon: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></> },
-      { label: 'Live Classes', href: '/admin/live-classes', badge: 1, icon: <><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></> },
+      { label: 'Lessons',      href: '/admin/lessons',      icon: <><polygon points="5 3 19 12 5 21 5 3"/></> },
+      { label: 'Quizzes',      href: '/admin/quizzes',      icon: <><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></> },
+      { label: 'Live Classes', href: '/admin/live-classes', icon: <><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></> },
     ],
   },
   {
@@ -32,7 +34,7 @@ const NAV = [
   {
     section: 'Management',
     items: [
-      { label: 'Assignments',    href: '/admin/assignments',    badge: 34, badgeColor: '#EF4444', icon: <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></> },
+      { label: 'Assignments',    href: '/admin/assignments',    icon: <><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></> },
       { label: 'Notifications',  href: '/admin/notifications',  icon: <><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></> },
     ],
   },
@@ -49,14 +51,14 @@ const BREADCRUMBS: Record<string, string> = {
   '/admin/dashboard':    'Dashboard',
   '/admin/analytics':    'Analytics',
   '/admin/courses':      'Courses',
+  '/admin/lessons':      'Lessons',
+  '/admin/quizzes':      'Quizzes',
   '/admin/live-classes': 'Live Classes',
   '/admin/students':     'Students',
   '/admin/assignments':  'Assignments',
   '/admin/notifications':'Notifications',
   '/admin/settings':     'Settings',
   '/admin/profile':      'My Profile',
-  '/admin/lessons':      'Lessons',
-  '/admin/quizzes':      'Quizzes',
 }
 
 interface Props { adminName: string; adminEmail: string; adminImage?: string | null; children: React.ReactNode }

@@ -27,7 +27,25 @@ interface Stats {
   pending: number; reviewed: number; late: number; reviewedThisWeek: number
 }
 
-interface Props { submissions: Submission[]; stats: Stats }
+interface AssignmentRow {
+  id: string
+  title: string
+  description: string | null
+  dueDate: string | null
+  maxScore: number
+  lessonId: string
+  lessonTitle: string
+  courseTitle: string
+  courseId: string
+  submissions: number
+  createdAt: string
+}
+
+interface Props {
+  submissions: Submission[]
+  stats: Stats
+  assignments: AssignmentRow[]
+}
 
 // ─────────────────────────────────────────────────────────────
 // Helpers
@@ -199,7 +217,7 @@ function ReviewPanel({ sub, onClose, onSubmit }: {
 // ─────────────────────────────────────────────────────────────
 // Main Component
 // ─────────────────────────────────────────────────────────────
-export default function AdminAssignmentsClient({ submissions, stats }: Props) {
+export default function AdminAssignmentsClient({ submissions, stats, assignments }: Props) {
   const [filter,   setFilter]   = useState<'all'|'pending'|'reviewed'|'late'>('all')
   const [selected, setSelected] = useState<Submission | null>(null)
   const [toast,    setToast]    = useState('')
@@ -245,6 +263,26 @@ export default function AdminAssignmentsClient({ submissions, stats }: Props) {
           Export Results
         </button>
       </div>
+
+      {/* ── Assignments summary bar ── */}
+      {assignments.length > 0 && (
+        <div className="mb-5 p-4 bg-white rounded-xl border border-[#E8E8EC] shadow-[0_1px_4px_rgba(0,0,0,.07)]">
+          <div className="text-[11px] font-bold uppercase tracking-[.5px] mb-3" style={{ color: '#8A8888' }}>
+            All Assignments ({assignments.length})
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {assignments.map(a => (
+              <div key={a.id} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#E8E8EC] bg-[#F4F4F6]">
+                <span className="text-[12px] font-bold" style={{ color: '#424040' }}>{a.title}</span>
+                <span className="text-[11px]" style={{ color: '#8A8888' }}>{a.courseTitle.split(' ')[0]}</span>
+                <span className="text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-[#E9E3FF] text-[#6B52B8]">
+                  {a.submissions} submitted
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ── Filter pills + Export ── */}
       <div className="flex items-center gap-2 mb-5 flex-wrap">

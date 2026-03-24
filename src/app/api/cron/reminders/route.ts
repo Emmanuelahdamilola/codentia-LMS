@@ -5,14 +5,12 @@
 import { prisma }                       from '@/lib/prisma'
 import { getPlatformSettings }          from '@/lib/settings'
 import { sendLiveClassReminder,
-         sendAssignmentDeadlineReminder } from '@/lib/email'
-import { Resend }                        from 'resend'
+         sendAssignmentDeadlineReminder,
+         sendReEngagementEmail }         from '@/lib/email'
 import { NextResponse }                  from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-const resend  = new Resend(process.env.RESEND_API_KEY)
-const FROM    = process.env.RESEND_FROM_EMAIL   ?? 'noreply@codentia.dev'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 export async function GET(req: Request) {
@@ -22,12 +20,20 @@ export async function GET(req: Request) {
   const cronSecret  = process.env.CRON_SECRET
 
   // Support both: Authorization: Bearer <secret>  AND  ?secret=<secret>
-  const isAuthorized =
-    (cronSecret && authHeader === `Bearer ${cronSecret}`) ||
-    (cronSecret && querySecret === cronSecret)
+  // If CRON_SECRET is not set, reject in production, allow in dev
+  if (!cronSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'CRON_SECRET env var not set' }, { status: 401 })
+    }
+    // Allow in development without secret
+  } else {
+    const isAuthorized =
+      authHeader === `Bearer ${cronSecret}` ||
+      querySecret === cronSecret
 
-  if (!isAuthorized) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!isAuthorized) {
+      return NextResponse.json({ error: 'Unauthorized — wrong secret' }, { status: 401 })
+    }
   }
 
   const settings = await getPlatformSettings()
@@ -143,7 +149,7 @@ export async function GET(req: Request) {
   }
 
   // ── 3. Re-engagement (7 days inactive) ─────────────────────────────
-  if (settings.emailReEngagement && process.env.RESEND_API_KEY) {
+  if (settings.emailReEngagement && process.env.EMAIL_USER) {
     const sevenDaysAgo  = new Date(now.getTime() - 7  * 86_400_000)
     const eightDaysAgo  = new Date(now.getTime() - 8  * 86_400_000)
 
@@ -163,38 +169,7 @@ export async function GET(req: Request) {
 
     for (const user of inactiveUsers) {
       try {
-        await resend.emails.send({
-          from:    FROM,
-          to:      user.email,
-          subject: `${user.name.split(' ')[0]}, your learning streak is waiting! 🔥`,
-          html: `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;background:#FBFBFB;padding:40px 20px;">
-<div style="max-width:560px;margin:0 auto;background:#fff;border-radius:12px;border:1px solid #E9E3FF;overflow:hidden;">
-  <div style="background:linear-gradient(135deg,#8A70D6,#6B52B8);padding:32px 40px;text-align:center;">
-    <div style="font-size:48px;margin-bottom:8px;">🔥</div>
-    <h1 style="color:#fff;margin:0;font-size:22px;font-weight:700;">We miss you!</h1>
-    <p style="color:rgba(255,255,255,.8);margin:8px 0 0;font-size:14px;">Your coding journey is waiting</p>
-  </div>
-  <div style="padding:40px;">
-    <p style="color:#424040;font-size:16px;margin:0 0 8px;">Hi ${user.name.split(' ')[0]},</p>
-    <p style="color:#424040;font-size:14px;line-height:1.6;margin:0 0 24px;">
-      You haven't logged in for 7 days. Your courses are still here — pick up right where you left off!
-    </p>
-    <div style="background:#F0EAFF;border-radius:8px;padding:16px 20px;margin-bottom:28px;">
-      <p style="color:#6B52B8;font-size:13px;margin:0;font-weight:600;">
-        💡 Tip: Even 15 minutes a day keeps your streak alive and builds real skills fast.
-      </p>
-    </div>
-    <a href="${APP_URL}/dashboard"
-       style="display:inline-block;background:#8A70D6;color:#fff;text-decoration:none;
-              padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;">
-      Continue Learning →
-    </a>
-    <p style="color:#8A8888;font-size:12px;margin:28px 0 0;">
-      <a href="${APP_URL}/settings" style="color:#8A8888;">Manage notifications</a>
-    </p>
-  </div>
-</div></body></html>`,
-        })
+        await sendReEngagementEmail(user.email, user.name)
         results.reEngagement++
         await prisma.notification.create({
           data: {

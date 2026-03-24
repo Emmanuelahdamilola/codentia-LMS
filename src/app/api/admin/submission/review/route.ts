@@ -1,7 +1,10 @@
 // PATH: src/app/api/admin/submissions/review/route.ts
-import { auth } from '@/auth'
-import { prisma } from '@/lib/prisma'
-import { NextResponse } from 'next/server'
+import { auth }                from '@/auth'
+import { prisma }              from '@/lib/prisma'
+import { sendGradeNotification } from '@/lib/email'
+import { NextResponse }        from 'next/server'
+
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -10,30 +13,41 @@ export async function POST(req: Request) {
   }
 
   const { submissionId, grade, feedback } = await req.json()
+  if (!submissionId) return NextResponse.json({ error: 'submissionId required' }, { status: 400 })
+  if (grade === undefined || grade === null) return NextResponse.json({ error: 'grade required' }, { status: 400 })
+  if (!feedback?.trim()) return NextResponse.json({ error: 'feedback required' }, { status: 400 })
+
+  const gradeNum = Math.min(100, Math.max(0, Number(grade)))
 
   const submission = await prisma.submission.update({
     where: { id: submissionId },
-    data: {
-      grade: Number(grade),
-      feedback,
-      status: grade !== undefined && grade !== null ? 'GRADED' : 'INSTRUCTOR_REVIEWED',
-      reviewedAt: new Date(),
-    },
+    data:  { grade: gradeNum, feedback, status: 'GRADED', reviewedAt: new Date() },
     include: {
-      user: { select: { id: true, name: true } },
-      assignment: { select: { title: true, id: true } },
+      user:       { select: { id: true, name: true, email: true } },
+      assignment: { include: { lesson: { include: { module: { select: { courseId: true } } } } } },
     },
   })
 
+  // In-app notification
   await prisma.notification.create({
     data: {
-      userId: submission.user.id,
-      type: 'ASSIGNMENT_FEEDBACK',
-      title: 'Assignment graded!',
-      message: `Your submission for "${submission.assignment.title}" received ${grade}/100.`,
-      link: `/assignments/${submission.assignment.id}`,
+      userId:  submission.user.id,
+      type:    'ASSIGNMENT_FEEDBACK',
+      title:   `Assignment graded: ${submission.assignment.title}`,
+      message: `You scored ${gradeNum}/100. Check your feedback.`,
+      link:    `/assignments/${submission.assignment.id}`,
     },
   })
 
-  return NextResponse.json({ success: true })
+  // Grade email via Nodemailer (non-fatal)
+  sendGradeNotification(
+    submission.user.email,
+    submission.user.name,
+    submission.assignment.title,
+    gradeNum,
+    feedback,
+    `${APP_URL}/assignments/${submission.assignment.id}`
+  ).catch(err => console.error('[grade email]', err))
+
+  return NextResponse.json({ success: true, grade: gradeNum })
 }

@@ -11,7 +11,7 @@ import { Eye, EyeOff } from 'lucide-react'
 // ─────────────────────────────────────────────────────────────
 function LoginContent() {
   const searchParams = useSearchParams()
-  const callbackUrl  = searchParams.get('callbackUrl')
+  const verified     = searchParams.get('verified')
   const [form, setForm]       = useState({ email: '', password: '' })
   const [showPw, setShowPw]   = useState(false)
   const [error, setError]     = useState('')
@@ -28,23 +28,8 @@ function LoginContent() {
       const result = await signIn('credentials', {
         email: form.email, password: form.password, redirect: false,
       })
-      if (result?.error) {
-        setError('Invalid email or password.')
-      } else {
-        // Fetch session to get role, then redirect appropriately
-        const sessionRes = await fetch('/api/auth/session')
-        const session    = await sessionRes.json()
-        const role       = session?.user?.role
-
-        // Use callbackUrl only if it's a relative path (security: avoid open redirect)
-        const safeCb = callbackUrl && callbackUrl.startsWith('/')
-          ? callbackUrl
-          : null
-
-        const destination = safeCb ?? (role === 'ADMIN' ? '/admin/dashboard' : '/dashboard')
-        router.push(destination)
-        router.refresh()
-      }
+      if (result?.error) setError('Invalid email or password.')
+      else { router.push('/dashboard'); router.refresh() }
     } finally { setLoading(false) }
   }
 
@@ -468,7 +453,13 @@ function LoginContent() {
             </div>
 
             <h1 className="form-heading">Welcome back</h1>
-      <p className="form-sub">Sign in to continue your learning journey.</p>
+            {verified && (
+              <div style={{ background:'#DCFCE7', border:'1px solid #BBF7D0', color:'#15803D',
+                fontSize:13, padding:'10px 14px', borderRadius:8, marginBottom:16 }}>
+                ✓ Email verified! You can now sign in.
+              </div>
+            )}
+            <p className="form-sub">Sign in to continue your learning journey.</p>
 
             {error && (
               <div className="form-error">

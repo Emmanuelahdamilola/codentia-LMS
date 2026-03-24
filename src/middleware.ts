@@ -2,6 +2,20 @@
 import { getToken }                      from 'next-auth/jwt'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// In production (HTTPS) NextAuth uses the __Secure- prefixed cookie name.
+// We must pass cookieName explicitly so getToken() finds the right cookie
+// regardless of environment.
+function getTokenOptions(req: NextRequest) {
+  const secure = req.url.startsWith('https://')
+  return {
+    req,
+    secret:     process.env.NEXTAUTH_SECRET!,
+    cookieName: secure
+      ? '__Secure-next-auth.session-token'
+      : 'next-auth.session-token',
+  }
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
@@ -15,14 +29,16 @@ export async function middleware(req: NextRequest) {
     '/icon.svg', '/apple-icon.svg', '/favicon.ico',
   ]
   if (publicPrefixes.some(p => pathname.startsWith(p))) {
-    const secret = process.env.NEXTAUTH_SECRET
-    if (secret && (pathname === '/login' || pathname === '/register')) {
-      const token = await getToken({ req, secret })
-      if (token) {
-        const role = token.role as string | undefined
-        return NextResponse.redirect(
-          new URL(role === 'ADMIN' ? '/admin/dashboard' : '/dashboard', req.url)
-        )
+    if (pathname === '/login' || pathname === '/register') {
+      const secret = process.env.NEXTAUTH_SECRET
+      if (secret) {
+        const token = await getToken(getTokenOptions(req))
+        if (token) {
+          const role = token.role as string | undefined
+          return NextResponse.redirect(
+            new URL(role === 'ADMIN' ? '/admin/dashboard' : '/dashboard', req.url)
+          )
+        }
       }
     }
     return NextResponse.next()
@@ -40,7 +56,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  const token      = await getToken({ req, secret })
+  const token      = await getToken(getTokenOptions(req))
   const isLoggedIn = !!token
   const role       = token?.role as string | undefined
 

@@ -11,7 +11,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/login',
-    error: '/login',
+    error:  '/login',
   },
   providers: [
     CredentialsProvider({
@@ -42,26 +42,38 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email:         user.email,
           role:          user.role,
           image:         user.image,
-          emailVerified: !!user.emailVerified,
+          emailVerified: user.emailVerified, // ← keep as Date | null, not boolean
         }
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.role          = (user as any).role
         token.id            = user.id
-        token.emailVerified = !!(user as any).emailVerified
+        token.emailVerified = (user as any).emailVerified ?? null // ← Date | null
       }
+
+      // Re-fetch from DB on every token refresh so verification is picked up
+      if (trigger === 'update' || (!user && token.id)) {
+        const dbUser = await prisma.user.findUnique({
+          where:  { id: token.id as string },
+          select: { emailVerified: true, role: true },
+        })
+        if (dbUser) {
+          token.emailVerified = dbUser.emailVerified
+          token.role          = dbUser.role
+        }
+      }
+
       return token
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id            = token.id   as string
-        session.user.role          = token.role as Role
-        // emailVerified is stored as boolean in our JWT
-        ;(session.user as any).emailVerified = !!(token.emailVerified)
+        session.user.id            = token.id            as string
+        session.user.role          = token.role          as Role
+        session.user.emailVerified = token.emailVerified as Date | null
       }
       return session
     },

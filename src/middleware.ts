@@ -48,8 +48,8 @@ export async function middleware(req: NextRequest) {
   }
 
   // ── Email not verified → verification page ─────────────────
-  const emailVerified = token?.emailVerified as boolean | undefined
-  if (emailVerified === false && !pathname.startsWith('/verify-email')) {
+  const emailVerified = token?.emailVerified
+  if (!emailVerified && !pathname.startsWith('/verify-email')) {
     return NextResponse.redirect(new URL('/verify-email', req.url))
   }
 

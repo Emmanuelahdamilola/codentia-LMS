@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
-  const token     = await getToken({ req, secret })
+  const token      = await getToken({ req, secret })
   const isLoggedIn = !!token
   const role       = token?.role as string | undefined
 
@@ -48,8 +48,10 @@ export async function middleware(req: NextRequest) {
   }
 
   // ── Email not verified → verification page ─────────────────
+  // Only block if emailVerified is explicitly null (unverified)
+  // undefined/missing means token predates this check — let them through
   const emailVerified = token?.emailVerified
-  if (!emailVerified && !pathname.startsWith('/verify-email')) {
+  if (emailVerified === null && !pathname.startsWith('/verify-email')) {
     return NextResponse.redirect(new URL('/verify-email', req.url))
   }
 

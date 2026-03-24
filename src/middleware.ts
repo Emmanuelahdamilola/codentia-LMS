@@ -1,38 +1,29 @@
 // Uses getToken() instead of auth() to avoid importing Prisma in Edge Runtime.
-import { getToken }                    from 'next-auth/jwt'
+import { getToken }                      from 'next-auth/jwt'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
-  const secret = process.env.NEXTAUTH_SECRET
-  if (!secret) {
-    if (process.env.NODE_ENV === 'production') {
-      return NextResponse.redirect(new URL('/login', req.url))
-    }
-    console.error('[middleware] NEXTAUTH_SECRET is not set in .env.local')
-    return NextResponse.next()
-  }
-
-  const token      = await getToken({ req, secret })
-  const isLoggedIn = !!token
-  const role       = token?.role as string | undefined
-
   // ── Public routes — no auth needed ────────────────────────
   const publicPrefixes = [
     '/login', '/register',
-    '/home',                 // marketing landing page
-    '/verify-email',         // email verification
-    '/api/paystack/webhook', // Paystack webhook (server-to-server)
-    '/api/cron',             // cron.org calls (protected by CRON_SECRET)
+    '/home',
+    '/verify-email',
+    '/api/paystack/webhook',
+    '/api/cron',
     '/icon.svg', '/apple-icon.svg', '/favicon.ico',
   ]
   if (publicPrefixes.some(p => pathname.startsWith(p))) {
-    // Already logged in — redirect away from login/register
-    if (isLoggedIn && (pathname === '/login' || pathname === '/register')) {
-      return NextResponse.redirect(
-        new URL(role === 'ADMIN' ? '/admin/dashboard' : '/dashboard', req.url)
-      )
+    const secret = process.env.NEXTAUTH_SECRET
+    if (secret && (pathname === '/login' || pathname === '/register')) {
+      const token = await getToken({ req, secret })
+      if (token) {
+        const role = token.role as string | undefined
+        return NextResponse.redirect(
+          new URL(role === 'ADMIN' ? '/admin/dashboard' : '/dashboard', req.url)
+        )
+      }
     }
     return NextResponse.next()
   }
@@ -40,19 +31,24 @@ export async function middleware(req: NextRequest) {
   // ── Root — handled by src/app/page.tsx ────────────────────
   if (pathname === '/') return NextResponse.next()
 
-  // ── Not logged in → login ──────────────────────────────────
-  if (!isLoggedIn) {
+  // ── Require NEXTAUTH_SECRET ────────────────────────────────
+  const secret = process.env.NEXTAUTH_SECRET
+  if (!secret) {
+    console.error('[middleware] NEXTAUTH_SECRET is not set')
     const loginUrl = new URL('/login', req.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
   }
 
-  // ── Email not verified → verification page ─────────────────
-  // Only block if emailVerified is explicitly null (unverified)
-  // undefined/missing means token predates this check — let them through
-  const emailVerified = token?.emailVerified
-  if (emailVerified === null && !pathname.startsWith('/verify-email')) {
-    return NextResponse.redirect(new URL('/verify-email', req.url))
+  const token      = await getToken({ req, secret })
+  const isLoggedIn = !!token
+  const role       = token?.role as string | undefined
+
+  // ── Not logged in → login ──────────────────────────────────
+  if (!isLoggedIn) {
+    const loginUrl = new URL('/login', req.url)
+    loginUrl.searchParams.set('callbackUrl', pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   // ── Admin-only routes ──────────────────────────────────────

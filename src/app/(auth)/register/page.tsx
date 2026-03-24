@@ -57,8 +57,8 @@ export default function RegisterPage() {
       })
       const data = await res.json()
       if (!res.ok) { setError(data.error ?? 'Registration failed.'); return }
-      // Don't auto sign in — redirect to verify-email page first
-      router.push('/verify-email')
+      
+      router.push('/login')
     } finally { setLoading(false) }
   }
 

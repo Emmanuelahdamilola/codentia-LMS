@@ -37,12 +37,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!passwordMatch) return null
 
         return {
-          id:            user.id,
-          name:          user.name,
-          email:         user.email,
-          role:          user.role,
-          image:         user.image,
-          emailVerified: user.emailVerified, // ← keep as Date | null, not boolean
+          id:    user.id,
+          name:  user.name,
+          email: user.email,
+          role:  user.role,
+          image: user.image,
         }
       },
     }),
@@ -50,20 +49,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user, trigger }) {
       if (user) {
-        token.role          = (user as any).role
-        token.id            = user.id
-        token.emailVerified = (user as any).emailVerified ?? null // ← Date | null
+        token.role = (user as any).role
+        token.id   = user.id
       }
 
-      // Re-fetch from DB on every token refresh so verification is picked up
+      // Re-fetch role from DB on token refresh
       if (trigger === 'update' || (!user && token.id)) {
         const dbUser = await prisma.user.findUnique({
           where:  { id: token.id as string },
-          select: { emailVerified: true, role: true },
+          select: { role: true },
         })
         if (dbUser) {
-          token.emailVerified = dbUser.emailVerified
-          token.role          = dbUser.role
+          token.role = dbUser.role
         }
       }
 
@@ -71,9 +68,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async session({ session, token }) {
       if (token) {
-        session.user.id            = token.id            as string
-        session.user.role          = token.role          as Role
-        session.user.emailVerified = token.emailVerified as Date | null
+        session.user.id   = token.id   as string
+        session.user.role = token.role as Role
       }
       return session
     },

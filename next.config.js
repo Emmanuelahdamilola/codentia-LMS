@@ -8,7 +8,23 @@ const nextConfig = {
     ],
   },
   experimental: {
-    serverActions: { allowedOrigins: ['localhost:3000'] },
+    serverActions: {
+      allowedOrigins: ['localhost:3000', 'codentia.vercel.app'],
+    },
+  },
+  async headers() {
+    return [
+      {
+        // Never cache auth pages — prevents Vercel CDN redirect loops
+        source: '/(login|register|verify-email)',
+        headers: [
+          {
+            key:   'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          },
+        ],
+      },
+    ]
   },
 }
 

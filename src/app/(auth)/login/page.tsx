@@ -12,7 +12,6 @@ import { Eye, EyeOff } from 'lucide-react'
 function LoginContent() {
   const searchParams = useSearchParams()
   const verified     = searchParams.get('verified')
-  const callbackUrl  = searchParams.get('callbackUrl')
   const [form, setForm]       = useState({ email: '', password: '' })
   const [showPw, setShowPw]   = useState(false)
   const [error, setError]     = useState('')
@@ -29,23 +28,8 @@ function LoginContent() {
       const result = await signIn('credentials', {
         email: form.email, password: form.password, redirect: false,
       })
-      if (result?.error) {
-        setError('Invalid email or password.')
-      } else {
-        // Fetch session to get role, then redirect appropriately
-        const sessionRes = await fetch('/api/auth/session')
-        const session    = await sessionRes.json()
-        const role       = session?.user?.role
-
-        // Use callbackUrl only if it's a relative path (security: avoid open redirect)
-        const safeCb = callbackUrl && callbackUrl.startsWith('/')
-          ? callbackUrl
-          : null
-
-        const destination = safeCb ?? (role === 'ADMIN' ? '/admin/dashboard' : '/dashboard')
-        router.push(destination)
-        router.refresh()
-      }
+      if (result?.error) setError('Invalid email or password.')
+      else { router.push('/dashboard'); router.refresh() }
     } finally { setLoading(false) }
   }
 

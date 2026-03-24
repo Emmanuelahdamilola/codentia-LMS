@@ -42,8 +42,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email:         user.email,
           role:          user.role,
           image:         user.image,
-          // Store as boolean — Date objects don't survive JWT serialization reliably
-          emailVerified: user.emailVerified !== null,
+          emailVerified: user.emailVerified, // ← keep as Date | null, not boolean
         }
       },
     }),
@@ -53,18 +52,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (user) {
         token.role          = (user as any).role
         token.id            = user.id
-        // emailVerified is now a boolean: true = verified, false = not verified
-        token.emailVerified = (user as any).emailVerified as boolean
+        token.emailVerified = (user as any).emailVerified ?? null // ← Date | null
       }
 
-      // Re-fetch from DB on token refresh so verification is picked up immediately
+      // Re-fetch from DB on every token refresh so verification is picked up
       if (trigger === 'update' || (!user && token.id)) {
         const dbUser = await prisma.user.findUnique({
           where:  { id: token.id as string },
           select: { emailVerified: true, role: true },
         })
         if (dbUser) {
-          token.emailVerified = dbUser.emailVerified !== null
+          token.emailVerified = dbUser.emailVerified
           token.role          = dbUser.role
         }
       }
@@ -75,8 +73,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (token) {
         session.user.id            = token.id            as string
         session.user.role          = token.role          as Role
-        // Pass through as boolean for session consumers
-        session.user.emailVerified = token.emailVerified as any
+        session.user.emailVerified = token.emailVerified as Date | null
       }
       return session
     },

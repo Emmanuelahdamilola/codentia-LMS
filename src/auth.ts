@@ -9,10 +9,15 @@ import { Role } from '@prisma/client'
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma) as any,
   session: { strategy: 'jwt' },
+
+  // NEXTAUTH_URL must be set to https://codentia.vercel.app in Vercel env vars.
+  // NextAuth reads it automatically — do NOT hardcode it here.
+
   pages: {
     signIn: '/login',
     error:  '/login',
   },
+
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -42,21 +47,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email:         user.email,
           role:          user.role,
           image:         user.image,
-          emailVerified: user.emailVerified, // ← keep as Date | null, not boolean
+          emailVerified: user.emailVerified, // Date | null
         }
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user, trigger }) {
+      // On initial sign-in, populate token from the returned user object
       if (user) {
         token.role          = (user as any).role
         token.id            = user.id
-        token.emailVerified = (user as any).emailVerified ?? null // ← Date | null
+        token.emailVerified = (user as any).emailVerified ?? null
       }
 
-      // Re-fetch from DB on every token refresh so verification is picked up
-      if (trigger === 'update' || (!user && token.id)) {
+      // Re-fetch from DB only when explicitly triggered (e.g. after email
+      // verification via useSession update()) — NOT on every request.
+      // Fetching on every request was causing unnecessary DB load and could
+      // contribute to slow cold-starts on Vercel.
+      if (trigger === 'update' && token.id) {
         const dbUser = await prisma.user.findUnique({
           where:  { id: token.id as string },
           select: { emailVerified: true, role: true },
@@ -69,6 +79,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
       return token
     },
+
     async session({ session, token }) {
       if (token) {
         session.user.id            = token.id            as string

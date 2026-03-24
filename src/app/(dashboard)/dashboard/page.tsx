@@ -1,5 +1,6 @@
 // PATH: src/app/(dashboard)/dashboard/page.tsx
 import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import { getAllCourseProgress } from '@/lib/progress'
 import { formatDate, formatTime, isToday, isSameDay } from '@/lib/utils'
@@ -123,7 +124,6 @@ function MiniCalendar({ classDates, assignmentDates }: CalendarProps) {
                 }`}
             >
               {d}
-              {/* Event dot — skip on today (already highlighted) */}
               {!isCurrentDay && (hasClass || hasAssignment) && (
                 <span
                   className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
@@ -155,9 +155,12 @@ function MiniCalendar({ classDates, assignmentDates }: CalendarProps) {
 // ─────────────────────────────────────────────────────────────
 
 export default async function DashboardPage() {
-  const session   = await auth()
-  const userId    = session!.user.id
-  const firstName = session!.user.name?.split(' ')[0] ?? 'there'
+  // ── Auth guard ───────────────────────────────────────────
+  const session = await auth()
+  if (!session) redirect('/login')  // ← fix: guard against null session
+
+  const userId    = session.user.id
+  const firstName = session.user.name?.split(' ')[0] ?? 'there'
   const now       = new Date()
 
   // ── Parallel data fetch ──────────────────────────────────
@@ -173,25 +176,20 @@ export default async function DashboardPage() {
     weekProgress,
     streakRecords,
   ] = await Promise.all([
-    // All course progress for enrolled courses
     getAllCourseProgress(userId),
 
-    // Quizzes passed (score >= 60)
     prisma.quizResult.count({
       where: { userId, score: { gte: 60 } },
     }),
 
-    // Pending submissions (assignments submitted but not yet graded)
     prisma.submission.count({
       where: { userId, status: 'PENDING' },
     }),
 
-    // Live classes this user has attended
     prisma.liveClassAttendance.count({
       where: { userId },
     }),
 
-    // Next 2 upcoming live classes
     prisma.liveClass.findMany({
       where: {
         scheduledAt: { gte: now },
@@ -211,7 +209,6 @@ export default async function DashboardPage() {
       },
     }),
 
-    // Published courses to browse (up to 3)
     prisma.course.findMany({
       where: { published: true },
       orderBy: { createdAt: 'desc' },
@@ -228,7 +225,6 @@ export default async function DashboardPage() {
       },
     }),
 
-    // User's enrollments with full course/module/lesson tree
     prisma.enrollment.findMany({
       where: { userId },
       orderBy: { enrolledAt: 'desc' },
@@ -257,13 +253,11 @@ export default async function DashboardPage() {
       },
     }),
 
-    // Assignment IDs already submitted by this user
     prisma.submission.findMany({
       where: { userId },
       select: { assignmentId: true },
     }),
 
-    // Lessons completed this week (for streak indicator)
     prisma.progressRecord.count({
       where: {
         userId,
@@ -273,7 +267,6 @@ export default async function DashboardPage() {
       },
     }),
 
-    // All completion dates for streak calculation (last 60 days)
     prisma.progressRecord.findMany({
       where: {
         userId,
@@ -287,11 +280,8 @@ export default async function DashboardPage() {
   ])
 
   // ── Derived values ───────────────────────────────────────
-
-  // Total lessons completed (all time)
   const lessonsCompleted = progressList.reduce((sum, p) => sum + p.completedLessons, 0)
 
-  // Assignments done (graded or reviewed)
   const assignmentsDone = await prisma.submission.count({
     where: {
       userId,
@@ -299,7 +289,6 @@ export default async function DashboardPage() {
     },
   })
 
-  // Current streak: consecutive days with at least 1 lesson completed
   let streak = 0
   const completionDays = new Set(
     streakRecords.map(r => r.completedAt.toDateString())
@@ -310,23 +299,18 @@ export default async function DashboardPage() {
     if (completionDays.has(day.toDateString())) {
       streak++
     } else if (offset > 0) {
-      // Allow today to be missed (still early in the day)
       break
     }
   }
 
-  // Total lessons across all explore courses
   function totalLessonsInCourse(
     modules: { _count: { lessons: number } }[]
   ): number {
     return modules.reduce((s, m) => s + m._count.lessons, 0)
   }
 
-  // Enrolled course IDs (for "Continue" vs "Start" button)
   const enrolledCourseIds = new Set(enrolledRows.map(e => e.course.id))
-
-  // Submitted assignment IDs set
-  const submittedIds = new Set(submittedAssignmentIds.map(s => s.assignmentId))
+  const submittedIds      = new Set(submittedAssignmentIds.map(s => s.assignmentId))
 
   // ── Upcoming assignments (not yet submitted) ─────────────
   const courseIds = enrolledRows.map(e => e.course.id)
@@ -340,9 +324,7 @@ export default async function DashboardPage() {
             { dueDate: null },
           ],
         },
-        orderBy: [
-          { dueDate: 'asc' },
-        ],
+        orderBy: [{ dueDate: 'asc' }],
         take: 3,
         select: {
           id:      true,
@@ -419,7 +401,6 @@ export default async function DashboardPage() {
     },
   ] as const
 
-  // ── In-progress course for welcome banner ────────────────
   const activeProgress = progressList.find(p => p.percentage > 0 && p.percentage < 100)
   const welcomeSub = activeProgress
     ? `Continue your ${activeProgress.courseTitle} journey — you're ${activeProgress.percentage}% through.`
@@ -427,7 +408,6 @@ export default async function DashboardPage() {
       ? "You have courses waiting — let's keep the momentum going!"
       : 'Start your first course and begin your coding journey!'
 
-  // ── Continue-learning href ───────────────────────────────
   const continueHref = activeProgress
     ? `/courses/${activeProgress.courseId}`
     : '/courses'
@@ -504,8 +484,8 @@ export default async function DashboardPage() {
         ) : (
           <div className="grid grid-cols-3 gap-3.5 mb-7">
             {exploreCourses.map(course => {
-              const thumb    = getCourseThumb(course.title)
-              const total    = totalLessonsInCourse(course.modules)
+              const thumb      = getCourseThumb(course.title)
+              const total      = totalLessonsInCourse(course.modules)
               const isEnrolled = enrolledCourseIds.has(course.id)
               return (
                 <Link
@@ -555,7 +535,6 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="bg-white border border-[#EBEBEB] rounded-[14px] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,.06),0_4px_16px_rgba(0,0,0,.04)] mb-7">
-            {/* Table header */}
             <div className="grid grid-cols-[2fr_1fr_2fr_auto] items-center px-5 py-3 border-b border-[#EBEBEB] bg-[#FBFBFB] gap-4">
               {['Course', 'Started', 'Progress', ''].map((h, i) => (
                 <span key={i} className="text-[11px] font-bold uppercase tracking-[.8px] text-[#8A8888]">{h}</span>
@@ -563,18 +542,15 @@ export default async function DashboardPage() {
             </div>
 
             {enrolledRows.map(({ course, enrolledAt }, idx) => {
-              const prog        = progressList.find(p => p.courseId === course.id)
-              const pct         = prog?.percentage ?? 0
-              const done        = prog?.completedLessons ?? 0
-              const total       = prog?.totalLessons ?? 0
-              const thumb       = getCourseThumb(course.title)
+              const prog  = progressList.find(p => p.courseId === course.id)
+              const pct   = prog?.percentage ?? 0
+              const done  = prog?.completedLessons ?? 0
+              const total = prog?.totalLessons ?? 0
+              const thumb = getCourseThumb(course.title)
 
-              // Determine current module: first module that isn't fully completed
               const currentModule = course.modules.find(m => {
-                const moduleTotal     = m.lessons.length
-                const moduleDone      = prog
-                  ? Math.min(done, moduleTotal) // approximate
-                  : 0
+                const moduleTotal = m.lessons.length
+                const moduleDone  = prog ? Math.min(done, moduleTotal) : 0
                 return moduleDone < moduleTotal
               }) ?? course.modules[course.modules.length - 1]
 
@@ -589,7 +565,6 @@ export default async function DashboardPage() {
                     idx < enrolledRows.length - 1 ? 'border-b border-[#EBEBEB]' : ''
                   }`}
                 >
-                  {/* Course name */}
                   <div>
                     <div className="text-[13px] font-bold text-[#424040] truncate">
                       {thumb.icon} {course.title}
@@ -597,14 +572,12 @@ export default async function DashboardPage() {
                     <div className="text-[11px] text-[#8A8888] mt-0.5">{moduleLabel}</div>
                   </div>
 
-                  {/* Enrolled date */}
                   <div className="text-[12px] text-[#8A8888]">
                     {new Date(enrolledAt).toLocaleDateString('en-US', {
                       month: 'short', day: 'numeric', year: 'numeric',
                     })}
                   </div>
 
-                  {/* Progress bar */}
                   <div className="flex flex-col gap-1">
                     <div className="h-1.5 bg-[#EBEBEB] rounded-full overflow-hidden">
                       <div
@@ -617,7 +590,6 @@ export default async function DashboardPage() {
                     </span>
                   </div>
 
-                  {/* CTA */}
                   <Link
                     href={`/courses/${course.id}`}
                     className="text-[12px] font-bold text-[#8A70D6] hover:underline whitespace-nowrap"
@@ -655,10 +627,10 @@ export default async function DashboardPage() {
               <p className="text-[13px] text-[#8A8888] py-3">No classes scheduled.</p>
             ) : (
               upcomingClasses.map((cls, i) => {
-                const date      = new Date(cls.scheduledAt)
-                const live      = cls.status === 'LIVE'
-                const today     = isToday(date)
-                const tomorrow  = isSameDay(date, new Date(now.getTime() + 86_400_000))
+                const date     = new Date(cls.scheduledAt)
+                const live     = cls.status === 'LIVE'
+                const today    = isToday(date)
+                const tomorrow = isSameDay(date, new Date(now.getTime() + 86_400_000))
 
                 const statusLabel = live ? 'LIVE NOW'
                   : today    ? 'Today'
@@ -672,7 +644,6 @@ export default async function DashboardPage() {
                       i < upcomingClasses.length - 1 ? 'border-b border-[#EBEBEB]' : ''
                     }`}
                   >
-                    {/* Status badge */}
                     {live ? (
                       <span className="self-start inline-flex items-center gap-1 bg-[#FEE2E2] text-[#EF4444] text-[10px] font-bold px-2 py-0.5 rounded-full tracking-[.5px]">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-pulse" />
@@ -707,7 +678,6 @@ export default async function DashboardPage() {
             )}
           </div>
 
-          {/* AI Quick Input */}
           <AIQuickInput />
         </div>
 

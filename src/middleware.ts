@@ -36,7 +36,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(absoluteUrl('/login', req))
   }
 
-  const token      = await getToken({ req, secret })
+  const token      = await getToken({ req, secret, secureCookie: true })
   const isLoggedIn = !!token
   const role       = token?.role as string | undefined
 

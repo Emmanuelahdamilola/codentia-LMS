@@ -1,5 +1,6 @@
 // PATH: src/components/dashboard/LiveClassesClient.tsx
 'use client'
+import { motion, AnimatePresence } from 'framer-motion'
 
 import { useState } from 'react'
 
@@ -42,7 +43,7 @@ function getCourseThumb(title: string) {
     return { bg: 'linear-gradient(135deg,#FF6B35 0%,#F7931E 100%)', icon: '🌐' }
   if (t.includes('css') || t.includes('flexbox') || t.includes('grid') || t.includes('layout') || t.includes('variable'))
     return { bg: 'linear-gradient(135deg,#264de4 0%,#1e3fbf 100%)', icon: '🎨' }
-  return { bg: 'linear-gradient(135deg,#8A70D6 0%,#6B52B8 100%)', icon: '📺' }
+  return { bg: 'linear-gradient(135deg,#7C5CDB 0%,#6146C4 100%)', icon: '📺' }
 }
 
 function formatDate(iso: string) {
@@ -114,16 +115,19 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
   }
 
   return (
-    <div className="p-7">
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 360, damping: 30 }} className="p-4 md:p-7">
       {/* Page title */}
-      <h1 className="text-[22px] font-black text-[#424040] tracking-tight mb-1">Live Classes</h1>
-      <p className="text-[13px] text-[#8A8888] mb-6">Join live sessions, review recordings, and stay on schedule.</p>
+      <h1 className="text-[26px] font-semibold text-[#1A1523] mb-1 animate-fade-up" style={{ letterSpacing: "-0.03em" }}>Live Classes</h1>
+      <p className="text-[13.5px] text-[#9591A8] mb-6 animate-fade-up" style={{ animationDelay: "40ms" }}>Join live sessions, review recordings, and stay on schedule.</p>
 
       {/* ── Live Now / Next Banner ── */}
       {bannerClass && (
         <div
-          className="rounded-[14px] px-7 py-6 flex items-center justify-between mb-7 relative overflow-hidden"
-          style={{ background: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)' }}
+          className="rounded-2xl px-7 py-6 flex items-center justify-between mb-7 relative overflow-hidden animate-fade-up"
+          style={{ 
+            animationDelay: "80ms",
+            background: 'linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)' 
+          }}
         >
           <span className="absolute -right-16 -top-16 w-[220px] h-[220px] rounded-full pointer-events-none" style={{ background: 'rgba(138,112,214,.15)' }} />
           <span className="absolute right-20 -bottom-20 w-[160px] h-[160px] rounded-full pointer-events-none" style={{ background: 'rgba(97,218,251,.08)' }} />
@@ -133,20 +137,20 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
             <div className="flex items-center gap-2 mb-2.5">
               {isBannerLive ? (
                 <>
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" style={{ animation: 'pulse 1.5s infinite' }} />
-                  <span className="text-[11px] font-black tracking-[1.5px] text-[#EF4444] uppercase">Live Now</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626]" style={{ animation: 'pulse 1.5s infinite' }} />
+                  <span className="text-[11px] font-bold tracking-[1.5px] text-[#DC2626] uppercase">Live Now</span>
                 </>
               ) : (
                 <>
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#8A70D6]" />
-                  <span className="text-[11px] font-black tracking-[1.5px] text-[#8A70D6] uppercase">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#7C5CDB]" />
+                  <span className="text-[11px] font-bold tracking-[1.5px] text-[#7C5CDB] uppercase">
                     {isToday(bannerClass.scheduledAt) ? 'Today' : isTomorrow(bannerClass.scheduledAt) ? 'Tomorrow' : 'Upcoming'}
                   </span>
                 </>
               )}
             </div>
 
-            <h2 className="text-[20px] font-black text-white tracking-tight mb-1.5">{bannerClass.title}</h2>
+            <h2 className="text-[20px] font-semibold text-white mb-1.5" style={{ letterSpacing: "-0.02em" }}>{bannerClass.title}</h2>
             <div className="flex items-center gap-4 text-[13px] text-white/70 flex-wrap">
               <span className="flex items-center gap-1.5">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -177,9 +181,9 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
               onClick={() => handleJoin(bannerClass.id, bannerClass.meetingLink)}
               disabled={attendJoining === bannerClass.id}
               className="flex items-center gap-2 text-white font-bold text-[14px] px-7 py-3 rounded-lg transition-all duration-200 hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-wait"
-              style={{ background: '#8A70D6' }}
-              onMouseEnter={e => { if (attendJoining !== bannerClass.id) e.currentTarget.style.background = '#6B52B8' }}
-              onMouseLeave={e => (e.currentTarget.style.background = '#8A70D6')}
+              style={{ background: '#7C5CDB' }}
+              onMouseEnter={e => { if (attendJoining !== bannerClass.id) e.currentTarget.style.background = '#6146C4' }}
+              onMouseLeave={e => (e.currentTarget.style.background = '#7C5CDB')}
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
@@ -199,13 +203,13 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
       )}
 
       {/* ── Tabs ── */}
-      <div className="flex gap-0 bg-white border border-[#EBEBEB] rounded-[10px] overflow-hidden mb-5 w-fit">
+      <div className="flex gap-0 bg-white border border-[#E9E7EF] rounded-xl overflow-hidden mb-5 w-fit">
         {(['upcoming', 'recordings'] as Tab[]).map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`px-5 py-2.5 text-[13px] font-bold border-none transition-all duration-150 capitalize ${
-              tab === t ? 'bg-[#8A70D6] text-white' : 'text-[#8A8888] hover:bg-[#E9E3FF] hover:text-[#8A70D6]'
+              tab === t ? 'bg-[#7C5CDB] text-white' : 'text-[#9591A8] hover:bg-[#EDE8FF] hover:text-[#7C5CDB]'
             }`}
           >
             {t === 'upcoming' ? 'Upcoming' : 'Recordings'}
@@ -217,8 +221,8 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
       {tab === 'upcoming' && (
         <div className="flex flex-col gap-3">
           {upcoming.length === 0 ? (
-            <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-16 text-center">
-              <p className="text-[13px] text-[#8A8888]">No upcoming classes scheduled.</p>
+            <div className="bg-white border border-[#E9E7EF] rounded-2xl p-16 text-center">
+              <p className="text-[13px] text-[#9591A8]">No upcoming classes scheduled.</p>
             </div>
           ) : (
             upcoming.map(cls => {
@@ -232,23 +236,23 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
               return (
                 <div
                   key={cls.id}
-                  className={`bg-white border rounded-[14px] px-5 py-4 flex items-center gap-5 shadow-[0_1px_3px_rgba(0,0,0,.06)] transition-all duration-200 hover:shadow-[0_4px_24px_rgba(138,112,214,.12)] ${
-                    today || soon ? 'border-[#D4CAF7] bg-gradient-to-r from-[#faf8ff] to-white' : 'border-[#EBEBEB]'
+                  className={`bg-white border rounded-2xl px-5 py-4 flex items-center gap-5 shadow-[0_2px_8px_rgba(15,13,26,0.06)] transition-all duration-200 hover:shadow-[0_4px_24px_rgba(138,112,214,.12)] ${
+                    today || soon ? 'border-[#D4CAF7] bg-gradient-to-r from-[#faf8ff] to-white' : 'border-[#E9E7EF]'
                   }`}
                 >
                   {/* Date column */}
                   <div className="text-center min-w-[52px] flex-shrink-0">
-                    <div className="text-[10px] font-bold uppercase tracking-[1px] text-[#8A8888]">{day}</div>
-                    <div className={`text-[26px] font-black leading-none ${today || soon ? 'text-[#8A70D6]' : 'text-[#424040]'}`}>{num}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-[1px] text-[#9591A8]">{day}</div>
+                    <div className={`text-[26px] font-semibold leading-none ${today || soon ? 'text-[#7C5CDB]' : 'text-[#1A1523]'}`}>{num}</div>
                   </div>
 
                   {/* Divider */}
-                  <div className="w-px h-14 bg-[#EBEBEB] flex-shrink-0" />
+                  <div className="w-px h-14 bg-[#E9E7EF] flex-shrink-0" />
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-[14px] font-bold text-[#424040] mb-1.5 truncate">{cls.title}</h3>
-                    <div className="flex items-center gap-3.5 text-[12px] text-[#8A8888] flex-wrap">
+                    <h3 className="text-[14px] font-bold text-[#1A1523] mb-1.5 truncate">{cls.title}</h3>
+                    <div className="flex items-center gap-3.5 text-[12px] text-[#9591A8] flex-wrap">
                       <span className="flex items-center gap-1">
                         <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
@@ -266,8 +270,8 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
                     {/* Tags */}
                     <div className="flex gap-1.5 mt-2 flex-wrap">
                       {tmrw && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#D97706]">Tomorrow</span>}
-                      {today && !soon && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E9E3FF] text-[#8A70D6]">Today</span>}
-                      {soon && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#8A70D6] text-white">Starting in {minsUntil(cls.scheduledAt)}m</span>}
+                      {today && !soon && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EDE8FF] text-[#7C5CDB]">Today</span>}
+                      {soon && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#7C5CDB] text-white">Starting in {minsUntil(cls.scheduledAt)}m</span>}
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${getCourseTag(cls.course.title)}`}>
                         {cls.course.title.split(' ')[0]}
                       </span>
@@ -280,8 +284,8 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
                       onClick={() => toggleReminder(cls.id)}
                       className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-md border-[1.5px] text-[12px] font-bold transition-all duration-150 ${
                         hasRem
-                          ? 'border-[#8A70D6] bg-[#E9E3FF] text-[#8A70D6]'
-                          : 'border-[#EBEBEB] text-[#8A8888] hover:border-[#8A70D6] hover:text-[#8A70D6]'
+                          ? 'border-[#7C5CDB] bg-[#EDE8FF] text-[#7C5CDB]'
+                          : 'border-[#E9E7EF] text-[#9591A8] hover:border-[#7C5CDB] hover:text-[#7C5CDB]'
                       }`}
                     >
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -295,7 +299,7 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
                         onClick={() => handleJoin(cls.id, cls.meetingLink)}
                         disabled={attendJoining === cls.id}
                         className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-[12px] font-bold text-white transition-all duration-150 disabled:opacity-70 disabled:cursor-wait"
-                        style={{ background: soon ? '#8A70D6' : '#6B52B8' }}
+                        style={{ background: soon ? '#7C5CDB' : '#6146C4' }}
                       >
                         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
@@ -315,11 +319,11 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
       {tab === 'recordings' && (
         <div>
           {completed.length === 0 ? (
-            <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-16 text-center">
-              <p className="text-[13px] text-[#8A8888]">No recordings available yet.</p>
+            <div className="bg-white border border-[#E9E7EF] rounded-2xl p-16 text-center">
+              <p className="text-[13px] text-[#9591A8]">No recordings available yet.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {completed.map(cls => {
                 const thumb   = getCourseThumb(cls.title)
                 const watched = attendedSet.has(cls.id)
@@ -329,7 +333,7 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
                   <div
                     key={cls.id}
                     onClick={() => cls.recordingUrl ? setModalClass(cls) : null}
-                    className={`bg-white border border-[#EBEBEB] rounded-[14px] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,.06)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_24px_rgba(138,112,214,.12)] hover:border-[#D4CAF7] ${cls.recordingUrl ? 'cursor-pointer' : 'opacity-60'}`}
+                    className={`bg-white border border-[#E9E7EF] rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(15,13,26,0.06)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_4px_24px_rgba(138,112,214,.12)] hover:border-[#D4CAF7] ${cls.recordingUrl ? 'cursor-pointer' : 'opacity-60'}`}
                   >
                     {/* Thumbnail */}
                     <div className="h-[140px] relative flex items-center justify-center" style={{ background: thumb.bg }}>
@@ -338,7 +342,7 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
                       {/* Play overlay */}
                       <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200">
                         <div className="w-11 h-11 rounded-full bg-white/90 flex items-center justify-center">
-                          <svg className="w-[18px] h-[18px] ml-0.5" viewBox="0 0 24 24" fill="#8A70D6">
+                          <svg className="w-[18px] h-[18px] ml-0.5" viewBox="0 0 24 24" fill="#7C5CDB">
                             <polygon points="5 3 19 12 5 21 5 3"/>
                           </svg>
                         </div>
@@ -357,8 +361,8 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
 
                     {/* Info */}
                     <div className="p-3.5">
-                      <h3 className="text-[13px] font-bold text-[#424040] mb-1.5 leading-snug line-clamp-2">{cls.title}</h3>
-                      <div className="flex items-center justify-between text-[11px] text-[#8A8888]">
+                      <h3 className="text-[13px] font-bold text-[#1A1523] mb-1.5 leading-snug line-clamp-2">{cls.title}</h3>
+                      <div className="flex items-center justify-between text-[11px] text-[#9591A8]">
                         <span className="flex items-center gap-1">
                           <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
@@ -368,7 +372,7 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
                         </span>
                       </div>
                       {watched && (
-                        <div className="flex items-center gap-1 text-[11px] font-bold text-[#22C55E] mt-1.5">
+                        <div className="flex items-center gap-1 text-[11px] font-bold text-[#16A34A] mt-1.5">
                           <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
                           </svg>
@@ -391,7 +395,7 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
           onClick={() => setModalClass(null)}
         >
           <div
-            className="bg-black rounded-[14px] overflow-hidden w-full max-w-[800px] relative"
+            className="bg-black rounded-2xl overflow-hidden w-full max-w-[800px] relative"
             onClick={e => e.stopPropagation()}
           >
             <button
@@ -414,8 +418,8 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
                 />
               ) : (
                 <>
-                  <div className="w-16 h-16 rounded-full bg-[#8A70D6]/30 flex items-center justify-center">
-                    <svg className="w-7 h-7 ml-1" viewBox="0 0 24 24" fill="#8A70D6">
+                  <div className="w-16 h-16 rounded-full bg-[#7C5CDB]/30 flex items-center justify-center">
+                    <svg className="w-7 h-7 ml-1" viewBox="0 0 24 24" fill="#7C5CDB">
                       <polygon points="5 3 19 12 5 21 5 3"/>
                     </svg>
                   </div>
@@ -435,7 +439,7 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
               {modalClass.recordingUrl && (
                 <button
                   onClick={() => handleJoin(modalClass.id, modalClass.recordingUrl!)}
-                  className="text-[12px] font-bold text-[#8A70D6] hover:underline">
+                  className="text-[12px] font-bold text-[#7C5CDB] hover:underline">
                   Open in new tab →
                 </button>
               )}
@@ -443,7 +447,7 @@ export default function LiveClassesClient({ bannerClass, isBannerLive, upcoming,
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -453,5 +457,5 @@ function getCourseTag(title: string) {
   if (t.includes('javascript') || t.includes('js')) return 'bg-[#FFFBEB] text-[#D97706]'
   if (t.includes('react'))                           return 'bg-[#ECFEFF] text-[#0891B2]'
   if (t.includes('html') || t.includes('css'))      return 'bg-[#FFF7ED] text-[#EA580C]'
-  return 'bg-[#E9E3FF] text-[#8A70D6]'
+  return 'bg-[#EDE8FF] text-[#7C5CDB]'
 }

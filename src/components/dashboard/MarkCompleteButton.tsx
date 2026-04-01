@@ -39,7 +39,7 @@ export default function MarkCompleteButton({ lessonId, isCompleted, nextLessonHr
 
   if (done) {
     return (
-      <span className="flex items-center gap-2 text-[13px] font-bold text-[#22C55E] bg-[#DCFCE7] px-5 py-2.5 rounded-lg">
+      <span className="flex items-center gap-2 text-[13px] font-bold text-[#16A34A] bg-[#DCFCE7] px-5 py-2.5 rounded-lg">
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="20 6 9 17 4 12"/>
         </svg>
@@ -53,9 +53,9 @@ export default function MarkCompleteButton({ lessonId, isCompleted, nextLessonHr
       onClick={handleClick}
       disabled={loading}
       className="flex items-center gap-2 text-[13px] font-bold text-white px-5 py-2.5 rounded-lg transition-all duration-200 disabled:opacity-60"
-      style={{ background: loading ? '#6B52B8' : '#8A70D6' }}
-      onMouseEnter={e => !loading && (e.currentTarget.style.background = '#6B52B8')}
-      onMouseLeave={e => !loading && (e.currentTarget.style.background = '#8A70D6')}
+      style={{ background: loading ? '#6146C4' : '#7C5CDB' }}
+      onMouseEnter={e => !loading && (e.currentTarget.style.background = '#6146C4')}
+      onMouseLeave={e => !loading && (e.currentTarget.style.background = '#7C5CDB')}
     >
       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="20 6 9 17 4 12"/>

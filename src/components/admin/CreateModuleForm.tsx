@@ -41,7 +41,7 @@ export default function CreateModuleForm({ courseId }: { courseId: string }) {
         </p>
       )}
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1.5">
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">
           Module Title *
         </label>
         <input

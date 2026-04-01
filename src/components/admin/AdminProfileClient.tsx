@@ -60,8 +60,8 @@ export default function AdminProfileClient({ user }: { user: User }) {
     } finally { setPwSaving(false) }
   }
 
-  const inputCls = "w-full border border-[#E8E8EC] rounded-lg px-3 h-[38px] text-[13px] text-[#424040] bg-[#F4F4F6] outline-none focus:border-[#8A70D6] transition-colors"
-  const labelCls = "block text-[11px] font-bold uppercase tracking-[.5px] text-[#8A8888] mb-1.5"
+  const inputCls = "w-full border border-[#E8E8EC] rounded-lg px-3 h-[38px] text-[13px] text-[#1A1523] bg-[#F4F4F6] outline-none focus:border-[#7C5CDB] transition-colors"
+  const labelCls = "block text-[11px] font-bold uppercase tracking-[.5px] text-[#9591A8] mb-1.5"
 
   return (
     <div className="px-7 py-6 pb-12 max-w-[700px]">
@@ -69,12 +69,12 @@ export default function AdminProfileClient({ user }: { user: User }) {
       {/* Header */}
       <div className="flex items-center justify-between mb-7">
         <div>
-          <h1 className="text-[20px] font-black tracking-tight" style={{ color: '#424040' }}>My Profile</h1>
-          <div className="text-[13px] mt-0.5" style={{ color: '#8A8888' }}>Manage your admin account details</div>
+          <h1 className="text-[18px] font-semibold tracking-[-0.01em] tracking-tight" style={{ color: '#1A1523' }}>My Profile</h1>
+          <div className="text-[13px] mt-0.5" style={{ color: '#9591A8' }}>Manage your admin account details</div>
         </div>
         <button onClick={handleSave} disabled={saving}
-          className="px-5 py-2 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6B52B8] disabled:opacity-60"
-          style={{ background: '#8A70D6' }}>
+          className="px-5 py-2 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6146C4] disabled:opacity-60"
+          style={{ background: '#7C5CDB' }}>
           {saving ? 'Saving…' : 'Save Changes'}
         </button>
       </div>
@@ -84,7 +84,7 @@ export default function AdminProfileClient({ user }: { user: User }) {
         {/* Avatar + basic info */}
         <div className="bg-white rounded-xl border border-[#E8E8EC] shadow-[0_1px_4px_rgba(0,0,0,.07)] overflow-hidden">
           {/* Purple header strip */}
-          <div className="h-20 relative" style={{ background: 'linear-gradient(135deg,#8A70D6,#6B52B8)' }} />
+          <div className="h-20 relative" style={{ background: 'linear-gradient(135deg,#7C5CDB,#6146C4)' }} />
 
           <div className="px-6 pb-6">
             {/* Avatar positioned over the strip */}
@@ -140,7 +140,7 @@ export default function AdminProfileClient({ user }: { user: User }) {
         {/* Change Password */}
         <div className="bg-white rounded-xl border border-[#E8E8EC] shadow-[0_1px_4px_rgba(0,0,0,.07)] overflow-hidden">
           <div className="px-5 py-4 border-b border-[#E8E8EC]">
-            <div className="text-[14px] font-black" style={{ color: '#424040' }}>🔒 Change Password</div>
+            <div className="text-[14px] font-black" style={{ color: '#1A1523' }}>🔒 Change Password</div>
           </div>
           <form onSubmit={handlePasswordChange} className="p-5 flex flex-col gap-3">
             {pwError && (
@@ -168,8 +168,8 @@ export default function AdminProfileClient({ user }: { user: User }) {
             </div>
             <div>
               <button type="submit" disabled={pwSaving}
-                className="px-5 py-2 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6B52B8] disabled:opacity-60"
-                style={{ background: '#8A70D6' }}>
+                className="px-5 py-2 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6146C4] disabled:opacity-60"
+                style={{ background: '#7C5CDB' }}>
                 {pwSaving ? 'Updating…' : 'Update Password'}
               </button>
             </div>

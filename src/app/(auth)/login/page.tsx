@@ -1,6 +1,7 @@
 'use client'
 
-import { Suspense, useState, useEffect } from 'react'
+import { Suspense, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { signIn } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -16,10 +17,8 @@ function LoginContent() {
   const [showPw, setShowPw]   = useState(false)
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const router = useRouter()
 
-  useEffect(() => { setMounted(true) }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -104,8 +103,8 @@ function LoginContent() {
         .wordmark-dot {
           width: 8px; height: 8px;
           border-radius: 50%;
-          background: #8A70D6;
-          box-shadow: 0 0 12px #8A70D6;
+          background: #7C5CDB;
+          box-shadow: 0 0 12px #7C5CDB;
         }
 
         .panel-headline {
@@ -120,7 +119,7 @@ function LoginContent() {
 
         .panel-headline em {
           font-style: normal;
-          background: linear-gradient(135deg, #8A70D6, #C4B0FF);
+          background: linear-gradient(135deg, #7C5CDB, #C4B0FF);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -227,7 +226,7 @@ function LoginContent() {
         .mobile-logo-dot {
           width: 7px; height: 7px;
           border-radius: 50%;
-          background: #8A70D6;
+          background: #7C5CDB;
         }
 
         @media (max-width: 900px) {
@@ -290,7 +289,7 @@ function LoginContent() {
 
         .forgot-link {
           font-size: 12px;
-          color: #8A70D6;
+          color: #7C5CDB;
           text-decoration: none;
           font-weight: 500;
         }
@@ -313,7 +312,7 @@ function LoginContent() {
         }
 
         .auth-input:focus {
-          border-color: #8A70D6;
+          border-color: #7C5CDB;
           box-shadow: 0 0 0 3px rgba(138,112,214,.12);
         }
 
@@ -359,7 +358,7 @@ function LoginContent() {
           content: '';
           position: absolute;
           inset: 0;
-          background: linear-gradient(135deg, #8A70D6, #6B52B8);
+          background: linear-gradient(135deg, #7C5CDB, #6146C4);
           opacity: 0;
           transition: opacity .2s;
         }
@@ -386,7 +385,7 @@ function LoginContent() {
           margin-top: 24px;
         }
         .form-footer a {
-          color: #8A70D6;
+          color: #7C5CDB;
           font-weight: 600;
           text-decoration: none;
         }
@@ -433,7 +432,7 @@ function LoginContent() {
 
           <div className="panel-content panel-footer">
             <div className="avatar-stack">
-              {['#8A70D6','#06B6D4','#10B981','#F59E0B'].map((c, i) => (
+              {['#7C5CDB','#06B6D4','#10B981','#F59E0B'].map((c, i) => (
                 <span key={i} style={{ background: c, zIndex: 4 - i }}>
                   {['A','B','C','D'][i]}
                 </span>
@@ -445,7 +444,12 @@ function LoginContent() {
 
         {/* ── Right form ── */}
         <div className="auth-form-side">
-          <div className={`form-box ${mounted ? 'visible' : ''}`}>
+          <motion.div
+            className="form-box visible"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 340, damping: 28, delay: 0.1 }}
+          >
 
             <div className="mobile-logo">
               <div className="mobile-logo-dot" />
@@ -461,14 +465,22 @@ function LoginContent() {
             )}
             <p className="form-sub">Sign in to continue your learning journey.</p>
 
-            {error && (
-              <div className="form-error">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                {error}
-              </div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  className="form-error"
+                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <form onSubmit={handleSubmit}>
               <div className="field">
@@ -506,7 +518,7 @@ function LoginContent() {
               <Link href="/register">Create account</Link>
             </p>
 
-          </div>
+          </motion.div>
         </div>
       </div>
     </>

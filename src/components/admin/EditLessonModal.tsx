@@ -60,19 +60,19 @@ function VideoUpload({ onUpload }: { onUpload: (url: string) => void }) {
 
   return (
     <label className={`flex flex-col items-center gap-2 p-5 rounded-lg border-2 border-dashed cursor-pointer transition-all ${
-      status === 'uploading' ? 'border-[#8A70D6] bg-[#F8F6FF] cursor-wait'
+      status === 'uploading' ? 'border-[#7C5CDB] bg-[#FAF8FF] cursor-wait'
       : status === 'error'   ? 'border-red-300 bg-red-50'
-      : 'border-[#C4B8EE] hover:border-[#8A70D6] hover:bg-[#F8F6FF]'
+      : 'border-[#C8C1E8] hover:border-[#7C5CDB] hover:bg-[#FAF8FF]'
     }`}>
       <input type="file" accept="video/mp4,video/webm,video/mov" className="hidden"
         disabled={status === 'uploading'}
         onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }} />
       {status === 'uploading' ? (
         <>
-          <Loader2 size={20} className="text-[#8A70D6] animate-spin" />
-          <span className="text-[12px] font-medium text-[#424040]">Uploading {fileName}…</span>
-          <div className="w-full h-1.5 bg-[#E9E3FF] rounded-full overflow-hidden">
-            <div className="h-full bg-[#8A70D6] rounded-full transition-all" style={{ width: `${progress}%` }} />
+          <Loader2 size={20} className="text-[#7C5CDB] animate-spin" />
+          <span className="text-[12px] font-medium text-[#1A1523]">Uploading {fileName}…</span>
+          <div className="w-full h-1.5 bg-[#EDE8FF] rounded-full overflow-hidden">
+            <div className="h-full bg-[#7C5CDB] rounded-full transition-all" style={{ width: `${progress}%` }} />
           </div>
         </>
       ) : status === 'error' ? (
@@ -82,9 +82,9 @@ function VideoUpload({ onUpload }: { onUpload: (url: string) => void }) {
         </>
       ) : (
         <>
-          <Upload size={20} className="text-[#C4B8EE]" />
-          <span className="text-[12px] font-semibold text-[#424040]">Upload Video</span>
-          <span className="text-[11px] text-[#8A8888]">MP4, WebM, MOV · Max 500MB</span>
+          <Upload size={20} className="text-[#C8C1E8]" />
+          <span className="text-[12px] font-semibold text-[#1A1523]">Upload Video</span>
+          <span className="text-[11px] text-[#9591A8]">MP4, WebM, MOV · Max 500MB</span>
         </>
       )}
     </label>
@@ -132,7 +132,7 @@ function QuizSection({ lessonId, hasQuiz }: { lessonId: string; hasQuiz: boolean
     finally { setSaving(false) }
   }
 
-  const inputCls = "w-full border border-[#E8E8EC] rounded-lg px-3 h-[36px] text-[13px] text-[#424040] bg-[#F4F4F6] outline-none focus:border-[#8A70D6] transition-colors"
+  const inputCls = "w-full border border-[#E8E8EC] rounded-lg px-3 h-[36px] text-[13px] text-[#1A1523] bg-[#F4F4F6] outline-none focus:border-[#7C5CDB] transition-colors"
 
   return (
     <div className="flex flex-col gap-4">
@@ -151,7 +151,7 @@ function QuizSection({ lessonId, hasQuiz }: { lessonId: string; hasQuiz: boolean
         </div>
       )}
 
-      <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: 'linear-gradient(135deg,#8A70D6,#6B52B8)' }}>
+      <div className="rounded-xl p-4 flex flex-col gap-3" style={{ background: 'linear-gradient(135deg,#7C5CDB,#6146C4)' }}>
         <div className="flex items-center gap-2">
           <span className="text-[18px]">🤖</span>
           <span className="text-[14px] font-black text-white">AI Quiz Generator</span>
@@ -162,13 +162,13 @@ function QuizSection({ lessonId, hasQuiz }: { lessonId: string; hasQuiz: boolean
           placeholder="e.g. JavaScript closures, scope, and the difference between var, let and const..."
           rows={3}
           className="w-full rounded-lg px-3 py-2 text-[12px] outline-none resize-none"
-          style={{ border: 'none', background: 'rgba(255,255,255,.9)', color: '#424040' }} />
+          style={{ border: 'none', background: 'rgba(255,255,255,.9)', color: '#1A1523' }} />
 
         <div className="flex items-center gap-2">
           <label className="text-[12px] text-white/80 font-medium">Questions:</label>
           <select value={count} onChange={e => setCount(Number(e.target.value))}
             className="rounded-md px-2 py-1 text-[12px] outline-none"
-            style={{ border: 'none', background: 'rgba(255,255,255,.9)', color: '#424040' }}>
+            style={{ border: 'none', background: 'rgba(255,255,255,.9)', color: '#1A1523' }}>
             {[3, 5, 8, 10].map(n => <option key={n} value={n}>{n}</option>)}
           </select>
           <button onClick={generate} disabled={loading || !prompt.trim()}
@@ -183,15 +183,15 @@ function QuizSection({ lessonId, hasQuiz }: { lessonId: string; hasQuiz: boolean
 
       {preview && (
         <div className="flex flex-col gap-3">
-          <div className="text-[13px] font-black text-[#424040]">Preview — {preview.length} questions</div>
+          <div className="text-[13px] font-black text-[#1A1523]">Preview — {preview.length} questions</div>
           <div className="flex flex-col gap-2 max-h-[320px] overflow-y-auto pr-1">
             {preview.map((q, i) => (
               <div key={i} className="p-3 rounded-lg border border-[#E8E8EC] bg-[#F8F8FC]">
-                <p className="text-[12px] font-bold text-[#424040] mb-2">Q{i+1}: {q.question}</p>
+                <p className="text-[12px] font-bold text-[#1A1523] mb-2">Q{i+1}: {q.question}</p>
                 <div className="flex flex-col gap-1">
                   {q.options.map((opt, j) => (
                     <div key={j} className={`text-[11px] px-2 py-1 rounded flex items-center gap-1.5 ${
-                      j === q.correctIndex ? 'bg-[#DCFCE7] text-green-700 font-bold' : 'text-[#8A8888]'
+                      j === q.correctIndex ? 'bg-[#DCFCE7] text-green-700 font-bold' : 'text-[#9591A8]'
                     }`}>
                       <span>{j === q.correctIndex ? '✓' : '○'}</span> {opt}
                     </div>
@@ -201,15 +201,15 @@ function QuizSection({ lessonId, hasQuiz }: { lessonId: string; hasQuiz: boolean
             ))}
           </div>
           <button onClick={saveQuiz} disabled={saving}
-            className="w-full py-2.5 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6B52B8] disabled:opacity-60"
-            style={{ background: '#8A70D6' }}>
+            className="w-full py-2.5 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6146C4] disabled:opacity-60"
+            style={{ background: '#7C5CDB' }}>
             {saving ? 'Saving Quiz…' : `Save Quiz (${preview.length} questions)`}
           </button>
         </div>
       )}
 
       <div className="pt-2 border-t border-[#E8E8EC]">
-        <p className="text-[11px] text-[#8A8888]">
+        <p className="text-[11px] text-[#9591A8]">
           You can also manage quizzes in detail from the <strong>Quizzes</strong> page in the sidebar.
         </p>
       </div>
@@ -286,10 +286,10 @@ function AssignmentSection({ lessonId, hasAssignment }: { lessonId: string; hasA
     } catch { setError('Delete failed') }
   }
 
-  const inputCls = "w-full border border-[#E8E8EC] rounded-lg px-3 h-[38px] text-[13px] text-[#424040] bg-[#F4F4F6] outline-none focus:border-[#8A70D6] transition-colors"
-  const labelCls = "block text-[11px] font-bold uppercase tracking-[.5px] text-[#8A8888] mb-1.5"
+  const inputCls = "w-full border border-[#E8E8EC] rounded-lg px-3 h-[38px] text-[13px] text-[#1A1523] bg-[#F4F4F6] outline-none focus:border-[#7C5CDB] transition-colors"
+  const labelCls = "block text-[11px] font-bold uppercase tracking-[.5px] text-[#9591A8] mb-1.5"
 
-  if (loading) return <div className="text-[13px] text-[#8A8888] py-4 text-center">Loading…</div>
+  if (loading) return <div className="text-[13px] text-[#9591A8] py-4 text-center">Loading…</div>
 
   return (
     <div className="flex flex-col gap-4">
@@ -314,9 +314,9 @@ function AssignmentSection({ lessonId, hasAssignment }: { lessonId: string; hasA
         <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
           rows={8}
           placeholder={`Describe what students need to build.\n\nRequirements:\n1. Create a React component that...\n2. Use useState to manage...\n3. Style with CSS modules...\n\nDeliverables:\n- GitHub repository URL\n- Live demo link`}
-          className="w-full border border-[#E8E8EC] rounded-lg px-3 py-2.5 text-[13px] text-[#424040] bg-[#F4F4F6] outline-none focus:border-[#8A70D6] transition-colors resize-y"
+          className="w-full border border-[#E8E8EC] rounded-lg px-3 py-2.5 text-[13px] text-[#1A1523] bg-[#F4F4F6] outline-none focus:border-[#7C5CDB] transition-colors resize-y"
           style={{ minHeight: 160 }} />
-        <p className="text-[11px] text-[#8A8888] mt-1">
+        <p className="text-[11px] text-[#9591A8] mt-1">
           Use numbered lists for requirements. Students will see this formatted.
         </p>
       </div>
@@ -338,8 +338,8 @@ function AssignmentSection({ lessonId, hasAssignment }: { lessonId: string; hasA
 
       <div className="flex gap-2">
         <button onClick={handleSave} disabled={saving}
-          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6B52B8] disabled:opacity-60"
-          style={{ background: '#8A70D6' }}>
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6146C4] disabled:opacity-60"
+          style={{ background: '#7C5CDB' }}>
           {saving && <Loader2 size={13} className="animate-spin" />}
           {saving ? 'Saving…' : existing ? 'Update Assignment' : 'Create Assignment'}
         </button>
@@ -352,7 +352,7 @@ function AssignmentSection({ lessonId, hasAssignment }: { lessonId: string; hasA
       </div>
 
       <div className="pt-2 border-t border-[#E8E8EC]">
-        <p className="text-[11px] text-[#8A8888]">
+        <p className="text-[11px] text-[#9591A8]">
           Students submit a GitHub URL, live demo link, or file upload. Submissions appear in the <strong>Assignments</strong> page for review.
         </p>
       </div>
@@ -414,7 +414,7 @@ export default function EditLessonModal({ lesson }: { lesson: Lesson }) {
 
   return (
     <>
-      <button onClick={() => setOpen(true)} className="text-xs text-[#8A70D6] font-semibold hover:underline">
+      <button onClick={() => setOpen(true)} className="text-xs text-[#7C5CDB] font-semibold hover:underline">
         Edit
       </button>
 
@@ -424,20 +424,20 @@ export default function EditLessonModal({ lesson }: { lesson: Lesson }) {
             style={{ maxHeight: '90vh' }}>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E4F0] flex-shrink-0">
-              <h3 className="font-black text-[#424040] text-[15px] truncate max-w-xs">{lesson.title}</h3>
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#E9E7EF] flex-shrink-0">
+              <h3 className="font-black text-[#1A1523] text-[15px] truncate max-w-xs">{lesson.title}</h3>
               <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0">
                 <X size={16} />
               </button>
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-[#E8E4F0] flex-shrink-0 px-4">
+            <div className="flex border-b border-[#E9E7EF] flex-shrink-0 px-4">
               {tabs.map(t => (
                 <button key={t.key} onClick={() => setActiveTab(t.key)}
                   className="flex items-center gap-1.5 px-4 py-3 text-[13px] font-bold transition-colors relative"
-                  style={{ color: activeTab === t.key ? '#8A70D6' : '#8A8888',
-                           borderBottom: activeTab === t.key ? '2px solid #8A70D6' : '2px solid transparent' }}>
+                  style={{ color: activeTab === t.key ? '#7C5CDB' : '#9591A8',
+                           borderBottom: activeTab === t.key ? '2px solid #7C5CDB' : '2px solid transparent' }}>
                   <span>{t.icon}</span>
                   {t.label}
                   {t.badge && (
@@ -456,21 +456,21 @@ export default function EditLessonModal({ lesson }: { lesson: Lesson }) {
               {activeTab === 'lesson' && (
                 <form onSubmit={handleSave} className="flex flex-col gap-4">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-[.5px] text-[#8A8888] mb-1.5">Title *</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-[.5px] text-[#9591A8] mb-1.5">Title *</label>
                     <input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
-                      required className="w-full border border-[#EBEBEB] rounded-lg px-3 h-[38px] text-[13px] text-[#424040] bg-[#FBFBFB] outline-none focus:border-[#8A70D6] transition-colors" />
+                      required className="w-full border border-[#E9E7EF] rounded-lg px-3 h-[38px] text-[13px] text-[#1A1523] bg-[#F7F7F9] outline-none focus:border-[#7C5CDB] transition-colors" />
                   </div>
 
                   {/* Video */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-[.5px] text-[#8A8888] mb-1.5">Video</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-[.5px] text-[#9591A8] mb-1.5">Video</label>
                     <div className="flex gap-1 p-1 rounded-lg bg-[#F4F4F6] border border-[#E8E8EC] mb-3 w-fit">
                       {([['embed', <Link2 size={11}/>, 'Embed URL'], ['upload', <Upload size={11}/>, 'Upload to R2']] as const).map(([key, icon, label]) => (
                         <button key={key} type="button" onClick={() => setVideoTab(key as any)}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[11px] font-bold transition-all"
                           style={{
                             background: videoTab === key ? '#fff' : 'transparent',
-                            color:      videoTab === key ? '#8A70D6' : '#8A8888',
+                            color:      videoTab === key ? '#7C5CDB' : '#9591A8',
                             boxShadow:  videoTab === key ? '0 1px 3px rgba(0,0,0,.07)' : 'none',
                           }}>
                           {icon}{label}
@@ -482,13 +482,13 @@ export default function EditLessonModal({ lesson }: { lesson: Lesson }) {
                       <div className="flex flex-col gap-1.5">
                         <input type="url" value={rawUrl} onChange={e => { setRawUrl(e.target.value); applyUrl(e.target.value) }}
                           placeholder="YouTube, Vimeo, Loom, or embed URL"
-                          className="w-full border border-[#EBEBEB] rounded-lg px-3 h-[38px] text-[13px] text-[#424040] bg-[#FBFBFB] outline-none focus:border-[#8A70D6] transition-colors" />
+                          className="w-full border border-[#E9E7EF] rounded-lg px-3 h-[38px] text-[13px] text-[#1A1523] bg-[#F7F7F9] outline-none focus:border-[#7C5CDB] transition-colors" />
                         {form.videoUrl && (
                           <p className="text-[11px] text-[#22C55E] font-medium flex items-center gap-1">
                             <CheckCircle size={11} /> Ready: {form.videoUrl.slice(0, 50)}…
                           </p>
                         )}
-                        <p className="text-[11px] text-[#8A8888]">YouTube watch links are auto-converted to embed URLs.</p>
+                        <p className="text-[11px] text-[#9591A8]">YouTube watch links are auto-converted to embed URLs.</p>
                       </div>
                     ) : (
                       <VideoUpload onUpload={url => setForm(p => ({ ...p, videoUrl: url }))} />
@@ -497,7 +497,7 @@ export default function EditLessonModal({ lesson }: { lesson: Lesson }) {
                     {form.videoUrl && (
                       <div className="mt-2">
                         <button type="button" onClick={() => setPreview(p => !p)}
-                          className="text-[11px] font-bold text-[#8A70D6] hover:underline">
+                          className="text-[11px] font-bold text-[#7C5CDB] hover:underline">
                           {preview ? 'Hide preview' : 'Preview video'}
                         </button>
                         {preview && (
@@ -514,17 +514,17 @@ export default function EditLessonModal({ lesson }: { lesson: Lesson }) {
 
                   {/* Content */}
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-[.5px] text-[#8A8888] mb-1.5">Lesson Content (Markdown)</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-[.5px] text-[#9591A8] mb-1.5">Lesson Content (Markdown)</label>
                     <textarea value={form.content} onChange={e => setForm(p => ({ ...p, content: e.target.value }))}
                       rows={8} placeholder="# Lesson Title&#10;&#10;Write your lesson notes in Markdown..."
-                      className="w-full border border-[#EBEBEB] rounded-lg px-3 py-2 text-[13px] text-[#424040] bg-[#FBFBFB] outline-none focus:border-[#8A70D6] transition-colors resize-y font-mono" />
+                      className="w-full border border-[#E9E7EF] rounded-lg px-3 py-2 text-[13px] text-[#1A1523] bg-[#F7F7F9] outline-none focus:border-[#7C5CDB] transition-colors resize-y font-mono" />
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-3 pt-2 border-t border-[#E8E4F0]">
+                  <div className="flex gap-3 pt-2 border-t border-[#E9E7EF]">
                     <button type="submit" disabled={saving}
-                      className="flex items-center gap-2 flex-1 justify-center py-2.5 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6B52B8] disabled:opacity-60"
-                      style={{ background: '#8A70D6' }}>
+                      className="flex items-center gap-2 flex-1 justify-center py-2.5 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6146C4] disabled:opacity-60"
+                      style={{ background: '#7C5CDB' }}>
                       {saving && <Loader2 size={13} className="animate-spin" />}
                       {saving ? 'Saving…' : 'Save Lesson'}
                     </button>

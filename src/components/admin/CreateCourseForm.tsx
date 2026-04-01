@@ -41,20 +41,20 @@ export default function CreateCourseForm() {
       )}
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1.5">Course Title *</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">Course Title *</label>
         <input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
           placeholder="e.g. JavaScript Fundamentals" required className="input text-sm" />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1.5">Description *</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">Description *</label>
         <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
           placeholder="What will students learn?" required rows={3} className="input text-sm resize-none" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-semibold text-[#424040] mb-1.5">Difficulty</label>
+          <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">Difficulty</label>
           <select value={form.difficulty} onChange={e => setForm(p => ({ ...p, difficulty: e.target.value }))}
             className="input text-sm">
             <option value="BEGINNER">Beginner</option>
@@ -63,7 +63,7 @@ export default function CreateCourseForm() {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[#424040] mb-1.5">Category</label>
+          <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">Category</label>
           <input value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
             placeholder="e.g. Frontend" className="input text-sm" />
         </div>
@@ -72,8 +72,8 @@ export default function CreateCourseForm() {
       <label className="flex items-center gap-2 cursor-pointer">
         <input type="checkbox" checked={form.published}
           onChange={e => setForm(p => ({ ...p, published: e.target.checked }))}
-          className="w-4 h-4 accent-[#8A70D6]" />
-        <span className="text-xs font-semibold text-[#424040]">Publish immediately</span>
+          className="w-4 h-4 accent-[#7C5CDB]" />
+        <span className="text-xs font-semibold text-[#1A1523]">Publish immediately</span>
       </label>
 
       <button type="submit" disabled={loading} className="btn-primary w-full text-sm flex items-center justify-center gap-2">

@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: 'Leaderboard — Codentia' }
 function getInitials(name: string) {
   return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
 }
-const AVATAR_COLORS = ['#8A70D6','#06B6D4','#10B981','#F59E0B','#EF4444','#3B82F6','#EC4899']
+const AVATAR_COLORS = ['#7C5CDB','#06B6D4','#10B981','#F59E0B','#EF4444','#3B82F6','#EC4899']
 const avatarColor   = (name: string) => AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length]
 
 const RANK_STYLES = [
@@ -93,23 +93,23 @@ export default async function LeaderboardPage() {
 
       {/* Header */}
       <div className="mb-7">
-        <h1 className="text-[24px] font-black text-[#424040] tracking-tight">🏆 Leaderboard</h1>
-        <p className="text-[13px] text-[#8A8888] mt-1">Top learners ranked by points this week.</p>
+        <h1 className="text-[24px] font-black text-[#1A1523] tracking-tight">🏆 Leaderboard</h1>
+        <p className="text-[13px] text-[#9591A8] mt-1">Top learners ranked by points this week.</p>
       </div>
 
       {/* My rank banner (if not top 3) */}
       {myRank > 3 && myEntry && (
         <div className="mb-5 rounded-[14px] px-5 py-4 flex items-center gap-4"
-          style={{ background: 'linear-gradient(135deg,#E9E3FF,#D4CAF7)', border: '1px solid #C4B8EE' }}>
+          style={{ background: 'linear-gradient(135deg,#EDE8FF,#D4CAF7)', border: '1px solid #C8C1E8' }}>
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-[14px] font-black text-white flex-shrink-0"
             style={{ background: avatarColor(myEntry.name) }}>
             {getInitials(myEntry.name)}
           </div>
           <div className="flex-1">
-            <div className="text-[13px] font-black text-[#424040]">Your ranking</div>
-            <div className="text-[12px] text-[#8A8888]">Keep going — you&apos;re #{myRank} with {myEntry.pts} pts</div>
+            <div className="text-[13px] font-black text-[#1A1523]">Your ranking</div>
+            <div className="text-[12px] text-[#9591A8]">Keep going — you&apos;re #{myRank} with {myEntry.pts} pts</div>
           </div>
-          <div className="text-[28px] font-black text-[#8A70D6]">#{myRank}</div>
+          <div className="text-[28px] font-black text-[#7C5CDB]">#{myRank}</div>
         </div>
       )}
 
@@ -124,10 +124,10 @@ export default async function LeaderboardPage() {
             const isMe  = s.id === myId
             return (
               <div key={s.id}
-                className={`bg-white border rounded-[14px] p-5 text-center shadow-[0_1px_3px_rgba(0,0,0,.06)] relative transition-all ${isMe ? 'ring-2 ring-[#8A70D6]' : ''} ${rank === 1 ? 'scale-105 shadow-[0_4px_24px_rgba(138,112,214,.2)]' : ''}`}
-                style={{ borderColor: rank === 1 ? '#D4CAF7' : '#EBEBEB' }}>
+                className={`bg-white border rounded-[14px] p-5 text-center shadow-[0_1px_3px_rgba(0,0,0,.06)] relative transition-all ${isMe ? 'ring-2 ring-[#7C5CDB]' : ''} ${rank === 1 ? 'scale-105 shadow-[0_4px_24px_rgba(138,112,214,.2)]' : ''}`}
+                style={{ borderColor: rank === 1 ? '#D4CAF7' : '#E9E7EF' }}>
                 {isMe && (
-                  <span className="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E9E3FF] text-[#8A70D6]">You</span>
+                  <span className="absolute top-3 right-3 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#EDE8FF] text-[#7C5CDB]">You</span>
                 )}
                 <div className="w-10 h-10 rounded-full flex items-center justify-center text-[18px] font-black text-white mx-auto mb-3"
                   style={{ background: style.bg }}>
@@ -137,9 +137,9 @@ export default async function LeaderboardPage() {
                   style={{ background: avatarColor(s.name) }}>
                   {getInitials(s.name)}
                 </div>
-                <div className="text-[13px] font-black text-[#424040] truncate">{s.name}</div>
-                <div className="text-[22px] font-black text-[#8A70D6] mt-1">{s.pts.toLocaleString()}</div>
-                <div className="text-[11px] text-[#8A8888]">points</div>
+                <div className="text-[13px] font-black text-[#1A1523] truncate">{s.name}</div>
+                <div className="text-[22px] font-black text-[#7C5CDB] mt-1">{s.pts.toLocaleString()}</div>
+                <div className="text-[11px] text-[#9591A8]">points</div>
                 <div className="flex justify-center gap-1 mt-2 flex-wrap">
                   {s.topBadges.map(b => (
                     <span key={b.id} title={b.name} className="text-[14px]">{b.icon}</span>
@@ -152,16 +152,16 @@ export default async function LeaderboardPage() {
       )}
 
       {/* Full table */}
-      <div className="bg-white border border-[#EBEBEB] rounded-[14px] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-        <div className="px-5 py-3.5 border-b border-[#EBEBEB] flex items-center justify-between">
-          <div className="text-[14px] font-black text-[#424040]">All Students</div>
-          <div className="text-[12px] text-[#8A8888]">{ranked.length} learners</div>
+      <div className="bg-white border border-[#E9E7EF] rounded-[14px] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+        <div className="px-5 py-3.5 border-b border-[#E9E7EF] flex items-center justify-between">
+          <div className="text-[14px] font-black text-[#1A1523]">All Students</div>
+          <div className="text-[12px] text-[#9591A8]">{ranked.length} learners</div>
         </div>
         <table className="w-full">
           <thead>
-            <tr style={{ borderBottom: '1px solid #EBEBEB' }}>
+            <tr style={{ borderBottom: '1px solid #E9E7EF' }}>
               {['Rank','Student','Points','Lessons','Quizzes','Streak','Badges'].map(h => (
-                <th key={h} className="text-left text-[11px] font-bold uppercase tracking-[.6px] px-4 py-3 text-[#8A8888]">{h}</th>
+                <th key={h} className="text-left text-[11px] font-bold uppercase tracking-[.6px] px-4 py-3 text-[#9591A8]">{h}</th>
               ))}
             </tr>
           </thead>
@@ -171,10 +171,10 @@ export default async function LeaderboardPage() {
               const isMe = s.id === myId
               return (
                 <tr key={s.id}
-                  className={`transition-colors ${isMe ? 'bg-[#F8F6FF]' : 'hover:bg-[#FAFAFA]'}`}
-                  style={{ borderBottom: '1px solid #EBEBEB' }}>
+                  className={`transition-colors ${isMe ? 'bg-[#FAF8FF]' : 'hover:bg-[#FAFAFA]'}`}
+                  style={{ borderBottom: '1px solid #E9E7EF' }}>
                   <td className="px-4 py-3">
-                    <span className={`text-[13px] font-black ${rank <= 3 ? 'text-[#8A70D6]' : 'text-[#8A8888]'}`}>
+                    <span className={`text-[13px] font-black ${rank <= 3 ? 'text-[#7C5CDB]' : 'text-[#9591A8]'}`}>
                       {rank <= 3 ? ['🥇','🥈','🥉'][rank-1] : `#${rank}`}
                     </span>
                   </td>
@@ -185,20 +185,20 @@ export default async function LeaderboardPage() {
                         {getInitials(s.name)}
                       </div>
                       <div>
-                        <div className="text-[13px] font-bold text-[#424040]">{s.name}</div>
-                        {isMe && <div className="text-[10px] font-bold text-[#8A70D6]">You</div>}
+                        <div className="text-[13px] font-bold text-[#1A1523]">{s.name}</div>
+                        {isMe && <div className="text-[10px] font-bold text-[#7C5CDB]">You</div>}
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-[14px] font-black text-[#8A70D6]">{s.pts.toLocaleString()}</span>
+                    <span className="text-[14px] font-black text-[#7C5CDB]">{s.pts.toLocaleString()}</span>
                   </td>
-                  <td className="px-4 py-3 text-[13px] font-bold text-[#424040]">{s.lessonsCompleted}</td>
-                  <td className="px-4 py-3 text-[13px] font-bold text-[#424040]">{s.quizzesPassed}</td>
+                  <td className="px-4 py-3 text-[13px] font-bold text-[#1A1523]">{s.lessonsCompleted}</td>
+                  <td className="px-4 py-3 text-[13px] font-bold text-[#1A1523]">{s.quizzesPassed}</td>
                   <td className="px-4 py-3">
                     {s.streak > 0
                       ? <span className="text-[12px] font-bold text-[#F59E0B]">🔥 {s.streak}d</span>
-                      : <span className="text-[12px] text-[#8A8888]">—</span>}
+                      : <span className="text-[12px] text-[#9591A8]">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-0.5">
@@ -206,7 +206,7 @@ export default async function LeaderboardPage() {
                         <span key={b.id} title={b.name} className="text-[14px]">{b.icon}</span>
                       ))}
                       {s.badgeCount > 3 && (
-                        <span className="text-[10px] font-bold text-[#8A8888] ml-0.5">+{s.badgeCount - 3}</span>
+                        <span className="text-[10px] font-bold text-[#9591A8] ml-0.5">+{s.badgeCount - 3}</span>
                       )}
                     </div>
                   </td>
@@ -218,8 +218,8 @@ export default async function LeaderboardPage() {
       </div>
 
       {/* How points work */}
-      <div className="mt-5 bg-[#F8F6FF] border border-[#E9E3FF] rounded-[14px] p-5">
-        <div className="text-[13px] font-black text-[#424040] mb-3">How points are earned</div>
+      <div className="mt-5 bg-[#FAF8FF] border border-[#EDE8FF] rounded-[14px] p-5">
+        <div className="text-[13px] font-black text-[#1A1523] mb-3">How points are earned</div>
         <div className="grid grid-cols-3 gap-3">
           {[
             { icon: '📖', label: 'Lesson completed',   pts: '10 pts' },
@@ -232,8 +232,8 @@ export default async function LeaderboardPage() {
             <div key={r.label} className="flex items-center gap-2.5">
               <span className="text-[18px]">{r.icon}</span>
               <div>
-                <div className="text-[11px] font-bold text-[#424040]">{r.label}</div>
-                <div className="text-[11px] text-[#8A70D6] font-black">{r.pts}</div>
+                <div className="text-[11px] font-bold text-[#1A1523]">{r.label}</div>
+                <div className="text-[11px] text-[#7C5CDB] font-black">{r.pts}</div>
               </div>
             </div>
           ))}
@@ -241,7 +241,7 @@ export default async function LeaderboardPage() {
       </div>
 
       <div className="mt-4 text-center">
-        <Link href="/progress" className="text-[13px] font-bold text-[#8A70D6] hover:underline">
+        <Link href="/progress" className="text-[13px] font-bold text-[#7C5CDB] hover:underline">
           View your detailed progress →
         </Link>
       </div>

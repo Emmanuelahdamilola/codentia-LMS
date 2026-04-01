@@ -59,7 +59,7 @@ export default function CreateLessonForm({ modules }: { modules: Module[] }) {
       )}
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1.5">Module *</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">Module *</label>
         <select
           value={form.moduleId}
           onChange={e => setForm(p => ({ ...p, moduleId: e.target.value }))}
@@ -74,7 +74,7 @@ export default function CreateLessonForm({ modules }: { modules: Module[] }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1.5">Lesson Title *</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">Lesson Title *</label>
         <input
           value={form.title}
           onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
@@ -85,9 +85,9 @@ export default function CreateLessonForm({ modules }: { modules: Module[] }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1.5">
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">
           Video URL
-          <span className="text-[#8A8888] font-normal ml-1">(YouTube / Vimeo embed)</span>
+          <span className="text-[#9591A8] font-normal ml-1">(YouTube / Vimeo embed)</span>
         </label>
         <input
           type="url"
@@ -99,9 +99,9 @@ export default function CreateLessonForm({ modules }: { modules: Module[] }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1.5">
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">
           Lesson Content
-          <span className="text-[#8A8888] font-normal ml-1">(Markdown supported)</span>
+          <span className="text-[#9591A8] font-normal ml-1">(Markdown supported)</span>
         </label>
         <textarea
           value={form.content}
@@ -118,18 +118,18 @@ export default function CreateLessonForm({ modules }: { modules: Module[] }) {
             type="checkbox"
             checked={form.hasQuiz}
             onChange={e => setForm(p => ({ ...p, hasQuiz: e.target.checked }))}
-            className="w-4 h-4 accent-[#8A70D6]"
+            className="w-4 h-4 accent-[#7C5CDB]"
           />
-          <span className="text-xs font-semibold text-[#424040]">Has Quiz</span>
+          <span className="text-xs font-semibold text-[#1A1523]">Has Quiz</span>
         </label>
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
             checked={form.hasAssignment}
             onChange={e => setForm(p => ({ ...p, hasAssignment: e.target.checked }))}
-            className="w-4 h-4 accent-[#8A70D6]"
+            className="w-4 h-4 accent-[#7C5CDB]"
           />
-          <span className="text-xs font-semibold text-[#424040]">Has Assignment</span>
+          <span className="text-xs font-semibold text-[#1A1523]">Has Assignment</span>
         </label>
       </div>
 

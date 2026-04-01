@@ -135,8 +135,8 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
   function DotBar() {
     return (
       <div className="flex items-center justify-between mb-7">
-        <span className="text-[13px] font-bold text-[#424040]">
-          Question <span className="text-[#8A70D6]">{currentIdx + 1}</span> of {total}
+        <span className="text-[13px] font-bold text-[#1A1523]">
+          Question <span className="text-[#7C5CDB]">{currentIdx + 1}</span> of {total}
         </span>
         <div className="flex gap-1.5">
           {questions.map((q, i) => {
@@ -148,9 +148,9 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
               <div key={q.id} className="h-1.5 w-7 rounded-full transition-all duration-300" style={{
                 background: right  ? '#16A34A'
                           : wrong  ? '#DC2626'
-                          : active ? '#8A70D6'
-                          : i < currentIdx ? '#8A70D6'
-                          : '#EBEBEB',
+                          : active ? '#7C5CDB'
+                          : i < currentIdx ? '#7C5CDB'
+                          : '#E9E7EF',
               }} />
             )
           })}
@@ -169,13 +169,13 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
     return (
       <div>
         {/* Result card */}
-        <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-10 text-center shadow-[0_1px_3px_rgba(0,0,0,.06),0_4px_16px_rgba(0,0,0,.04)] mb-5">
+        <div className="bg-white border border-[#E9E7EF] rounded-2xl p-10 text-center shadow-[0_2px_8px_rgba(15,13,26,0.06)] mb-5">
           <div className="text-[56px] mb-2">{passed ? '🎉' : '📚'}</div>
-          <div className="text-[28px] font-black text-[#424040] tracking-tight">{correctCount} / {total} Correct</div>
-          <div className="text-[14px] text-[#8A8888] mt-2 mb-6">Score: {finalScore}% · {passed ? 'Passed ✓' : 'Not passed — try again'}</div>
+          <div className="text-[28px] font-semibold text-[#1A1523] tracking-tight" style={{ letterSpacing: "-0.03em" }}>{correctCount} / {total} Correct</div>
+          <div className="text-[14px] text-[#9591A8] mt-2 mb-6">Score: {finalScore}% · {passed ? 'Passed ✓' : 'Not passed — try again'}</div>
 
           {passed && (
-            <div className="inline-flex items-center gap-2 bg-[#DCFCE7] text-[#15803D] rounded-full px-5 py-2 font-bold text-[14px] mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full px-5 py-2 font-semibold text-[14px] mb-6" style={{ background: "#DCFCE7", color: "#15803D" }}>
               ✓ Quiz Passed!
             </div>
           )}
@@ -187,12 +187,12 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
                 setSubmitted({}); setCorrectMap({}); setTimeLeft(totalTimeSecs)
                 setTimerRunning(true); setFinalScore(0)
               }}
-              className="flex items-center gap-2 bg-[#E9E3FF] text-[#8A70D6] border border-[#D4CAF7] font-bold text-[13px] px-5 py-2.5 rounded-lg hover:bg-[#8A70D6] hover:text-white transition-all duration-200"
+              className="flex items-center gap-2 text-[13px] font-semibold px-5 py-2.5 rounded-xl transition-all duration-150 active:scale-95" style={{ background: "#EDE8FF", color: "#7C5CDB", border: "1px solid #C8C1E8" }} onMouseEnter={e => { const el=e.currentTarget as HTMLButtonElement; el.style.background="#7C5CDB"; el.style.color="#fff" }} onMouseLeave={e => { const el=e.currentTarget as HTMLButtonElement; el.style.background="#EDE8FF"; el.style.color="#7C5CDB" }}
             >
               Review Answers
             </button>
             <Link href={`/courses/${courseId}/learn/${lessonId}`}
-              className="flex items-center gap-2 bg-[#8A70D6] text-white font-bold text-[13px] px-5 py-2.5 rounded-lg hover:bg-[#6B52B8] transition-all duration-200">
+              className="flex items-center gap-2 text-white font-semibold text-[13px] px-5 py-2.5 rounded-xl transition-all duration-150 active:scale-95" style={{ background: "#7C5CDB", boxShadow: "0 1px 2px rgba(124,92,219,0.3)" }} onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background="#6146C4"} onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background="#7C5CDB"}>
               Continue Learning →
             </Link>
           </div>
@@ -206,13 +206,13 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
             const isRight = sel !== undefined && correct !== undefined && sel === correct
 
             return (
-              <div key={q.id} className="bg-white border-[1.5px] rounded-[14px] p-6 shadow-[0_1px_3px_rgba(0,0,0,.06)]"
+              <div key={q.id} className="bg-white border-[1.5px] rounded-2xl p-6 shadow-[0_2px_8px_rgba(15,13,26,0.06)]"
                 style={{ borderColor: isRight ? '#86EFAC' : '#FCA5A5' }}>
                 <div className="flex items-start gap-2.5 mb-4">
                   <span className={`w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold mt-0.5 ${isRight ? 'bg-[#16A34A] text-white' : 'bg-[#DC2626] text-white'}`}>
                     {isRight ? '✓' : '✗'}
                   </span>
-                  <p className="text-[14px] font-bold text-[#424040] leading-snug">Q{qi + 1}. {q.question}</p>
+                  <p className="text-[14px] font-semibold text-[#1A1523] leading-snug">Q{qi + 1}. {q.question}</p>
                 </div>
 
                 <div className="flex flex-col gap-2 ml-7">
@@ -220,8 +220,8 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
                     const isCorrectOpt = correct !== undefined && opt.order === correct
                     const isWrongPick  = opt.order === sel && !isRight
                     return (
-                      <div key={opt.id} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] ${isCorrectOpt ? 'bg-[#DCFCE7] text-[#15803D] font-bold' : isWrongPick ? 'bg-[#FEE2E2] text-[#B91C1C]' : 'text-[#8A8888]'}`}>
-                        <span className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold border-[1.5px] ${isCorrectOpt ? 'bg-[#16A34A] border-[#16A34A] text-white' : isWrongPick ? 'bg-[#DC2626] border-[#DC2626] text-white' : 'border-[#EBEBEB] text-[#8A8888]'}`}>
+                      <div key={opt.id} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] ${isCorrectOpt ? 'bg-[#DCFCE7] text-[#15803D] font-semibold' : isWrongPick ? 'bg-[#FEE2E2] text-[#B91C1C]' : 'text-[#9591A8]'}`}>
+                        <span className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold border-[1.5px] ${isCorrectOpt ? 'bg-[#16A34A] border-[#16A34A] text-white' : isWrongPick ? 'bg-[#DC2626] border-[#DC2626] text-white' : 'border-[#E9E7EF] text-[#9591A8]'}`}>
                           {LETTERS[opt.order]}
                         </span>
                         <span className="flex-1">{opt.text}</span>
@@ -232,7 +232,7 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
                 </div>
 
                 {q.explanation && (
-                  <div className="mt-3 ml-7 bg-[#F8F6FF] border border-[#E9E3FF] rounded-lg px-3 py-2.5 text-[12px] text-[#8A8888] leading-relaxed">
+                  <div className="mt-3 ml-7 bg-[#FAF8FF] border border-[#EDE8FF] rounded-lg px-3 py-2.5 text-[12px] text-[#9591A8] leading-relaxed">
                     💡 {q.explanation}
                   </div>
                 )}
@@ -250,10 +250,10 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
   if (phase === 'submitting') {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <svg className="w-8 h-8 animate-spin text-[#8A70D6]" viewBox="0 0 24 24" fill="none">
+        <svg className="w-8 h-8 animate-spin text-[#7C5CDB]" viewBox="0 0 24 24" fill="none">
           <path d="M21 12a9 9 0 1 1-6.219-8.56" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
         </svg>
-        <p className="text-[14px] font-bold text-[#424040]">Grading your quiz...</p>
+        <p className="text-[14px] font-semibold text-[#1A1523]">Grading your quiz…</p>
       </div>
     )
   }
@@ -273,9 +273,9 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
       )}
 
       {/* Question card */}
-      <div className="bg-white border border-[#EBEBEB] rounded-[14px] px-7 py-6 shadow-[0_1px_3px_rgba(0,0,0,.06),0_4px_16px_rgba(0,0,0,.04)] mb-5">
-        <p className="text-[17px] font-bold text-[#424040] leading-snug mb-2">{currentQ.question}</p>
-        <p className="text-[13px] text-[#8A8888] mb-5">Select the best answer.</p>
+      <div className="bg-white border border-[#E9E7EF] rounded-2xl px-7 py-6 shadow-[0_2px_8px_rgba(15,13,26,0.06)] mb-5">
+        <p className="text-[17px] font-semibold text-[#1A1523] leading-snug mb-2">{currentQ.question}</p>
+        <p className="text-[13px] text-[#9591A8] mb-5">Select the best answer.</p>
 
         <div className="flex flex-col gap-2.5">
           {currentQ.options.slice().sort((a, b) => a.order - b.order).map(opt => {
@@ -283,18 +283,18 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
             const isCorrectOpt = isSubmitted && knownCorrect !== undefined && opt.order === knownCorrect
             const isWrongPick  = isSubmitted && isSelected && answerState === 'incorrect'
 
-            let cls       = 'border-[#EBEBEB] bg-white hover:border-[#A48FE0] hover:bg-[#E9E3FF]'
-            let letterCls = 'bg-[#FBFBFB] border-[#EBEBEB] text-[#8A8888]'
-            let textCls   = 'text-[#424040]'
+            let cls       = 'border-[#E9E7EF] bg-white hover:border-[#A48FE0] hover:bg-[#EDE8FF]'
+            let letterCls = 'bg-[#F7F7F9] border-[#E9E7EF] text-[#9591A8]'
+            let textCls   = 'text-[#1A1523]'
 
             if (!isSubmitted && isSelected) {
-              cls       = 'border-[#8A70D6] bg-[#E9E3FF]'
-              letterCls = 'bg-[#8A70D6] border-[#8A70D6] text-white'
+              cls       = 'border-[#7C5CDB] bg-[#EDE8FF]'
+              letterCls = 'bg-[#7C5CDB] border-[#7C5CDB] text-white'
             }
             if (isCorrectOpt) {
               cls       = 'border-[#16A34A] bg-[#DCFCE7]'
               letterCls = 'bg-[#16A34A] border-[#16A34A] text-white'
-              textCls   = 'text-[#15803D] font-bold'
+              textCls   = 'text-[#15803D] font-semibold'
             }
             if (isWrongPick) {
               cls       = 'border-[#DC2626] bg-[#FEE2E2]'
@@ -306,7 +306,7 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
               <button key={opt.id}
                 disabled={isSubmitted}
                 onClick={() => !isSubmitted && setSelections(p => ({ ...p, [currentQ.id]: opt.order }))}
-                className={`flex items-center gap-3.5 px-4 py-3.5 rounded-[10px] border-[1.5px] w-full text-left transition-all duration-150 ${cls} disabled:cursor-default`}
+                className={`flex items-center gap-3.5 px-4 py-3.5 rounded-xl border-[1.5px] w-full text-left transition-all duration-150 ${cls} disabled:cursor-default`}
               >
                 <span className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold text-[13px] border-[1.5px] transition-all ${letterCls}`}>
                   {LETTERS[opt.order]}
@@ -320,13 +320,13 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
 
       {/* Feedback banner — only show when we have a definitive answer */}
       {isSubmitted && answerState !== 'idle' && (
-        <div className="flex items-start gap-3 px-4 py-3.5 rounded-[10px] border mb-5"
+        <div className="flex items-start gap-3 px-4 py-3.5 rounded-xl border mb-5"
           style={{ background: answerState === 'correct' ? '#DCFCE7' : '#FEE2E2', borderColor: answerState === 'correct' ? '#86EFAC' : '#FCA5A5' }}>
           <span className={`w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[12px] font-bold mt-0.5 ${answerState === 'correct' ? 'bg-[#16A34A] text-white' : 'bg-[#DC2626] text-white'}`}>
             {answerState === 'correct' ? '✓' : '✗'}
           </span>
           <div>
-            <p className={`text-[13px] font-bold ${answerState === 'correct' ? 'text-[#15803D]' : 'text-[#B91C1C]'}`}>
+            <p className={`text-[13px] font-semibold ${answerState === 'correct' ? 'text-[#15803D]' : 'text-[#B91C1C]'}`}>
               {answerState === 'correct' ? 'Correct! Well done.' : 'Not quite — the correct answer is highlighted in green.'}
             </p>
             {currentQ.explanation && (
@@ -341,17 +341,17 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
       {/* Loading state while checking answer */}
       {isSubmitted && answerState === 'idle' && (
         <div className="flex items-center gap-2 px-4 py-3 mb-5">
-          <svg className="w-4 h-4 animate-spin text-[#8A70D6]" viewBox="0 0 24 24" fill="none">
+          <svg className="w-4 h-4 animate-spin text-[#7C5CDB]" viewBox="0 0 24 24" fill="none">
             <path d="M21 12a9 9 0 1 1-6.219-8.56" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
           </svg>
-          <span className="text-[13px] text-[#8A8888]">Checking answer...</span>
+          <span className="text-[13px] text-[#9591A8]">Checking answer...</span>
         </div>
       )}
 
       {/* Navigation */}
       <div className="flex items-center justify-between">
         <button onClick={goPrev} disabled={currentIdx === 0}
-          className="flex items-center gap-1.5 bg-white text-[#424040] border border-[#EBEBEB] font-bold text-[13px] px-5 py-2.5 rounded-lg hover:border-[#8A70D6] hover:text-[#8A70D6] transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed">
+          className="flex items-center gap-1.5 bg-white text-[#5A5672] border border-[#E9E7EF] font-semibold text-[13px] px-5 py-2.5 rounded-xl hover:border-[#7C5CDB] hover:text-[#7C5CDB] transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed">
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           Previous
         </button>
@@ -359,7 +359,7 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
         <div className="flex items-center gap-2">
           {!isSubmitted && (
             <button onClick={handleSubmitAnswer} disabled={selectedOrder === undefined || submitLoading}
-              className="bg-[#E9E3FF] text-[#8A70D6] border border-[#D4CAF7] font-bold text-[13px] px-5 py-2.5 rounded-lg hover:bg-[#8A70D6] hover:text-white transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+              className="text-[13px] font-semibold px-5 py-2.5 rounded-xl transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2 active:scale-95" style={{ background: "#EDE8FF", color: "#7C5CDB", border: "1px solid #C8C1E8" }} onMouseEnter={e => { if (!(e.currentTarget as HTMLButtonElement).disabled) { (e.currentTarget as HTMLButtonElement).style.background="#7C5CDB"; (e.currentTarget as HTMLButtonElement).style.color="#fff" }}} onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background="#EDE8FF"; (e.currentTarget as HTMLButtonElement).style.color="#7C5CDB" }}>
               {submitLoading ? (
                 <><svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 1 1-6.219-8.56" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>Checking…</>
               ) : 'Submit Answer'}
@@ -368,7 +368,7 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
 
           <button onClick={currentIdx < total - 1 ? goNext : handleFinish}
             disabled={!isSubmitted}
-            className="flex items-center gap-1.5 bg-[#8A70D6] text-white font-bold text-[13px] px-5 py-2.5 rounded-lg hover:bg-[#6B52B8] transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed">
+            className="flex items-center gap-1.5 text-white font-semibold text-[13px] px-5 py-2.5 rounded-xl transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed active:scale-95" style={{ background: "#7C5CDB", boxShadow: "0 1px 2px rgba(124,92,219,0.3)" }} onMouseEnter={e => { if (!(e.currentTarget as HTMLButtonElement).disabled) (e.currentTarget as HTMLButtonElement).style.background="#6146C4" }} onMouseLeave={e => (e.currentTarget as HTMLButtonElement).style.background="#7C5CDB"}>
             {currentIdx < total - 1
               ? <>Next <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg></>
               : <>Finish Quiz <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg></>
@@ -379,10 +379,10 @@ export default function QuizClient({ quiz, lessonId, courseId, totalTimeSecs }: 
 
       {/* Timer strip */}
       <div className="mt-6 flex items-center gap-3">
-        <div className="flex-1 h-1 bg-[#EBEBEB] rounded-full overflow-hidden">
-          <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${(timeLeft / totalTimeSecs) * 100}%`, background: timeLeft < 60 ? '#EF4444' : '#8A70D6' }} />
+        <div className="flex-1 h-1 bg-[#E9E7EF] rounded-full overflow-hidden">
+          <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${(timeLeft / totalTimeSecs) * 100}%`, background: timeLeft < 60 ? '#DC2626' : '#7C5CDB' }} />
         </div>
-        <span className="text-[12px] font-bold tabular-nums w-10 text-right" style={{ color: timeLeft < 60 ? '#EF4444' : '#8A70D6' }}>
+        <span className="text-[12px] font-bold tabular-nums w-10 text-right" style={{ color: timeLeft < 60 ? '#DC2626' : '#7C5CDB' }}>
           {formatTime(timeLeft)}
         </span>
       </div>

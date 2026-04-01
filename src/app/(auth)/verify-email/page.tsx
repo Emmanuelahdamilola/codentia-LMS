@@ -131,7 +131,7 @@ function VerifyEmailContent() {
         border:'1px solid #E8E8EC', boxShadow:'0 4px 24px rgba(0,0,0,.07)', padding:40, textAlign:'center' }}>
 
         <div style={{ fontSize:52, marginBottom:16 }}>{c.icon}</div>
-        <div style={{ width:48, height:48, borderRadius:'50%', background:'linear-gradient(135deg,#8A70D6,#6B52B8)',
+        <div style={{ width:48, height:48, borderRadius:'50%', background:'linear-gradient(135deg,#7C5CDB,#6146C4)',
           display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
           <span style={{ color:'#fff', fontWeight:800, fontSize:18 }}>C</span>
         </div>
@@ -139,7 +139,7 @@ function VerifyEmailContent() {
         {c.body}
 
         <div style={{ marginTop:28, paddingTop:20, borderTop:'1px solid #E8E8EC' }}>
-          <Link href="/home" style={{ fontSize:12, color:'#8A8888', textDecoration:'none' }}>
+          <Link href="/home" style={{ fontSize:12, color:'#9591A8', textDecoration:'none' }}>
             ← Back to Codentia
           </Link>
         </div>
@@ -152,7 +152,7 @@ function VerifyEmailContent() {
 const sub: React.CSSProperties = { fontSize:14, color:'#71717a', lineHeight:1.6, margin:0 }
 const btn: React.CSSProperties = {
   display:'inline-block', marginTop:16,
-  background:'#8A70D6', color:'#fff', textDecoration:'none',
+  background:'#7C5CDB', color:'#fff', textDecoration:'none',
   padding:'12px 28px', borderRadius:8, fontSize:14, fontWeight:700,
   border:'none', cursor:'pointer', width:'100%',
 }

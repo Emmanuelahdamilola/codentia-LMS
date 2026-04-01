@@ -1,75 +1,72 @@
 /**
  * styles/tokens.css
- * Codentia Design System — CSS Custom Properties
- * Import this in globals.css: @import '@/styles/tokens.css';
+ * Codentia Design System — Premium Edition
  */
 
+
 :root {
-  /* ─── Brand Palette ──────────────────────────────── */
-  --color-primary:       #8A70D6;
-  --color-primary-dark:  #6B52B8;
-  --color-primary-dim:   #5B3FAA;
-  --color-primary-tint:  #E9E3FF;
-  --color-primary-light: #F0EAFF;
-  --color-primary-faint: #F8F6FF;
+  --color-primary:       #7C5CDB;
+  --color-primary-dark:  #6146C4;
+  --color-primary-dim:   #4F38A8;
+  --color-primary-tint:  #EDE8FF;
+  --color-primary-light: #F4F1FF;
+  --color-primary-faint: #FAF8FF;
 
-  /* ─── Neutrals ───────────────────────────────────── */
-  --color-bg:       #FBFBFB;
-  --color-surface:  #FFFFFF;
-  --color-border:   #E8E4F0;
-  --color-border-strong: #C4B8EE;
+  --color-bg:            #F7F7F9;
+  --color-surface:       #FFFFFF;
+  --color-surface-raised:#FFFFFF;
+  --color-border:        #E9E7EF;
+  --color-border-strong: #C8C1E8;
+  --color-border-subtle: #F0EEF7;
 
-  /* ─── Text ───────────────────────────────────────── */
-  --color-text:       #424040;
-  --color-text-muted: #8A8888;
-  --color-text-faint: #B0ADAD;
+  --color-text:          #1A1523;
+  --color-text-secondary:#5A5672;
+  --color-text-muted:    #9591A8;
+  --color-text-faint:    #C4C0D4;
+  --color-text-inverse:  #FFFFFF;
 
-  /* ─── Semantic ───────────────────────────────────── */
-  --color-success:       #22C55E;
+  --color-success:       #16A34A;
   --color-success-tint:  #DCFCE7;
-  --color-warning:       #F59E0B;
+  --color-success-fg:    #15803D;
+  --color-warning:       #D97706;
   --color-warning-tint:  #FEF3C7;
-  --color-error:         #EF4444;
+  --color-warning-fg:    #B45309;
+  --color-error:         #DC2626;
   --color-error-tint:    #FEE2E2;
-  --color-info:          #3B82F6;
+  --color-error-fg:      #B91C1C;
+  --color-info:          #2563EB;
   --color-info-tint:     #EFF6FF;
+  --color-info-fg:       #1D4ED8;
 
-  /* ─── Difficulty badge colors ────────────────────── */
-  --color-beginner:        #22C55E;
-  --color-beginner-tint:   #DCFCE7;
-  --color-intermediate:    #F59E0B;
-  --color-intermediate-tint: #FEF3C7;
-  --color-advanced:        #EF4444;
-  --color-advanced-tint:   #FEE2E2;
+  --color-sidebar-bg:       #0F0D1A;
+  --color-sidebar-hover:    rgba(255,255,255,0.065);
+  --color-sidebar-active:   #7C5CDB;
+  --color-sidebar-text:     rgba(255,255,255,0.52);
+  --color-sidebar-text-active:#FFFFFF;
+  --color-sidebar-border:   rgba(255,255,255,0.07);
+  --color-sidebar-section:  rgba(255,255,255,0.22);
 
-  /* ─── Submission status colors ───────────────────── */
-  --color-status-pending:     #F59E0B;
-  --color-status-ai:          #8A70D6;
-  --color-status-instructor:  #3B82F6;
-  --color-status-graded:      #22C55E;
+  --font-sans:  'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-mono:  'DM Mono', 'Fira Code', monospace;
 
-  /* ─── Typography ─────────────────────────────────── */
-  --font-sans: 'Lato', sans-serif;
-  --font-mono: 'Fira Code', monospace;
-
-  --text-xs:   12px;
+  --text-xs:   11.5px;
   --text-sm:   13px;
-  --text-base: 15px;
+  --text-base: 14.5px;
   --text-md:   16px;
   --text-lg:   18px;
-  --text-xl:   20px;
-  --text-2xl:  24px;
-  --text-3xl:  28px;
+  --text-xl:   22px;
+  --text-2xl:  26px;
+  --text-3xl:  32px;
 
   --font-regular:   400;
+  --font-medium:    500;
   --font-semibold:  600;
   --font-bold:      700;
-  --font-black:     900;
 
+  --line-tight:   1.3;
   --line-normal:  1.5;
   --line-relaxed: 1.7;
 
-  /* ─── Spacing (8px grid) ─────────────────────────── */
   --space-1:  4px;
   --space-2:  8px;
   --space-3:  12px;
@@ -80,34 +77,48 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  /* ─── Border radius ──────────────────────────────── */
-  --radius-sm:  4px;
-  --radius-md:  8px;
-  --radius-lg:  12px;
-  --radius-xl:  16px;
-  --radius-2xl: 20px;
+  --radius-sm:   5px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
+  --radius-2xl:  20px;
   --radius-full: 9999px;
 
-  /* ─── Shadows ─────────────────────────────────────── */
-  --shadow-card:      0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-card-hover: 0 4px 12px rgba(138,112,214,0.15), 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-modal:     0 20px 60px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-xs:           0 1px 2px rgba(15,13,26,0.04);
+  --shadow-sm:           0 1px 3px rgba(15,13,26,0.06), 0 1px 2px rgba(15,13,26,0.04);
+  --shadow-card:         0 2px 8px rgba(15,13,26,0.06), 0 1px 3px rgba(15,13,26,0.04);
+  --shadow-card-hover:   0 8px 24px rgba(124,92,219,0.13), 0 2px 8px rgba(15,13,26,0.06);
+  --shadow-modal:        0 24px 64px rgba(15,13,26,0.18), 0 8px 24px rgba(15,13,26,0.08);
+  --shadow-dropdown:     0 8px 24px rgba(15,13,26,0.10), 0 2px 8px rgba(15,13,26,0.06);
+  --shadow-focus:        0 0 0 3px rgba(124,92,219,0.18);
+  --shadow-focus-error:  0 0 0 3px rgba(220,38,38,0.15);
 
-  /* ─── Layout ──────────────────────────────────────── */
-  --sidebar-width:    240px;
-  --topbar-height:    64px;
-  --content-max-w:    1280px;
-  --lesson-max-w:     900px;
+  --sidebar-width:   230px;
+  --topbar-height:   56px;
+  --content-max-w:   1280px;
+  --lesson-max-w:    900px;
 
-  /* ─── Transitions ─────────────────────────────────── */
-  --transition-fast:   100ms ease;
-  --transition-base:   150ms ease;
-  --transition-slow:   300ms ease;
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-standard:  cubic-bezier(0.2, 0, 0, 1);
 
-  /* ─── Z-index scale ───────────────────────────────── */
-  --z-sidebar:    40;
-  --z-topbar:     30;
-  --z-dropdown:   50;
-  --z-modal:      60;
-  --z-toast:      70;
+  --duration-instant: 80ms;
+  --duration-fast:    150ms;
+  --duration-base:    220ms;
+  --duration-slow:    350ms;
+  --duration-slower:  500ms;
+
+  --transition-fast:   var(--duration-fast) var(--ease-out-quart);
+  --transition-base:   var(--duration-base) var(--ease-out-quart);
+  --transition-slow:   var(--duration-slow) var(--ease-out-expo);
+  --transition-spring: var(--duration-slow) var(--ease-spring);
+
+  --z-sidebar:  40;
+  --z-topbar:   30;
+  --z-dropdown: 50;
+  --z-modal:    60;
+  --z-toast:    70;
+  --z-overlay:  80;
 }

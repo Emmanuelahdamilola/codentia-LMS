@@ -48,7 +48,7 @@ export default function ScheduleClassForm({ courses }: { courses: Course[] }) {
       )}
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1">Course</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1">Course</label>
         <select value={form.courseId} onChange={e => setForm(p => ({ ...p, courseId: e.target.value }))}
           className="input text-sm" required>
           {courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
@@ -56,32 +56,32 @@ export default function ScheduleClassForm({ courses }: { courses: Course[] }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1">Class Title</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1">Class Title</label>
         <input value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
           placeholder="e.g. JavaScript Functions" required className="input text-sm" />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1">Instructor</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1">Instructor</label>
         <input value={form.instructor} onChange={e => setForm(p => ({ ...p, instructor: e.target.value }))}
           required className="input text-sm" />
       </div>
 
       <div className="grid grid-cols-2 gap-2">
         <div>
-          <label className="block text-xs font-semibold text-[#424040] mb-1">Date</label>
+          <label className="block text-xs font-semibold text-[#1A1523] mb-1">Date</label>
           <input type="date" value={form.date} onChange={e => setForm(p => ({ ...p, date: e.target.value }))}
             required className="input text-sm" min={new Date().toISOString().split('T')[0]} />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[#424040] mb-1">Time</label>
+          <label className="block text-xs font-semibold text-[#1A1523] mb-1">Time</label>
           <input type="time" value={form.time} onChange={e => setForm(p => ({ ...p, time: e.target.value }))}
             required className="input text-sm" />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1">Duration</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1">Duration</label>
         <select value={form.durationMins} onChange={e => setForm(p => ({ ...p, durationMins: Number(e.target.value) }))}
           className="input text-sm">
           {[30, 45, 60, 90, 120].map(d => <option key={d} value={d}>{d} minutes</option>)}
@@ -89,13 +89,13 @@ export default function ScheduleClassForm({ courses }: { courses: Course[] }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1">Zoom / Meet Link</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1">Zoom / Meet Link</label>
         <input type="url" value={form.meetingLink} onChange={e => setForm(p => ({ ...p, meetingLink: e.target.value }))}
           placeholder="https://meet.google.com/..." required className="input text-sm" />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#424040] mb-1.5">Email Reminders</label>
+        <label className="block text-xs font-semibold text-[#1A1523] mb-1.5">Email Reminders</label>
         <div className="space-y-1.5">
           {[
             { key: 'h24', label: '24 hours before' },
@@ -106,8 +106,8 @@ export default function ScheduleClassForm({ courses }: { courses: Course[] }) {
               <input type="checkbox"
                 checked={form.reminders[key as keyof typeof form.reminders]}
                 onChange={e => setForm(p => ({ ...p, reminders: { ...p.reminders, [key]: e.target.checked } }))}
-                className="w-3.5 h-3.5 accent-[#8A70D6]" />
-              <span className="text-xs text-[#424040]">{label}</span>
+                className="w-3.5 h-3.5 accent-[#7C5CDB]" />
+              <span className="text-xs text-[#1A1523]">{label}</span>
             </label>
           ))}
         </div>

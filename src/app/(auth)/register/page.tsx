@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
@@ -39,10 +40,8 @@ export default function RegisterPage() {
   const [showPw, setShowPw]   = useState(false)
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const router = useRouter()
 
-  useEffect(() => { setMounted(true) }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -117,7 +116,7 @@ export default function RegisterPage() {
           gap: 8px;
           margin-bottom: 36px;
         }
-        .mobile-logo-dot { width: 7px; height: 7px; border-radius: 50%; background: #8A70D6; }
+        .mobile-logo-dot { width: 7px; height: 7px; border-radius: 50%; background: #7C5CDB; }
         @media (max-width: 900px) { .mobile-logo { display: flex; } }
 
         .form-heading {
@@ -148,7 +147,7 @@ export default function RegisterPage() {
           transition: border-color .15s, box-shadow .15s;
         }
         .auth-input:focus {
-          border-color: #8A70D6;
+          border-color: #7C5CDB;
           box-shadow: 0 0 0 3px rgba(138,112,214,.12);
         }
         .auth-input.has-icon { padding-right: 44px; }
@@ -168,7 +167,7 @@ export default function RegisterPage() {
 
         .submit-btn {
           width: 100%; height: 48px; border-radius: 10px; border: none;
-          background: linear-gradient(135deg, #8A70D6, #6B52B8);
+          background: linear-gradient(135deg, #7C5CDB, #6146C4);
           color: #fff; font-family: 'Syne', sans-serif;
           font-size: 15px; font-weight: 700; cursor: pointer;
           letter-spacing: -.2px;
@@ -198,7 +197,7 @@ export default function RegisterPage() {
           text-align: center; font-size: 13px;
           color: #71717a; margin-top: 22px;
         }
-        .form-footer a { color: #8A70D6; font-weight: 600; text-decoration: none; }
+        .form-footer a { color: #7C5CDB; font-weight: 600; text-decoration: none; }
         .form-footer a:hover { text-decoration: underline; }
 
         /* ── Right panel ── */
@@ -241,7 +240,7 @@ export default function RegisterPage() {
         }
         .wordmark-dot {
           width: 8px; height: 8px; border-radius: 50%;
-          background: #8A70D6; box-shadow: 0 0 12px #8A70D6;
+          background: #7C5CDB; box-shadow: 0 0 12px #7C5CDB;
         }
 
         .panel-headline {
@@ -252,7 +251,7 @@ export default function RegisterPage() {
         }
         .panel-headline em {
           font-style: normal;
-          background: linear-gradient(135deg, #8A70D6, #C4B0FF);
+          background: linear-gradient(135deg, #7C5CDB, #C4B0FF);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -285,7 +284,7 @@ export default function RegisterPage() {
       <div className="reg-root">
         {/* ── Left: form ── */}
         <div className="reg-form-side">
-          <div className={`form-box ${mounted ? 'visible' : ''}`}>
+          <motion.div className="form-box visible" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: "spring", stiffness: 340, damping: 28, delay: 0.1 }}>
 
             <div className="mobile-logo">
               <div className="mobile-logo-dot" />
@@ -295,14 +294,22 @@ export default function RegisterPage() {
             <h1 className="form-heading">Create your account</h1>
             <p className="form-sub">Join thousands of students learning to code.</p>
 
-            {error && (
-              <div className="form-error">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                {error}
-              </div>
-            )}
+            <AnimatePresence>
+              {error && (
+                <motion.div
+                  className="form-error"
+                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 28 }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                  {error}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <form onSubmit={handleSubmit}>
               <div className="field">
@@ -360,7 +367,7 @@ export default function RegisterPage() {
               Already have an account?{' '}
               <Link href="/login">Sign in</Link>
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* ── Right: panel ── */}

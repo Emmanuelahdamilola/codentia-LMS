@@ -57,23 +57,23 @@ export default async function BadgesPage() {
   const earned = badges.filter(b => b.earned).length
 
   return (
-    <div className="p-7 max-w-[760px]">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[820px]">
 
       {/* Header */}
       <div className="flex items-start justify-between mb-7 flex-wrap gap-4">
         <div>
-          <h1 className="text-[24px] font-black text-[#424040] tracking-tight">Badges & Achievements</h1>
-          <p className="text-[13px] text-[#8A8888] mt-1">
+          <h1 className="text-[26px] font-semibold text-[#1A1523] animate-fade-up" style={{ letterSpacing: "-0.025em" }} >Badges & Achievements</h1>
+          <p className="text-[13px] text-[#9591A8] mt-1">
             {earned} of {badges.length} badges earned · {points.toLocaleString()} total points
           </p>
         </div>
         {/* Points pill */}
-        <div className="flex items-center gap-3 px-5 py-3 rounded-[14px] border border-[#D4CAF7]"
-          style={{ background: 'linear-gradient(135deg,#E9E3FF,#D4CAF7)' }}>
+        <div className="flex items-center gap-3 px-5 py-3 rounded-2xl border border-[#C8C1E8] animate-fade-up"
+          style={{ background: 'linear-gradient(135deg,#EDE8FF,#D4CAF7)',  animationDelay: "60ms" }}>
           <span className="text-[28px]">⭐</span>
           <div>
-            <div className="text-[22px] font-black text-[#6B52B8] leading-none">{points.toLocaleString()}</div>
-            <div className="text-[11px] font-bold text-[#8A70D6]">Total Points</div>
+            <div className="text-[24px] font-semibold text-[#6146C4] leading-none tracking-tight">{points.toLocaleString()}</div>
+            <div className="text-[11px] font-bold text-[#7C5CDB]">Total Points</div>
           </div>
         </div>
       </div>
@@ -81,29 +81,29 @@ export default async function BadgesPage() {
       {/* Progress bar */}
       <div className="mb-7">
         <div className="flex items-center justify-between text-[12px] font-bold mb-2">
-          <span className="text-[#424040]">{earned} earned</span>
-          <span className="text-[#8A8888]">{badges.length - earned} remaining</span>
+          <span className="text-[#1A1523]">{earned} earned</span>
+          <span className="text-[#9591A8]">{badges.length - earned} remaining</span>
         </div>
-        <div className="h-2 rounded-full overflow-hidden" style={{ background: '#F4F4F6' }}>
+        <div className="h-2 rounded-full overflow-hidden" style={{ background: '#E9E7EF' }}>
           <div className="h-full rounded-full transition-all duration-700"
-            style={{ width: `${(earned / badges.length) * 100}%`, background: 'linear-gradient(to right,#8A70D6,#6B52B8)' }} />
+            style={{ width: `${(earned / badges.length) * 100}%`, background: 'linear-gradient(to right,#7C5CDB,#6146C4)' }} />
         </div>
       </div>
 
       {/* Earned badges */}
       {earned > 0 && (
         <section className="mb-7">
-          <h2 className="text-[15px] font-black text-[#424040] mb-4">Earned 🎉</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <h2 className="text-[16px] font-semibold text-[#1A1523] mb-4" style={{ letterSpacing: "-0.01em" }}>Earned 🎉</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {badges.filter(b => b.earned).map(badge => (
               <div key={badge.id}
-                className="bg-white border border-[#EBEBEB] rounded-[14px] p-4 flex items-center gap-4 shadow-[0_1px_3px_rgba(0,0,0,.06)] transition-all hover:shadow-[0_4px_16px_rgba(138,112,214,.12)] hover:border-[#D4CAF7]">
+                className="bg-white border border-[#E9E7EF] rounded-2xl p-4 flex items-center gap-4 animate-fade-up hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(124,92,219,0.14)] hover:border-[#C8C1E8] transition-all duration-[220ms]" style={{ boxShadow: "0 2px 8px rgba(15,13,26,0.06)" }}>
                 <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-[28px] flex-shrink-0 ${badge.color}`}>
                   {badge.icon}
                 </div>
                 <div>
-                  <div className="text-[14px] font-black text-[#424040]">{badge.name}</div>
-                  <div className="text-[12px] text-[#8A8888] mt-0.5">{badge.description}</div>
+                  <div className="text-[14px] font-semibold text-[#1A1523]">{badge.name}</div>
+                  <div className="text-[12px] text-[#9591A8] mt-0.5">{badge.description}</div>
                   <div className={`text-[11px] font-bold mt-1 ${badge.textColor}`}>✓ Earned</div>
                 </div>
               </div>
@@ -114,17 +114,17 @@ export default async function BadgesPage() {
 
       {/* Locked badges */}
       <section>
-        <h2 className="text-[15px] font-black text-[#424040] mb-4">Locked 🔒</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <h2 className="text-[16px] font-semibold text-[#1A1523] mb-4" style={{ letterSpacing: "-0.01em" }}>Locked 🔒</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {badges.filter(b => !b.earned).map(badge => (
             <div key={badge.id}
-              className="bg-white border border-[#EBEBEB] rounded-[14px] p-4 flex items-center gap-4 shadow-[0_1px_3px_rgba(0,0,0,.06)] opacity-60">
-              <div className="w-14 h-14 rounded-xl flex items-center justify-center text-[28px] flex-shrink-0 bg-[#F4F4F6] grayscale">
+              className="bg-white border border-[#E9E7EF] rounded-2xl p-4 flex items-center gap-4 opacity-50" style={{ boxShadow: "0 1px 4px rgba(15,13,26,0.04)" }}>
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center text-[28px] flex-shrink-0 bg-[#F7F7F9] grayscale">
                 {badge.icon}
               </div>
               <div>
-                <div className="text-[14px] font-black text-[#424040]">{badge.name}</div>
-                <div className="text-[12px] text-[#8A8888] mt-0.5">{badge.description}</div>
+                <div className="text-[14px] font-semibold text-[#1A1523]">{badge.name}</div>
+                <div className="text-[12px] text-[#9591A8] mt-0.5">{badge.description}</div>
                 <div className="text-[11px] font-bold mt-1 text-[#BCBBBB]">🔒 Not yet earned</div>
               </div>
             </div>
@@ -133,9 +133,9 @@ export default async function BadgesPage() {
       </section>
 
       {/* Stats breakdown */}
-      <div className="mt-7 bg-[#F8F6FF] border border-[#E9E3FF] rounded-[14px] p-5">
-        <div className="text-[13px] font-black text-[#424040] mb-4">Your stats</div>
-        <div className="grid grid-cols-3 gap-4">
+      <div className="mt-7 rounded-2xl p-5 animate-fade-up" style={{ background: "#FAF8FF", border: "1px solid #EDE8FF", animationDelay: "280ms" }}>
+        <div className="text-[14px] font-semibold text-[#1A1523] mb-4">Your stats</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             { icon: '📖', label: 'Lessons done',    value: lessonsCompleted },
             { icon: '✅', label: 'Quizzes passed',  value: quizzesPassed },
@@ -146,8 +146,8 @@ export default async function BadgesPage() {
           ].map(s => (
             <div key={s.label} className="text-center">
               <div className="text-[22px] mb-1">{s.icon}</div>
-              <div className="text-[18px] font-black text-[#8A70D6]">{s.value}</div>
-              <div className="text-[11px] text-[#8A8888] font-bold">{s.label}</div>
+              <div className="text-[20px] font-semibold text-[#7C5CDB] tracking-tight">{s.value}</div>
+              <div className="text-[11px] text-[#9591A8] font-bold">{s.label}</div>
             </div>
           ))}
         </div>

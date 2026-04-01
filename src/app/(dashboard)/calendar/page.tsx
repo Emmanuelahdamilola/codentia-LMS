@@ -108,21 +108,21 @@ export default async function CalendarPage() {
 
   const monthLabel = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 
-  const dotColor  = (t: 'class' | 'deadline') => t === 'class' ? '#8A70D6' : '#F59E0B'
+  const dotColor  = (t: 'class' | 'deadline') => t === 'class' ? '#7C5CDB' : '#F59E0B'
   const chipColor = (t: 'class' | 'deadline') =>
-    t === 'class' ? 'bg-[#E9E3FF] text-[#6B52B8]' : 'bg-[#FEF3C7] text-[#D97706]'
+    t === 'class' ? 'bg-[#EDE8FF] text-[#6146C4]' : 'bg-[#FEF3C7] text-[#D97706]'
 
   return (
-    <div className="p-7 max-w-[1100px]">
-      <h1 className="text-[24px] font-black text-[#424040] tracking-tight mb-1">Calendar</h1>
-      <p className="text-[13px] text-[#8A8888] mb-6">Your classes, deadlines, and quizzes at a glance.</p>
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[1100px]">
+      <h1 className="text-[24px] font-semibold text-[#1A1523] tracking-tight mb-1" style={{ letterSpacing: "-0.025em" }}>Calendar</h1>
+      <p className="text-[13px] text-[#9591A8] mb-6">Your classes, deadlines, and quizzes at a glance.</p>
 
       {/* Legend */}
       <div className="flex gap-4 mb-5">
         {(['class', 'deadline'] as const).map(t => (
           <div key={t} className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: dotColor(t) }} />
-            <span className="text-[12px] text-[#8A8888]">
+            <span className="text-[12px] text-[#9591A8]">
               {t === 'class' ? 'Live Class' : 'Assignment Deadline'}
             </span>
           </div>
@@ -132,12 +132,12 @@ export default async function CalendarPage() {
       <div className="grid grid-cols-[1fr_300px] gap-5">
 
         {/* ── Calendar grid ── */}
-        <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-5 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-          <p className="text-[14px] font-bold text-[#424040] mb-4">{monthLabel}</p>
+        <div className="bg-white border border-[#E9E7EF] rounded-2xl p-5 shadow-[0_2px_8px_rgba(15,13,26,0.06)]">
+          <p className="text-[14px] font-bold text-[#1A1523] mb-4">{monthLabel}</p>
 
           <div className="grid grid-cols-7 mb-2">
             {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => (
-              <div key={d} className="text-center text-[10px] font-bold text-[#8A8888] uppercase py-1">
+              <div key={d} className="text-center text-[10px] font-bold text-[#9591A8] uppercase py-1">
                 {d}
               </div>
             ))}
@@ -156,15 +156,15 @@ export default async function CalendarPage() {
                   key={i}
                   className={[
                     'min-h-[68px] rounded-lg p-1 border transition-colors',
-                    isToday       ? 'border-[#8A70D6] bg-[#F8F6FF]'  :
-                    events.length ? 'border-[#E8E4F0] bg-white'       :
-                                    'border-transparent hover:bg-[#FBFBFB]',
+                    isToday       ? 'border-[#7C5CDB] bg-[#FAF8FF]'  :
+                    events.length ? 'border-[#E9E7EF] bg-white'       :
+                                    'border-transparent hover:bg-[#F7F7F9]',
                     isPast ? 'opacity-50' : '',
                   ].join(' ')}
                 >
                   <div className={[
                     'text-[11px] font-bold mb-1 w-6 h-6 flex items-center justify-center rounded-full',
-                    isToday ? 'bg-[#8A70D6] text-white' : 'text-[#424040]',
+                    isToday ? 'bg-[#7C5CDB] text-white' : 'text-[#1A1523]',
                   ].join(' ')}>
                     {day}
                   </div>
@@ -179,7 +179,7 @@ export default async function CalendarPage() {
                       </Link>
                     ))}
                     {events.length > 2 && (
-                      <p className="text-[9px] text-[#8A8888] px-1">+{events.length - 2}</p>
+                      <p className="text-[9px] text-[#9591A8] px-1">+{events.length - 2}</p>
                     )}
                   </div>
                 </div>
@@ -189,9 +189,9 @@ export default async function CalendarPage() {
         </div>
 
         {/* ── Upcoming sidebar ── */}
-        <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-5 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-          <h2 className="text-[13px] font-bold text-[#424040] mb-4 flex items-center gap-2">
-            <svg className="w-4 h-4 text-[#8A70D6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="bg-white border border-[#E9E7EF] rounded-2xl p-5 shadow-[0_2px_8px_rgba(15,13,26,0.06)]">
+          <h2 className="text-[13px] font-bold text-[#1A1523] mb-4 flex items-center gap-2">
+            <svg className="w-4 h-4 text-[#7C5CDB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2"/>
               <line x1="16" y1="2" x2="16" y2="6"/>
               <line x1="8"  y1="2" x2="8"  y2="6"/>
@@ -201,7 +201,7 @@ export default async function CalendarPage() {
           </h2>
 
           {upcoming.length === 0 ? (
-            <p className="text-[13px] text-[#8A8888] text-center py-8">
+            <p className="text-[13px] text-[#9591A8] text-center py-8">
               Nothing coming up — you&apos;re all clear! 🎉
             </p>
           ) : (
@@ -210,7 +210,7 @@ export default async function CalendarPage() {
                 <Link
                   key={i}
                   href={ev.link}
-                  className="flex gap-3 p-3 rounded-xl bg-[#FBFBFB] hover:bg-[#E9E3FF] transition-colors no-underline"
+                  className="flex gap-3 p-3 rounded-xl bg-[#F7F7F9] hover:bg-[#EDE8FF] transition-colors no-underline"
                 >
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${chipColor(ev.type)}`}>
                     {ev.type === 'class' ? (
@@ -226,8 +226,8 @@ export default async function CalendarPage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[12px] font-bold text-[#424040] truncate">{ev.label}</p>
-                    <p className="text-[10px] text-[#8A8888] mt-0.5">
+                    <p className="text-[12px] font-bold text-[#1A1523] truncate">{ev.label}</p>
+                    <p className="text-[10px] text-[#9591A8] mt-0.5">
                       {ev.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
                       {ev.time ? ` · ${ev.time}` : ''}
                     </p>

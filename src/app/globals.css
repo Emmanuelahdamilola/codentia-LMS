@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
 @import '../styles/tokens.css';
 @import "tailwindcss";
 
+/* ─── Base ──────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
 
-/* ─── Base ────────────────────────────────────────────────── */
-
-* { box-sizing: border-box; }
+html { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 
 body {
   background-color: var(--color-bg);
@@ -12,152 +13,185 @@ body {
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: var(--line-normal);
+  letter-spacing: -0.01em;
 }
 
-/* ─── Scrollbar ───────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* ─── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-border-strong); }
 
-/* ─── Components (Tailwind v4 safe) ───────────────────────── */
+/* ─── CSS Keyframes (used by utility classes & framer-motion fallbacks) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.93); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes bounceIn {
+  0%   { opacity: 0; transform: scale(0.78); }
+  55%  { opacity: 1; transform: scale(1.05); }
+  75%  { transform: scale(0.98); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-6px); }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124,92,219,0); }
+  50%       { box-shadow: 0 0 20px 4px rgba(124,92,219,0.25); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── Animation utility classes ─────────────────────────────────────── */
+.animate-fade-in     { animation: fadeIn      220ms cubic-bezier(0.25,1,0.5,1) both; }
+.animate-fade-up     { animation: fadeUp      380ms cubic-bezier(0.16,1,0.3,1) both; }
+.animate-fade-down   { animation: fadeDown    380ms cubic-bezier(0.16,1,0.3,1) both; }
+.animate-scale-in    { animation: scaleIn     260ms cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-slide-right { animation: slideInRight 380ms cubic-bezier(0.16,1,0.3,1) both; }
+.animate-bounce-in   { animation: bounceIn    460ms cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-float       { animation: float 3s ease-in-out infinite; }
+.animate-glow-pulse  { animation: glow-pulse 2.5s ease-in-out infinite; }
+.animate-spin-slow   { animation: spin-slow 8s linear infinite; }
+
+/* Stagger helpers */
+.stagger-1 { animation-delay: 40ms; }
+.stagger-2 { animation-delay: 80ms; }
+.stagger-3 { animation-delay: 120ms; }
+.stagger-4 { animation-delay: 160ms; }
+.stagger-5 { animation-delay: 200ms; }
+.stagger-6 { animation-delay: 240ms; }
+.stagger-7 { animation-delay: 280ms; }
+.stagger-8 { animation-delay: 320ms; }
+
+/* ─── Skeleton shimmer ──────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--color-border-subtle) 25%,
+    var(--color-border) 37%,
+    var(--color-border-subtle) 63%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: var(--radius-md);
+}
+
+/* ─── Focus visible ─────────────────────────────────────────────────── */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* ─── Selection ─────────────────────────────────────────────────────── */
+::selection {
+  background: var(--color-primary-tint);
+  color: var(--color-primary-dim);
+}
+
+/* ─── Premium glass surface ─────────────────────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.5);
+}
+
+/* ─── Gradient text ─────────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, #7C5CDB 0%, #A48FE0 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── Base components ───────────────────────────────────────────────── */
 @layer components {
 
-  /* ─── Navigation ─── */
   .nav-item {
-    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium
-           text-[#8A8888] hover:bg-[#E9E3FF] hover:text-[#8A70D6]
-           transition-all duration-150 cursor-pointer select-none;
+    @apply flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium
+           cursor-pointer select-none no-underline;
+    color: var(--color-sidebar-text);
+    font-size: var(--text-sm);
+    transition: background 150ms cubic-bezier(0.25,1,0.5,1), color 150ms cubic-bezier(0.25,1,0.5,1);
   }
-
+  .nav-item:hover:not(.active) {
+    background: var(--color-sidebar-hover);
+    color: rgba(255,255,255,0.85);
+  }
   .nav-item.active {
-    @apply bg-[#8A70D6] text-white hover:bg-[#6B52B8];
+    background: var(--color-sidebar-active);
+    color: var(--color-sidebar-text-active);
   }
 
-  /* ─── Cards ─── */
   .card {
-    @apply bg-white rounded-xl border border-[#E8E4F0] p-5;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 20px;
   }
 
   .card-hover {
-    @apply bg-white rounded-xl border border-[#E8E4F0] p-5
-           hover:shadow-md hover:border-[#C4B8EE]
-           transition-all duration-200 cursor-pointer;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 220ms cubic-bezier(0.25,1,0.5,1), box-shadow 220ms cubic-bezier(0.25,1,0.5,1), border-color 220ms;
+  }
+  .card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--color-border-strong);
   }
 
-  .stat-card {
-    @apply bg-white rounded-xl border border-[#E8E4F0] p-5
-           flex items-start gap-4;
-  }
-
-  .stat-icon {
-    @apply w-12 h-12 rounded-xl bg-[#E9E3FF] text-[#8A70D6]
-           flex items-center justify-center shrink-0;
-  }
-
-  /* ─── Buttons ─── */
-  .btn-primary {
-    @apply bg-[#8A70D6] text-white px-5 py-2.5 rounded-lg font-semibold text-sm
-           hover:bg-[#6B52B8] active:scale-[0.98]
-           transition-all duration-150 disabled:opacity-50;
-  }
-
-  .btn-secondary {
-    @apply border border-[#8A70D6] text-[#8A70D6] px-5 py-2.5 rounded-lg font-semibold text-sm
-           hover:bg-[#E9E3FF] active:scale-[0.98]
-           transition-all duration-150;
-  }
-
-  .btn-ghost {
-    @apply text-[#8A70D6] px-4 py-2 rounded-lg font-medium text-sm
-           hover:bg-[#E9E3FF] transition-all duration-150;
-  }
-
-  .btn-danger {
-    @apply bg-red-500 text-white px-5 py-2.5 rounded-lg font-semibold text-sm
-           hover:bg-red-600 active:scale-[0.98]
-           transition-all duration-150;
-  }
-
-  /* ─── Inputs ─── */
   .input {
-    @apply w-full border border-[#E8E4F0] rounded-lg px-4 py-2.5 text-sm
-           bg-white text-[#424040] placeholder-[#8A8888]
-           focus:outline-none focus:ring-2 focus:ring-[#8A70D6]/40 focus:border-[#8A70D6]
-           transition-all duration-150;
+    @apply w-full;
+    background: var(--color-surface);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 9px 13px;
+    font-size: var(--text-sm);
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    transition: border-color 150ms cubic-bezier(0.25,1,0.5,1), box-shadow 150ms cubic-bezier(0.25,1,0.5,1);
+    outline: none;
   }
+  .input::placeholder { color: var(--color-text-faint); }
+  .input:focus {
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-focus);
+  }
+  .input:hover:not(:focus) { border-color: var(--color-border-strong); }
 
-  /* ─── Badges (NO reuse) ─── */
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
-  }
-
-  .badge-beginner {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-           bg-green-100 text-green-700;
-  }
-
-  .badge-intermediate {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-           bg-amber-100 text-amber-700;
-  }
-
-  .badge-advanced {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-           bg-red-100 text-red-700;
-  }
-
-  .badge-purple {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-           bg-[#E9E3FF] text-[#8A70D6];
-  }
-
-  .badge-gray {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-           bg-gray-100 text-gray-600;
-  }
-
-  /* ─── Progress ─── */
-  .progress-bar {
-    @apply w-full bg-gray-100 rounded-full h-2;
-  }
-
-  .progress-fill {
-    @apply bg-[#8A70D6] h-2 rounded-full transition-all duration-500;
-  }
+  .table-row { transition: background 120ms cubic-bezier(0.25,1,0.5,1); }
+  .table-row:hover { background: var(--color-primary-faint); }
 }
-
-/* ─── Utilities ───────────────────────────────────────────── */
-@layer utilities {
-  .font-lato { font-family: var(--font-sans); }
-  .font-code { font-family: var(--font-mono); }
-}
-
-/* ─── Code blocks ─────────────────────────────────────────── */
-pre, code {
-  font-family: var(--font-mono);
-  font-size: 13px;
-}
-
-pre {
-  background: #1e1e2e;
-  color: #cdd6f4;
-  padding: 16px 20px;
-  border-radius: 8px;
-  overflow-x: auto;
-}
-
-code:not(pre code) {
-  background: #F0EAFF;
-  color: #6B52B8;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-/* ─── Prose ──────────────────────────────────────────────── */
-.prose-lesson h1 { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
-.prose-lesson h2 { font-size: 20px; font-weight: 700; margin: 24px 0 12px; }
-.prose-lesson h3 { font-size: 17px; font-weight: 600; margin: 20px 0 8px; }
-.prose-lesson p  { margin-bottom: 14px; color: #5a5858; line-height: 1.75; }
-.prose-lesson ul { margin-bottom: 14px; padding-left: 24px; }
-.prose-lesson li { margin-bottom: 6px; color: #5a5858; }

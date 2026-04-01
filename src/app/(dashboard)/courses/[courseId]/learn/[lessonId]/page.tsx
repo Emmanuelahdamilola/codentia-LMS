@@ -184,10 +184,10 @@ export default async function LessonPage({ params }: Props) {
       <div className="flex-1 min-w-0 px-7 py-6" style={{ maxWidth: 780 }}>
 
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-[12px] text-[#8A8888] mb-4">
-          <Link href="/dashboard" className="text-[#8A70D6] hover:underline">Dashboard</Link>
+        <nav className="flex items-center gap-1.5 text-[12px] text-[#9591A8] mb-4">
+          <Link href="/dashboard" className="text-[#7C5CDB] hover:underline">Dashboard</Link>
           <span>›</span>
-          <Link href={`/courses/${courseId}`} className="text-[#8A70D6] hover:underline truncate max-w-[140px]">
+          <Link href={`/courses/${courseId}`} className="text-[#7C5CDB] hover:underline truncate max-w-[140px]">
             {lesson.module.course.title}
           </Link>
           <span>›</span>
@@ -196,18 +196,18 @@ export default async function LessonPage({ params }: Props) {
 
         {/* Lesson title + meta */}
         <div className="mb-5">
-          <h1 className="text-[24px] font-black text-[#424040] tracking-tight leading-tight">
+          <h1 className="text-[24px] font-black text-[#1A1523] tracking-tight leading-tight">
             {lesson.title}
           </h1>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-            <span className="flex items-center gap-1 text-[12px] text-[#8A8888]">
+            <span className="flex items-center gap-1 text-[12px] text-[#9591A8]">
               {/* clock icon */}
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
               </svg>
               ~10 min
             </span>
-            <span className="bg-[#E9E3FF] text-[#8A70D6] text-[11px] font-bold px-2 py-0.5 rounded-full">
+            <span className="bg-[#EDE8FF] text-[#7C5CDB] text-[11px] font-bold px-2 py-0.5 rounded-full">
               Lesson {lesson.order + 1} of {siblings.length}
             </span>
             {completedRecord && (
@@ -276,9 +276,9 @@ export default async function LessonPage({ params }: Props) {
 
         {/* Resources */}
         {lesson.resources.length > 0 && (
-          <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-4 mb-6 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-            <h3 className="text-[13px] font-bold text-[#424040] mb-3 flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-[#8A70D6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <div className="bg-white border border-[#E9E7EF] rounded-[14px] p-4 mb-6 shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+            <h3 className="text-[13px] font-bold text-[#1A1523] mb-3 flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-[#7C5CDB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                 <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
               </svg>
@@ -287,7 +287,7 @@ export default async function LessonPage({ params }: Props) {
             <div className="flex flex-col gap-2">
               {lesson.resources.map(r => (
                 <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-[13px] text-[#8A70D6] hover:underline font-medium">
+                  className="flex items-center gap-2 text-[13px] text-[#7C5CDB] hover:underline font-medium">
                   <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                     <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
@@ -305,7 +305,7 @@ export default async function LessonPage({ params }: Props) {
             {lesson.quiz && (
               <Link
                 href={`/quizzes/${lesson.quiz.id}`}
-                className="flex items-center gap-2 bg-[#E9E3FF] text-[#8A70D6] border border-[#D4CAF7] font-bold text-[13px] px-4 py-2.5 rounded-lg hover:bg-[#8A70D6] hover:text-white transition-all duration-200"
+                className="flex items-center gap-2 bg-[#EDE8FF] text-[#7C5CDB] border border-[#D4CAF7] font-bold text-[13px] px-4 py-2.5 rounded-lg hover:bg-[#7C5CDB] hover:text-white transition-all duration-200"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
@@ -316,7 +316,7 @@ export default async function LessonPage({ params }: Props) {
             {lesson.assignment && (
               <Link
                 href={`/assignments/${lesson.assignment.id}`}
-                className="flex items-center gap-2 bg-[#E9E3FF] text-[#8A70D6] border border-[#D4CAF7] font-bold text-[13px] px-4 py-2.5 rounded-lg hover:bg-[#8A70D6] hover:text-white transition-all duration-200"
+                className="flex items-center gap-2 bg-[#EDE8FF] text-[#7C5CDB] border border-[#D4CAF7] font-bold text-[13px] px-4 py-2.5 rounded-lg hover:bg-[#7C5CDB] hover:text-white transition-all duration-200"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -332,11 +332,11 @@ export default async function LessonPage({ params }: Props) {
         <LessonAIPanel lessonId={lesson.id} lessonTitle={lesson.title} />
 
         {/* Lesson actions */}
-        <div className="flex items-center justify-between pt-4 mt-2 border-t border-[#EBEBEB]">
+        <div className="flex items-center justify-between pt-4 mt-2 border-t border-[#E9E7EF]">
           {prevLesson ? (
             <Link
               href={`/courses/${courseId}/learn/${prevLesson.id}`}
-              className="flex items-center gap-2 bg-white text-[#424040] border border-[#EBEBEB] font-bold text-[13px] px-5 py-2.5 rounded-lg hover:border-[#8A70D6] hover:text-[#8A70D6] transition-all duration-200"
+              className="flex items-center gap-2 bg-white text-[#1A1523] border border-[#E9E7EF] font-bold text-[13px] px-5 py-2.5 rounded-lg hover:border-[#7C5CDB] hover:text-[#7C5CDB] transition-all duration-200"
             >
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="15 18 9 12 15 6"/>
@@ -356,7 +356,7 @@ export default async function LessonPage({ params }: Props) {
           {nextLesson ? (
             <Link
               href={`/courses/${courseId}/learn/${nextLesson.id}`}
-              className="flex items-center gap-2 bg-white text-[#424040] border border-[#EBEBEB] font-bold text-[13px] px-5 py-2.5 rounded-lg hover:border-[#8A70D6] hover:text-[#8A70D6] transition-all duration-200"
+              className="flex items-center gap-2 bg-white text-[#1A1523] border border-[#E9E7EF] font-bold text-[13px] px-5 py-2.5 rounded-lg hover:border-[#7C5CDB] hover:text-[#7C5CDB] transition-all duration-200"
             >
               Next Lesson
               <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -373,27 +373,27 @@ export default async function LessonPage({ params }: Props) {
       <div className="w-[260px] flex-shrink-0 px-5 py-6 flex flex-col gap-4">
 
         {/* Course progress donut */}
-        <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-4 shadow-[0_1px_3px_rgba(0,0,0,.06),0_4px_16px_rgba(0,0,0,.04)]">
-          <div className="text-[13px] font-bold text-[#424040] mb-2">Course Progress</div>
+        <div className="bg-white border border-[#E9E7EF] rounded-[14px] p-4 shadow-[0_1px_3px_rgba(0,0,0,.06),0_4px_16px_rgba(0,0,0,.04)]">
+          <div className="text-[13px] font-bold text-[#1A1523] mb-2">Course Progress</div>
 
           {/* SVG donut */}
           <div className="flex justify-center my-3">
             <svg width="96" height="96" viewBox="0 0 96 96">
-              <circle cx="48" cy="48" r="40" fill="none" stroke="#EBEBEB" strokeWidth="8" />
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#E9E7EF" strokeWidth="8" />
               <circle
                 cx="48" cy="48" r="40"
                 fill="none"
-                stroke="#8A70D6"
+                stroke="#7C5CDB"
                 strokeWidth="8"
                 strokeDasharray={CIRC}
                 strokeDashoffset={dashOffset}
                 strokeLinecap="round"
                 transform="rotate(-90 48 48)"
               />
-              <text x="48" y="44" textAnchor="middle" fontFamily="Lato,sans-serif" fontWeight="900" fontSize="18" fill="#424040">
+              <text x="48" y="44" textAnchor="middle" fontFamily="Lato,sans-serif" fontWeight="900" fontSize="18" fill="#1A1523">
                 {courseProgress.pct}%
               </text>
-              <text x="48" y="58" textAnchor="middle" fontFamily="Lato,sans-serif" fontSize="10" fill="#8A8888">
+              <text x="48" y="58" textAnchor="middle" fontFamily="Lato,sans-serif" fontSize="10" fill="#9591A8">
                 complete
               </text>
             </svg>
@@ -401,12 +401,12 @@ export default async function LessonPage({ params }: Props) {
 
           <div className="flex flex-col gap-2">
             <div className="flex justify-between text-[12px]">
-              <span className="text-[#8A8888]">Lessons done</span>
-              <span className="font-bold text-[#424040]">{courseProgress.done} / {courseProgress.total}</span>
+              <span className="text-[#9591A8]">Lessons done</span>
+              <span className="font-bold text-[#1A1523]">{courseProgress.done} / {courseProgress.total}</span>
             </div>
             <div className="flex justify-between text-[12px]">
-              <span className="text-[#8A8888]">This module</span>
-              <span className="font-bold text-[#424040]">{moduleDoneCount} / {siblings.length}</span>
+              <span className="text-[#9591A8]">This module</span>
+              <span className="font-bold text-[#1A1523]">{moduleDoneCount} / {siblings.length}</span>
             </div>
           </div>
         </div>

@@ -50,17 +50,17 @@ export default function AssignmentForm({ assignmentId }: { assignmentId: string 
 
   if (success) {
     return (
-      <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-8 text-center shadow-[0_1px_3px_rgba(0,0,0,.06)]">
+      <div className="bg-white border border-[#E9E7EF] rounded-2xl p-8 text-center shadow-[0_2px_8px_rgba(15,13,26,0.06)]">
         <div className="w-12 h-12 rounded-full bg-[#DCFCE7] flex items-center justify-center mx-auto mb-4 text-[22px]">✓</div>
-        <h3 className="text-[16px] font-black text-[#22C55E] mb-2">Submitted!</h3>
-        <p className="text-[13px] text-[#8A8888]">AI feedback is being generated. Your instructor will review shortly.</p>
+        <h3 className="text-[16px] font-bold text-[#16A34A] mb-2">Submitted!</h3>
+        <p className="text-[13px] text-[#9591A8]">AI feedback is being generated. Your instructor will review shortly.</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-6 shadow-[0_1px_3px_rgba(0,0,0,.06),0_4px_16px_rgba(0,0,0,.04)]">
-      <h2 className="text-[15px] font-bold text-[#424040] mb-5">Submit Your Assignment</h2>
+    <div className="bg-white border border-[#E9E7EF] rounded-2xl p-6 shadow-[0_2px_8px_rgba(15,13,26,0.06)]">
+      <h2 className="text-[15px] font-bold text-[#1A1523] mb-5">Submit Your Assignment</h2>
 
       {error && (
         <div className="mb-4 bg-[#FEE2E2] border border-[#FCA5A5] text-[#B91C1C] text-[13px] font-medium px-4 py-3 rounded-lg">
@@ -72,11 +72,11 @@ export default function AssignmentForm({ assignmentId }: { assignmentId: string 
 
         {/* GitHub URL */}
         <div>
-          <label className="block text-[13px] font-bold text-[#424040] mb-1.5">
+          <label className="block text-[13px] font-bold text-[#1A1523] mb-1.5">
             GitHub Repository URL
           </label>
-          <div className="flex items-center border border-[#EBEBEB] rounded-lg overflow-hidden bg-[#FBFBFB]">
-            <div className="px-3 h-[38px] flex items-center border-r border-[#EBEBEB] bg-white text-[13px] text-[#8A8888] whitespace-nowrap flex-shrink-0">
+          <div className="flex items-center border border-[#E9E7EF] rounded-lg overflow-hidden bg-[#F7F7F9]">
+            <div className="px-3 h-[38px] flex items-center border-r border-[#E9E7EF] bg-white text-[13px] text-[#9591A8] whitespace-nowrap flex-shrink-0">
               github.com/
             </div>
             <input
@@ -84,29 +84,29 @@ export default function AssignmentForm({ assignmentId }: { assignmentId: string 
               value={form.githubUrl}
               onChange={set('githubUrl')}
               placeholder="username/your-project"
-              className="flex-1 border-none bg-transparent px-3 h-[38px] text-[13px] text-[#424040] outline-none placeholder:text-[#8A8888]"
+              className="flex-1 border-none bg-transparent px-3 h-[38px] text-[13px] text-[#1A1523] outline-none placeholder:text-[#9591A8]"
             />
           </div>
         </div>
 
         {/* Live URL */}
         <div>
-          <label className="block text-[13px] font-bold text-[#424040] mb-1.5">
-            Live Project URL <span className="text-[11px] text-[#8A8888] font-normal">(optional)</span>
+          <label className="block text-[13px] font-bold text-[#1A1523] mb-1.5">
+            Live Project URL <span className="text-[11px] text-[#9591A8] font-normal">(optional)</span>
           </label>
           <input
             type="url"
             value={form.liveUrl}
             onChange={set('liveUrl')}
             placeholder="https://your-project.vercel.app"
-            className="w-full border border-[#EBEBEB] rounded-lg px-3 h-[38px] text-[13px] text-[#424040] outline-none bg-[#FBFBFB] placeholder:text-[#8A8888] focus:border-[#8A70D6] transition-colors"
+            className="w-full border border-[#E9E7EF] rounded-xl border border-[#E9E7EF] rounded-lg px-3 h-[38px] text-[13px] text-[#1A1523] outline-none bg-[#F7F7F9] placeholder:text-[#9591A8] focus:border-[#7C5CDB] transition-colors"
           />
         </div>
 
         {/* File upload — wired to R2 via presign API */}
         <div>
-          <label className="block text-[13px] font-bold text-[#424040] mb-1.5">
-            Upload File <span className="text-[11px] text-[#8A8888] font-normal">(optional — .zip, .pdf)</span>
+          <label className="block text-[13px] font-bold text-[#1A1523] mb-1.5">
+            Upload File <span className="text-[11px] text-[#9591A8] font-normal">(optional — .zip, .pdf)</span>
           </label>
           <FileUpload
             folder="assignments"
@@ -118,21 +118,21 @@ export default function AssignmentForm({ assignmentId }: { assignmentId: string 
             onError={msg => setError(msg)}
           />
           {fileUrl && (
-            <p className="text-[11px] text-[#22C55E] mt-1 font-medium">✓ File uploaded and ready to submit</p>
+            <p className="text-[11px] text-[#16A34A] mt-1 font-medium">✓ File uploaded and ready to submit</p>
           )}
         </div>
 
         {/* Notes */}
         <div>
-          <label className="block text-[13px] font-bold text-[#424040] mb-1.5">
-            Notes to Instructor <span className="text-[11px] text-[#8A8888] font-normal">(optional)</span>
+          <label className="block text-[13px] font-bold text-[#1A1523] mb-1.5">
+            Notes to Instructor <span className="text-[11px] text-[#9591A8] font-normal">(optional)</span>
           </label>
           <textarea
             value={form.notes}
             onChange={set('notes')}
             rows={3}
             placeholder="Any context about your submission, challenges you faced..."
-            className="w-full border border-[#EBEBEB] rounded-lg px-3 py-2.5 text-[13px] text-[#424040] outline-none bg-[#FBFBFB] placeholder:text-[#8A8888] focus:border-[#8A70D6] transition-colors resize-y min-h-[80px]"
+            className="w-full border border-[#E9E7EF] rounded-xl border border-[#E9E7EF] rounded-lg px-3 py-2.5 text-[13px] text-[#1A1523] outline-none bg-[#F7F7F9] placeholder:text-[#9591A8] focus:border-[#7C5CDB] transition-colors resize-y min-h-[80px]"
           />
         </div>
 
@@ -141,9 +141,9 @@ export default function AssignmentForm({ assignmentId }: { assignmentId: string 
           type="submit"
           disabled={loading}
           className="w-full flex items-center justify-center gap-2 text-white font-bold text-[14px] py-3 rounded-lg transition-all duration-200 disabled:opacity-60"
-          style={{ background: '#8A70D6' }}
-          onMouseEnter={e => !loading && (e.currentTarget.style.background = '#6B52B8')}
-          onMouseLeave={e => !loading && (e.currentTarget.style.background = '#8A70D6')}
+          style={{ background: '#7C5CDB' }}
+          onMouseEnter={e => !loading && (e.currentTarget.style.background = '#6146C4')}
+          onMouseLeave={e => !loading && (e.currentTarget.style.background = '#7C5CDB')}
         >
           {loading ? (
             <>
@@ -164,7 +164,7 @@ export default function AssignmentForm({ assignmentId }: { assignmentId: string 
         </button>
 
         {!loading && (
-          <p className="text-[11px] text-[#8A8888] text-center">
+          <p className="text-[11px] text-[#9591A8] text-center">
             AI feedback will be generated automatically after submission.
           </p>
         )}

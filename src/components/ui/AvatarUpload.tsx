@@ -70,9 +70,9 @@ export default function AvatarUpload({
     <div className="relative inline-block" style={{ width: size, height: size }}>
       {/* Avatar circle */}
       <div
-        className="w-full h-full rounded-full overflow-hidden flex items-center justify-center font-black text-white cursor-pointer"
+        className="w-full h-full rounded-full overflow-hidden flex items-center justify-center font-bold text-white cursor-pointer"
         style={{
-          background: preview ? 'transparent' : 'linear-gradient(135deg,#8A70D6,#6B52B8)',
+          background: preview ? 'transparent' : 'linear-gradient(135deg,#7C5CDB,#6146C4)',
           fontSize: size * 0.32,
           border: '3px solid white',
           boxShadow: '0 2px 8px rgba(0,0,0,.12)',
@@ -93,7 +93,7 @@ export default function AvatarUpload({
         disabled={uploading}
         className="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center transition-all"
         style={{
-          background: uploading ? '#E9E3FF' : '#8A70D6',
+          background: uploading ? '#EDE8FF' : '#7C5CDB',
           border: '2px solid white',
           boxShadow: '0 1px 4px rgba(0,0,0,.15)',
         }}
@@ -101,7 +101,7 @@ export default function AvatarUpload({
       >
         {uploading ? (
           <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56" stroke="#8A70D6" strokeWidth="2.5" strokeLinecap="round"/>
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" stroke="#7C5CDB" strokeWidth="2.5" strokeLinecap="round"/>
           </svg>
         ) : (
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

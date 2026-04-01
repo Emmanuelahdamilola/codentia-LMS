@@ -39,28 +39,28 @@ export default async function QuizzesPage() {
   const unattempted = quizzes.filter(q => q.quizResults.length === 0)
 
   return (
-    <div className="p-7 max-w-[860px]">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[860px] animate-fade-up">
 
       {/* Header */}
       <div className="mb-7">
-        <h1 className="text-[24px] font-black text-[#424040] tracking-tight">Quizzes</h1>
-        <p className="text-[13px] text-[#8A8888] mt-1">
+        <h1 className="text-2xl sm:text-[26px] font-bold text-[#1A1523]" style={{ letterSpacing: "-0.025em" }}>Quizzes</h1>
+        <p className="text-[13px] text-[#9591A8] mt-1">
           {attempted.length} completed · {unattempted.length} remaining
         </p>
       </div>
 
       {quizzes.length === 0 ? (
-        <div className="bg-white border border-[#EBEBEB] rounded-[14px] p-16 text-center shadow-[0_1px_3px_rgba(0,0,0,.06)]">
-          <div className="w-12 h-12 rounded-xl bg-[#E9E3FF] flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-[#8A70D6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <div className="bg-white border border-[#E9E7EF] rounded-2xl p-16 text-center" style={{ boxShadow: "0 2px 8px rgba(15,13,26,0.06)" }}>
+          <div className="w-12 h-12 rounded-xl bg-[#EDE8FF] flex items-center justify-center mx-auto mb-4">
+            <svg className="w-6 h-6 text-[#7C5CDB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
             </svg>
           </div>
-          <p className="font-bold text-[#424040] mb-1">No quizzes yet</p>
-          <p className="text-[13px] text-[#8A8888]">
+          <p className="font-bold text-[#1A1523] mb-1">No quizzes yet</p>
+          <p className="text-[13px] text-[#9591A8]">
             Quizzes will appear here as you progress through your lessons.
           </p>
-          <Link href="/courses" className="inline-block mt-4 text-[13px] font-bold text-[#8A70D6] hover:underline">
+          <Link href="/courses" className="inline-block mt-4 text-[13px] font-bold text-[#7C5CDB] hover:underline">
             Browse Courses →
           </Link>
         </div>
@@ -70,7 +70,7 @@ export default async function QuizzesPage() {
           {/* To Do */}
           {unattempted.length > 0 && (
             <div>
-              <h2 className="text-[11px] font-bold uppercase tracking-[1px] text-[#8A8888] mb-3">
+              <h2 className="text-[11px] font-semibold uppercase tracking-[1px] text-[#9591A8] mb-4">
                 To Do — {unattempted.length} quiz{unattempted.length !== 1 ? 'zes' : ''}
               </h2>
               <div className="flex flex-col gap-2.5">
@@ -84,7 +84,7 @@ export default async function QuizzesPage() {
           {/* Completed */}
           {attempted.length > 0 && (
             <div>
-              <h2 className="text-[11px] font-bold uppercase tracking-[1px] text-[#8A8888] mb-3">
+              <h2 className="text-[11px] font-semibold uppercase tracking-[1px] text-[#9591A8] mb-4">
                 Completed — {attempted.length} quiz{attempted.length !== 1 ? 'zes' : ''}
               </h2>
               <div className="flex flex-col gap-2.5">
@@ -120,16 +120,16 @@ function QuizRow({ quiz, attempted }: { quiz: any; attempted: boolean }) {
   return (
     <Link
       href={`/quizzes/${quiz.id}`}
-      className="bg-white border border-[#EBEBEB] rounded-[14px] px-5 py-4 flex items-center gap-4 shadow-[0_1px_3px_rgba(0,0,0,.06)] hover:shadow-[0_4px_24px_rgba(138,112,214,.12)] hover:border-[#D4CAF7] hover:-translate-y-0.5 transition-all duration-200 no-underline"
+      className="bg-white border border-[#E9E7EF] rounded-2xl px-4 sm:px-5 py-4 flex items-center gap-4 no-underline block animate-fade-up hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(124,92,219,0.14)] hover:border-[#C8C1E8] transition-all duration-[220ms]" style={{ boxShadow: "0 2px 8px rgba(15,13,26,0.06)" }}
     >
       {/* Icon */}
       <div className={`w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center ${
-        !result  ? 'bg-[#E9E3FF]'
+        !result  ? 'bg-[#EDE8FF]'
         : passed ? 'bg-[#DCFCE7]'
         :          'bg-[#FEF3C7]'
       }`}>
         {!result ? (
-          <svg className="w-5 h-5 text-[#8A70D6]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="w-5 h-5 text-[#7C5CDB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
           </svg>
         ) : passed ? (
@@ -145,10 +145,10 @@ function QuizRow({ quiz, attempted }: { quiz: any; attempted: boolean }) {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-bold text-[#424040] truncate">{quiz.title}</p>
-        <p className="text-[12px] text-[#8A8888] mt-0.5 truncate">{course.title}</p>
+        <p className="text-[14px] font-semibold text-[#1A1523] truncate">{quiz.title}</p>
+        <p className="text-[12px] text-[#9591A8] mt-0.5 truncate">{course.title}</p>
         <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
-          <span className="text-[11px] text-[#8A8888]">
+          <span className="text-[11px] text-[#9591A8]">
             {quiz._count.questions} question{quiz._count.questions !== 1 ? 's' : ''}
           </span>
           {result ? (
@@ -163,7 +163,7 @@ function QuizRow({ quiz, attempted }: { quiz: any; attempted: boolean }) {
               </span>
             </>
           ) : (
-            <span className="text-[11px] font-bold bg-[#E9E3FF] text-[#8A70D6] px-2 py-0.5 rounded-full">
+            <span className="text-[11px] font-bold bg-[#EDE8FF] text-[#7C5CDB] px-2 py-0.5 rounded-full">
               Not started
             </span>
           )}
@@ -172,11 +172,11 @@ function QuizRow({ quiz, attempted }: { quiz: any; attempted: boolean }) {
 
       {/* Score or arrow */}
       {result ? (
-        <div className={`text-[24px] font-black flex-shrink-0 ${passed ? 'text-[#16A34A]' : 'text-[#D97706]'}`}>
+        <div className={`text-[22px] font-semibold flex-shrink-0 tracking-tight ${passed ? 'text-[#16A34A]' : 'text-[#D97706]'}`}>
           {result.score}%
         </div>
       ) : (
-        <svg className="w-4 h-4 text-[#8A8888] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg className="w-4 h-4 text-[#9591A8] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
       )}

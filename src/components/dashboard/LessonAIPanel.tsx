@@ -41,13 +41,13 @@ export default function LessonAIPanel({ lessonId, lessonTitle }: Props) {
   }
 
   return (
-    <div className="border border-[#EBEBEB] rounded-[14px] overflow-hidden mb-6"
+    <div className="border border-[#E9E7EF] rounded-2xl overflow-hidden mb-6"
       style={{ boxShadow: '0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04)' }}>
 
       {/* ── Header ── */}
       <button onClick={() => setCollapsed(p => !p)}
         className="w-full flex items-center justify-between px-4 py-3.5 text-left"
-        style={{ background: 'linear-gradient(135deg,#8A70D6 0%,#6B52B8 100%)' }}>
+        style={{ background: 'linear-gradient(135deg,#7C5CDB 0%,#6146C4 100%)' }}>
         <div className="flex items-center gap-2 text-[13px] font-bold text-white">
           <span className="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center text-[14px]">🤖</span>
           Ask Codentia AI — about this lesson
@@ -68,7 +68,7 @@ export default function LessonAIPanel({ lessonId, lessonTitle }: Props) {
             {/* Greeting */}
             {messages.length === 0 && (
               <AiBubble>
-                <p className="text-[13px] text-[#424040] leading-relaxed">
+                <p className="text-[13px] text-[#1A1523] leading-relaxed">
                   Hi! I&apos;m here to help with <strong>{lessonTitle}</strong>. What would you like to understand better?
                 </p>
               </AiBubble>
@@ -79,19 +79,19 @@ export default function LessonAIPanel({ lessonId, lessonTitle }: Props) {
                 {/* Avatar */}
                 {msg.role === 'assistant'
                   ? <span className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-[12px] mt-0.5"
-                      style={{ background: 'linear-gradient(135deg,#8A70D6,#6B52B8)' }}>🤖</span>
+                      style={{ background: 'linear-gradient(135deg,#7C5CDB,#6146C4)' }}>🤖</span>
                   : <span className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[11px] font-bold text-white mt-0.5"
-                      style={{ background: 'linear-gradient(135deg,#6B52B8,#8A70D6)' }}>Me</span>
+                      style={{ background: 'linear-gradient(135deg,#6146C4,#7C5CDB)' }}>Me</span>
                 }
 
                 {/* Bubble */}
                 {msg.role === 'user' ? (
-                  <div className="bg-[#8A70D6] text-white rounded-[10px] rounded-tr-[3px] px-3.5 py-2.5 text-[13px] leading-relaxed"
+                  <div className="bg-[#7C5CDB] text-white rounded-xl rounded-tr-[3px] px-3.5 py-2.5 text-[13px] leading-relaxed"
                     style={{ maxWidth: 'calc(100% - 40px)' }}>
                     {msg.content}
                   </div>
                 ) : (
-                  <div className="bg-[#FBFBFB] border border-[#EBEBEB] rounded-[10px] rounded-tl-[3px] px-3.5 py-2.5"
+                  <div className="bg-[#F7F7F9] border border-[#E9E7EF] rounded-xl rounded-tl-[3px] px-3.5 py-2.5"
                     style={{ maxWidth: 'calc(100% - 40px)' }}>
                     {renderMarkdown(msg.content)}
                   </div>
@@ -104,7 +104,7 @@ export default function LessonAIPanel({ lessonId, lessonTitle }: Props) {
               <AiBubble>
                 <div className="flex items-center gap-1 py-0.5">
                   {[0, 1, 2].map(j => (
-                    <span key={j} className="w-1.5 h-1.5 rounded-full bg-[#8A70D6] animate-bounce"
+                    <span key={j} className="w-1.5 h-1.5 rounded-full bg-[#7C5CDB] animate-bounce"
                       style={{ animationDelay: `${j * 0.15}s` }} />
                   ))}
                 </div>
@@ -115,7 +115,7 @@ export default function LessonAIPanel({ lessonId, lessonTitle }: Props) {
           </div>
 
           {/* ── Input row ── */}
-          <div className="flex items-center gap-2 px-4 py-3 border-t border-[#EBEBEB] bg-white">
+          <div className="flex items-center gap-2 px-4 py-3 border-t border-[#E9E7EF] bg-white">
             <input
               ref={inputRef}
               type="text"
@@ -123,13 +123,13 @@ export default function LessonAIPanel({ lessonId, lessonTitle }: Props) {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendMessage()}
               placeholder={`Ask anything about ${lessonTitle}...`}
-              className="flex-1 border border-[#EBEBEB] rounded-lg px-3 py-2 text-[13px] text-[#424040] outline-none bg-[#FBFBFB] placeholder:text-[#8A8888] focus:border-[#8A70D6] transition-colors"
+              className="flex-1 border border-[#E9E7EF] rounded-xl border border-[#E9E7EF] rounded-lg px-3 py-2 text-[13px] text-[#1A1523] outline-none bg-[#F7F7F9] placeholder:text-[#9591A8] focus:border-[#7C5CDB] transition-colors"
             />
             <button onClick={sendMessage} disabled={!input.trim() || loading}
               className="w-[34px] h-[34px] rounded-lg flex items-center justify-center flex-shrink-0 transition-colors disabled:opacity-50"
-              style={{ background: '#8A70D6' }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#6B52B8')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#8A70D6')}>
+              style={{ background: '#7C5CDB' }}
+              onMouseEnter={e => (e.currentTarget.style.background = '#6146C4')}
+              onMouseLeave={e => (e.currentTarget.style.background = '#7C5CDB')}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                 <line x1="22" y1="2" x2="11" y2="13" stroke="white" strokeWidth="2" strokeLinecap="round"/>
                 <polygon points="22 2 15 22 11 13 2 9 22 2" fill="white"/>
@@ -147,8 +147,8 @@ function AiBubble({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-start gap-2.5">
       <span className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center text-[12px] mt-0.5"
-        style={{ background: 'linear-gradient(135deg,#8A70D6,#6B52B8)' }}>🤖</span>
-      <div className="bg-[#FBFBFB] border border-[#EBEBEB] rounded-[10px] rounded-tl-[3px] px-3.5 py-2.5"
+        style={{ background: 'linear-gradient(135deg,#7C5CDB,#6146C4)' }}>🤖</span>
+      <div className="bg-[#F7F7F9] border border-[#E9E7EF] rounded-xl rounded-tl-[3px] px-3.5 py-2.5"
         style={{ maxWidth: 'calc(100% - 40px)' }}>
         {children}
       </div>

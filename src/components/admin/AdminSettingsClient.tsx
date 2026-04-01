@@ -42,7 +42,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   return (
     <button role="switch" aria-checked={checked} onClick={() => onChange(!checked)}
       className="relative flex-shrink-0 rounded-full transition-colors duration-200"
-      style={{ width: 38, height: 22, background: checked ? '#8A70D6' : '#E8E8EC' }}>
+      style={{ width: 38, height: 22, background: checked ? '#7C5CDB' : '#E8E8EC' }}>
       <span className="absolute top-[3px] w-4 h-4 rounded-full bg-white shadow-sm transition-transform duration-200"
         style={{ left: 3, transform: checked ? 'translateX(16px)' : 'translateX(0)' }} />
     </button>
@@ -56,8 +56,8 @@ function SettingRow({ label, sub, checked, onChange, last = false }: {
     <div className="flex items-center justify-between py-3"
       style={{ borderBottom: last ? 'none' : '1px solid #E8E8EC', gap: 16 }}>
       <div>
-        <div className="text-[13px] font-bold" style={{ color: '#424040' }}>{label}</div>
-        <div className="text-[11px]" style={{ color: '#8A8888' }}>{sub}</div>
+        <div className="text-[13px] font-bold" style={{ color: '#1A1523' }}>{label}</div>
+        <div className="text-[11px]" style={{ color: '#9591A8' }}>{sub}</div>
       </div>
       <Toggle checked={checked} onChange={onChange} />
     </div>
@@ -68,7 +68,7 @@ function Card({ title, children }: { title: React.ReactNode; children: React.Rea
   return (
     <div className="bg-white rounded-xl border border-[#E8E8EC] shadow-[0_1px_4px_rgba(0,0,0,.07)] overflow-hidden">
       <div className="px-4 py-3.5 border-b border-[#E8E8EC]">
-        <div className="text-[14px] font-bold" style={{ color: '#424040' }}>{title}</div>
+        <div className="text-[14px] font-bold" style={{ color: '#1A1523' }}>{title}</div>
       </div>
       {children}
     </div>
@@ -149,7 +149,7 @@ export default function AdminSettingsClient() {
   if (loading) {
     return (
       <div className="px-7 py-6">
-        <div className="text-[13px]" style={{ color: '#8A8888' }}>Loading settings…</div>
+        <div className="text-[13px]" style={{ color: '#9591A8' }}>Loading settings…</div>
       </div>
     )
   }
@@ -160,12 +160,12 @@ export default function AdminSettingsClient() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-[20px] font-black tracking-tight" style={{ color: '#424040' }}>Platform Settings</h1>
-          <div className="text-[13px] mt-1" style={{ color: '#8A8888' }}>Configure and control your Codentia platform.</div>
+          <h1 className="text-[18px] font-semibold tracking-[-0.01em] tracking-tight" style={{ color: '#1A1523' }}>Platform Settings</h1>
+          <div className="text-[13px] mt-1" style={{ color: '#9591A8' }}>Configure and control your Codentia platform.</div>
         </div>
         <button onClick={handleSave} disabled={saving}
-          className="flex items-center gap-1.5 px-5 py-2 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6B52B8] disabled:opacity-60"
-          style={{ background: '#8A70D6' }}>
+          className="flex items-center gap-1.5 px-5 py-2 rounded-lg font-bold text-[13px] text-white transition-colors hover:bg-[#6146C4] disabled:opacity-60"
+          style={{ background: '#7C5CDB' }}>
           {saving ? 'Saving…' : 'Save Settings'}
         </button>
       </div>
@@ -180,23 +180,23 @@ export default function AdminSettingsClient() {
             <div className="p-4 flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#8A8888' }}>Platform Name</label>
+                  <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#9591A8' }}>Platform Name</label>
                   <input value={settings.platformName} onChange={e => set('platformName', e.target.value)}
                     className="w-full rounded-lg px-3 py-2 text-[13px] outline-none"
-                    style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040' }} />
+                    style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#1A1523' }} />
                 </div>
                 <div>
-                  <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#8A8888' }}>Support Email</label>
+                  <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#9591A8' }}>Support Email</label>
                   <input type="email" value={settings.supportEmail} onChange={e => set('supportEmail', e.target.value)}
                     className="w-full rounded-lg px-3 py-2 text-[13px] outline-none"
-                    style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040' }} />
+                    style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#1A1523' }} />
                 </div>
               </div>
               <div>
-                <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#8A8888' }}>Default Timezone</label>
+                <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#9591A8' }}>Default Timezone</label>
                 <select value={settings.timezone} onChange={e => set('timezone', e.target.value)}
                   className="w-full rounded-lg px-3 py-2 text-[13px] outline-none cursor-pointer"
-                  style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040' }}>
+                  style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#1A1523' }}>
                   <option>Africa/Lagos (WAT +1)</option>
                   <option>Europe/London (GMT)</option>
                   <option>America/New_York (EST)</option>
@@ -205,11 +205,11 @@ export default function AdminSettingsClient() {
                 </select>
               </div>
               <div>
-                <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#8A8888' }}>Platform Logo URL</label>
+                <label className="text-[11px] font-bold uppercase tracking-[.5px] block mb-1.5" style={{ color: '#9591A8' }}>Platform Logo URL</label>
                 <input type="url" value={settings.logoUrl} onChange={e => set('logoUrl', e.target.value)}
                   placeholder="https://..."
                   className="w-full rounded-lg px-3 py-2 text-[13px] outline-none"
-                  style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#424040' }} />
+                  style={{ border: '1px solid #E8E8EC', background: '#F4F4F6', color: '#1A1523' }} />
               </div>
             </div>
           </Card>
@@ -251,12 +251,12 @@ export default function AdminSettingsClient() {
           {/* Roles & Permissions */}
           <Card title="👥 Roles & Permissions">
             <div className="p-4 flex flex-col gap-3">
-              <div className="p-3 rounded-lg" style={{ border: '2px solid #8A70D6', background: '#E9E3FF' }}>
+              <div className="p-3 rounded-lg" style={{ border: '2px solid #7C5CDB', background: '#EDE8FF' }}>
                 <div className="flex items-center justify-between mb-2">
-                  <div className="text-[13px] font-black" style={{ color: '#8A70D6' }}>Super Admin</div>
-                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#E9E3FF] text-[#6B52B8]" style={{ border: '1px solid #D4CAF7' }}>Your role</span>
+                  <div className="text-[13px] font-black" style={{ color: '#7C5CDB' }}>Super Admin</div>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-[#EDE8FF] text-[#6146C4]" style={{ border: '1px solid #D4CAF7' }}>Your role</span>
                 </div>
-                <div className="text-[11px]" style={{ color: '#6B52B8' }}>Full platform access — create, edit, delete, manage users, all settings</div>
+                <div className="text-[11px]" style={{ color: '#6146C4' }}>Full platform access — create, edit, delete, manage users, all settings</div>
               </div>
               {[
                 { title: 'Instructor', perms: ['Create course','Edit lesson','Review assignments'] },
@@ -264,17 +264,17 @@ export default function AdminSettingsClient() {
               ].map(role => (
                 <div key={role.title} className="p-3 rounded-lg" style={{ border: '1px solid #E8E8EC', background: '#F4F4F6' }}>
                   <div className="flex items-center justify-between mb-2">
-                    <div className="text-[13px] font-bold" style={{ color: '#424040' }}>{role.title}</div>
+                    <div className="text-[13px] font-bold" style={{ color: '#1A1523' }}>{role.title}</div>
                     <button onClick={() => showToast('Role editor opened')}
-                      className="text-[11px] font-bold bg-transparent border-none cursor-pointer" style={{ color: '#8A70D6' }}>
+                      className="text-[11px] font-bold bg-transparent border-none cursor-pointer" style={{ color: '#7C5CDB' }}>
                       Edit →
                     </button>
                   </div>
                   <div className="flex gap-1 flex-wrap">
                     {role.perms.map(p => (
                       <span key={p} className="text-[11px] font-bold px-2 py-0.5 rounded-full"
-                        style={{ background: role.title === 'Instructor' ? '#E9E3FF' : '#F4F4F6',
-                                 color: role.title === 'Instructor' ? '#6B52B8' : '#8A8888',
+                        style={{ background: role.title === 'Instructor' ? '#EDE8FF' : '#F4F4F6',
+                                 color: role.title === 'Instructor' ? '#6146C4' : '#9591A8',
                                  border: role.title === 'Moderator' ? '1px solid #E8E8EC' : 'none' }}>{p}</span>
                     ))}
                   </div>
@@ -282,7 +282,7 @@ export default function AdminSettingsClient() {
               ))}
               <button onClick={() => showToast('New role dialog opened')}
                 className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg font-bold text-[12px]"
-                style={{ background: '#E9E3FF', color: '#8A70D6', border: '1.5px dashed #D4CAF7' }}>
+                style={{ background: '#EDE8FF', color: '#7C5CDB', border: '1.5px dashed #D4CAF7' }}>
                 <Svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></Svg>
                 Create New Role
               </button>
@@ -294,7 +294,7 @@ export default function AdminSettingsClient() {
             <div className="p-4 flex flex-col gap-3">
               {[
                 { name: 'Zoom',         bg: '#2D8CFF', status: 'Connected', statusColor: '#22C55E', action: 'Configure →' },
-                { name: 'Google Meet',  bg: '#00A651', status: 'Not connected', statusColor: '#8A8888', action: 'Connect →' },
+                { name: 'Google Meet',  bg: '#00A651', status: 'Not connected', statusColor: '#9591A8', action: 'Connect →' },
               ].map(app => (
                 <div key={app.name} className="flex items-center justify-between px-3 py-2.5 rounded-lg"
                   style={{ background: '#F4F4F6', border: '1px solid #E8E8EC' }}>
@@ -308,14 +308,14 @@ export default function AdminSettingsClient() {
                       </svg>
                     </div>
                     <div>
-                      <div className="text-[12px] font-bold" style={{ color: '#424040' }}>{app.name}</div>
+                      <div className="text-[12px] font-bold" style={{ color: '#1A1523' }}>{app.name}</div>
                       <div className="text-[11px]" style={{ color: app.statusColor }}>
                         {app.status === 'Connected' ? '● ' : ''}{app.status}
                       </div>
                     </div>
                   </div>
                   <button onClick={() => showToast(`${app.name} settings opened`)}
-                    className="text-[11px] font-bold cursor-pointer" style={{ color: '#8A70D6', background: 'none', border: 'none' }}>
+                    className="text-[11px] font-bold cursor-pointer" style={{ color: '#7C5CDB', background: 'none', border: 'none' }}>
                     {app.action}
                   </button>
                 </div>
@@ -335,8 +335,8 @@ export default function AdminSettingsClient() {
               ].map(z => (
                 <div key={z.label} className="flex items-center justify-between">
                   <div>
-                    <div className="text-[13px] font-bold" style={{ color: '#424040' }}>{z.label}</div>
-                    <div className="text-[11px]" style={{ color: '#8A8888' }}>{z.sub}</div>
+                    <div className="text-[13px] font-bold" style={{ color: '#1A1523' }}>{z.label}</div>
+                    <div className="text-[11px]" style={{ color: '#9591A8' }}>{z.sub}</div>
                   </div>
                   <button onClick={() => setConfirm({ msg: `${z.label}? This cannot be undone.`, label: z.action, cb: () => showToast(`${z.action} completed`) })}
                     className="px-4 py-1.5 rounded-lg font-bold text-[12px]"
@@ -356,15 +356,15 @@ export default function AdminSettingsClient() {
           <div className="bg-white rounded-xl p-7 w-[380px] shadow-2xl" style={{ animation: 'pop .18s ease' }}>
             <style>{`@keyframes pop{from{transform:scale(.93);opacity:0}to{transform:scale(1);opacity:1}}`}</style>
             <div className="text-[18px] mb-2">⚠️</div>
-            <div className="text-[15px] font-black mb-1.5" style={{ color: '#424040' }}>{confirm.label}?</div>
-            <div className="text-[13px] mb-5" style={{ color: '#8A8888' }}>{confirm.msg}</div>
+            <div className="text-[15px] font-black mb-1.5" style={{ color: '#1A1523' }}>{confirm.label}?</div>
+            <div className="text-[13px] mb-5" style={{ color: '#9591A8' }}>{confirm.msg}</div>
             <div className="flex gap-2.5">
               <button onClick={() => { confirm.cb(); setConfirm(null) }}
                 className="flex-1 py-2.5 rounded-lg font-bold text-[13px] text-white" style={{ background: '#EF4444' }}>
                 {confirm.label}
               </button>
               <button onClick={() => setConfirm(null)}
-                className="flex-1 py-2.5 rounded-lg font-bold text-[13px] border border-[#E8E8EC]" style={{ color: '#424040' }}>
+                className="flex-1 py-2.5 rounded-lg font-bold text-[13px] border border-[#E8E8EC]" style={{ color: '#1A1523' }}>
                 Cancel
               </button>
             </div>

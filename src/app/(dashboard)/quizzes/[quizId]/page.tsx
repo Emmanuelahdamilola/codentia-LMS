@@ -70,33 +70,33 @@ export default async function QuizPage({ params }: Props) {
     <div className="p-7 max-w-[820px]">
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-[12px] text-[#8A8888] mb-6 flex-wrap">
-        <Link href="/dashboard"              className="text-[#8A70D6] hover:underline">Dashboard</Link>
+      <nav className="flex items-center gap-1.5 text-[12px] text-[#9591A8] mb-6 flex-wrap">
+        <Link href="/dashboard"              className="text-[#7C5CDB] hover:underline">Dashboard</Link>
         <span>›</span>
-        <Link href={`/courses/${courseId}`}  className="text-[#8A70D6] hover:underline truncate max-w-[140px]">{courseTitle}</Link>
+        <Link href={`/courses/${courseId}`}  className="text-[#7C5CDB] hover:underline truncate max-w-[140px]">{courseTitle}</Link>
         <span>›</span>
-        <Link href={`/courses/${courseId}/learn/${quiz.lesson.id}`} className="text-[#8A70D6] hover:underline truncate max-w-[140px]">{moduleTitle}</Link>
+        <Link href={`/courses/${courseId}/learn/${quiz.lesson.id}`} className="text-[#7C5CDB] hover:underline truncate max-w-[140px]">{moduleTitle}</Link>
         <span>›</span>
-        <span className="text-[#424040]">Quiz</span>
+        <span className="text-[#1A1523]">Quiz</span>
       </nav>
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4 mb-7">
         <div>
-          <h1 className="text-[22px] font-black text-[#424040] tracking-tight">
+          <h1 className="text-[22px] font-black text-[#1A1523] tracking-tight">
             {quiz.title}
           </h1>
-          <p className="text-[13px] text-[#8A8888] mt-1">
+          <p className="text-[13px] text-[#9591A8] mt-1">
             Test your understanding of {moduleTitle.toLowerCase()}.
           </p>
         </div>
 
         {/* Timer box — shown by QuizClient, just a placeholder here for layout */}
-        <div className="bg-[#E9E3FF] rounded-[10px] px-4 py-3 text-center flex-shrink-0">
-          <div className="text-[22px] font-black text-[#8A70D6] tabular-nums tracking-tight leading-none">
+        <div className="bg-[#EDE8FF] rounded-[10px] px-4 py-3 text-center flex-shrink-0">
+          <div className="text-[22px] font-black text-[#7C5CDB] tabular-nums tracking-tight leading-none">
             {quiz.questions.length > 5 ? '15:00' : '12:00'}
           </div>
-          <div className="text-[11px] font-bold text-[#8A70D6] mt-0.5">Time left</div>
+          <div className="text-[11px] font-bold text-[#7C5CDB] mt-0.5">Time left</div>
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export default async function QuizPage({ params }: Props) {
               Best score: {bestResult.score}%
             </span>
           </div>
-          <span className="text-[11px] text-[#8A8888] flex-shrink-0">
+          <span className="text-[11px] text-[#9591A8] flex-shrink-0">
             {new Date(bestResult.completedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </span>
         </div>

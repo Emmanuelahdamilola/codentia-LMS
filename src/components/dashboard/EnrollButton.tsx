@@ -62,7 +62,7 @@ export default function EnrollButton({ courseId, priceUsd, enrolled, published }
 
       {/* Currency toggle — only show for paid courses not yet enrolled */}
       {!isFree && !enrolled && (
-        <div className="flex rounded-lg overflow-hidden border border-[#E8E8EC]" style={{ height: 32 }}>
+        <div className="flex rounded-lg overflow-hidden border border-[#E9E7EF]" style={{ height: 32 }}>
           {(['NGN', 'USD'] as const).map(c => (
             <button
               key={c}
@@ -70,8 +70,8 @@ export default function EnrollButton({ courseId, priceUsd, enrolled, published }
               onClick={() => setCurrency(c)}
               className="flex-1 text-[12px] font-bold transition-all"
               style={{
-                background: currency === c ? '#8A70D6' : '#F4F4F6',
-                color:      currency === c ? '#fff'    : '#8A8888',
+                background: currency === c ? '#7C5CDB' : '#F7F7F9',
+                color:      currency === c ? '#fff'    : '#9591A8',
                 border:     'none',
               }}
             >
@@ -86,13 +86,13 @@ export default function EnrollButton({ courseId, priceUsd, enrolled, published }
         onClick={handleClick}
         disabled={loading || !published}
         className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-[14px] text-white transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
-        style={{ background: enrolled ? '#22C55E' : '#8A70D6' }}
+        style={{ background: enrolled ? '#16A34A' : '#7C5CDB' }}
         onMouseEnter={e => {
           if (!loading && published)
-            e.currentTarget.style.background = enrolled ? '#16A34A' : '#6B52B8'
+            e.currentTarget.style.background = enrolled ? '#16A34A' : '#6146C4'
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.background = enrolled ? '#22C55E' : '#8A70D6'
+          e.currentTarget.style.background = enrolled ? '#16A34A' : '#7C5CDB'
         }}
       >
         {loading ? (
@@ -120,11 +120,11 @@ export default function EnrollButton({ courseId, priceUsd, enrolled, published }
       </button>
 
       {error && (
-        <p className="text-[12px] text-[#EF4444] text-center font-medium">{error}</p>
+        <p className="text-[12px] text-[#DC2626] text-center font-medium">{error}</p>
       )}
 
       {!isFree && !enrolled && (
-        <p className="text-[11px] text-[#8A8888] text-center">
+        <p className="text-[11px] text-[#9591A8] text-center">
           Secure payment via Paystack · Cards, bank transfer & USSD
         </p>
       )}
